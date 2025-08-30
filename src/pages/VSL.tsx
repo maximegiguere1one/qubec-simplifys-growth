@@ -2,16 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, CheckCircle2, Clock, TrendingUp, Shield, Calendar, MapPin } from "lucide-react";
+import { Play, CheckCircle2, Clock, TrendingUp, Shield, Calendar, MapPin, Zap } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
+import { VSLVideo } from "@/components/VSLVideo";
+import { ProductVisuals } from "@/components/ProductVisuals";
+import { ROICalculator } from "@/components/ROICalculator";
+import { BookingCalendar } from "@/components/BookingCalendar";
+import { TrustBadges } from "@/components/TrustBadges";
+import { FAQ } from "@/components/FAQ";
+import { ProcessSteps } from "@/components/ProcessSteps";
 
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
+  const [showStickyButton, setShowStickyButton] = useState(false);
   const navigate = useNavigate();
   
   // Track page view
@@ -25,21 +32,41 @@ const VSL = () => {
     
     // Show survey after 60 seconds
     const timer = setTimeout(() => setShowSurvey(true), 60000);
-    return () => clearTimeout(timer);
+    
+    // Show sticky button on scroll
+    const handleScroll = () => {
+      if (window.scrollY > 800) {
+        setShowStickyButton(true);
+      } else {
+        setShowStickyButton(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
+  const handleCTAClick = () => {
+    trackEvent('vsl_cta_click', { cta_location: 'primary' });
+    navigate("/book-call");
+  };
+
   const getPersonalizedMessage = () => {
-    if (!quizResults) return "Vous pourriez";
+    if (!quizResults) return "Arrêtez de perdre 10-15h par semaine sur la paperasse";
     
     const score = quizResults.totalScore;
     if (score >= 14) {
-      return "Votre entreprise pourrait économiser jusqu'à 25 heures par semaine";
+      return "Votre priorité : récupérer ces 25h perdues chaque semaine";
     } else if (score >= 10) {
-      return "Votre entreprise pourrait économiser jusqu'à 15 heures par semaine";
+      return "Votre priorité : récupérer ces 15h perdues chaque semaine";
     } else if (score >= 6) {
-      return "Votre entreprise pourrait économiser jusqu'à 10 heures par semaine";
+      return "Votre priorité : récupérer ces 10h perdues chaque semaine";
     } else {
-      return "Votre entreprise pourrait économiser jusqu'à 5 heures par semaine";
+      return "Arrêtez de perdre 5-10h par semaine sur la paperasse";
     }
   };
 
@@ -78,99 +105,102 @@ const VSL = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      {/* Hero Section with Personalized Message */}
-      <section className="py-20">
+      {/* Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/30 border-b">
+        <div className="container mx-auto px-6 py-2">
+          <div className="flex items-center justify-center text-sm text-muted-foreground">
+            <span className="mr-2">Étape 2/3 :</span>
+            <span className="font-medium">Regardez la vidéo (4 min) puis réservez votre diagnostic</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
-              {getPersonalizedMessage()}{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                avec One Système
-              </span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              {getPersonalizedMessage()}
             </h1>
-            <div className="bg-secondary/30 border border-primary/20 rounded-lg p-6 max-w-4xl mx-auto mb-8">
-              <p className="text-lg leading-relaxed">
-                {quizResults?.diagnostic || "Découvrez comment nous transformons les entreprises québécoises comme la vôtre en seulement quelques semaines"}
-              </p>
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
+              One Système automatise vos opérations (TPS/TVQ incluses) et réunit vos outils en une seule plateforme simple – <span className="font-semibold text-primary">100% québécoise</span>
+            </p>
+            
+            {/* Personalized Alert */}
+            {quizResults && (
+              <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 max-w-2xl mx-auto mb-8">
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-warning" />
+                  <p className="font-medium">
+                    <strong>Votre priorité n°1 :</strong> {quizResults.mainPriority || "Automatisation des processus"}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Voici comment One Système résout exactement ce problème ↓
+                </p>
+              </div>
+            )}
+
+            {/* Trust Badges */}
+            <TrustBadges />
+          </div>
+
+          {/* VSL Video */}
+          <VSLVideo onCTAClick={handleCTAClick} />
+
+          {/* Primary CTA with Calendar */}
+          <div className="text-center mb-12">
+            <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Main CTA */}
+              <div className="lg:order-2">
+                <Button
+                  variant="cta-large"
+                  size="xl"
+                  onClick={handleCTAClick}
+                  className="w-full mb-4"
+                >
+                  Réserver mon diagnostic gratuit (30 min)
+                </Button>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    <span>100% gratuit et sans engagement</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    <span>Avec un expert local qui comprend votre réalité</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    <span>Créneaux limités cette semaine</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Integrated Calendar */}
+              <div className="lg:order-1">
+                <BookingCalendar />
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Video Section */}
-          <div className="max-w-4xl mx-auto mb-16">
-            <Card className="overflow-hidden shadow-strong">
-              <div className="relative bg-gradient-hero aspect-video flex items-center justify-center">
-                {!isVideoPlaying ? (
-                  <div className="text-center text-white">
-                    <ABTest
-                      testName="vsl_cta_button"
-                      variants={{
-                        control: (
-                          <Button
-                            variant="cta-large"
-                            onClick={() => {
-                              setIsVideoPlaying(true);
-                              trackEvent('vsl_play', { variant: 'control' });
-                            }}
-                            className="mb-4"
-                          >
-                            <Play className="w-8 h-8 mr-3" />
-                            Regarder la vidéo explicative (4 min)
-                          </Button>
-                        ),
-                        variant_a: (
-                          <Button
-                            variant="cta-large"
-                            onClick={() => {
-                              setIsVideoPlaying(true);
-                              trackEvent('vsl_play', { variant: 'variant_a' });
-                            }}
-                            className="mb-4"
-                          >
-                            <Play className="w-8 h-8 mr-3" />
-                            Découvrez comment économiser 15h/semaine
-                          </Button>
-                        ),
-                      }}
-                    />
-                    <p className="text-lg opacity-90">
-                      Imaginez... Il est 22h30, vous êtes encore au bureau à essayer de boucler vos factures sur Excel. Votre famille vous attend à la maison, mais impossible de partir : les commandes s'accumulent, les erreurs de calcul vous font paniquer, et demain matin le téléphone va encore sonner parce qu'une livraison a été oubliée...
-                    </p>
-                    <p className="text-base opacity-75 mt-4">
-                      👆 Vous reconnaissez cette scène ? Découvrez comment en finir avec ce cauchemar une fois pour toutes
-                    </p>
-                  </div>
-                ) : (
-                  <div className="w-full h-full bg-black flex items-center justify-center">
-                    <div className="text-white text-center">
-                      <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-xl">Chargement de la vidéo...</p>
-                      <p className="text-sm opacity-75 mt-2">
-                        (Dans une vraie application, votre vidéo serait ici)
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
+      {/* Product Visuals */}
+      <ProductVisuals />
 
-          {/* CTA Button */}
-          <div className="text-center mb-20">
-            <Button
-              variant="cta-large"
-              size="xl"
-              onClick={() => {
-                trackEvent('vsl_cta_click', { cta_location: 'primary' });
-                navigate("/book-call");
-              }}
-              className="pulse-animation"
-            >
-              Réservez votre consultation gratuite maintenant
-            </Button>
-            <p className="text-sm text-muted-foreground mt-4">
-              ✓ Consultation 100% gratuite • ✓ Aucun engagement • ✓ Analyse personnalisée
+      {/* ROI Calculator */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Calculez votre retour sur investissement
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Découvrez en 30 secondes combien One Système vous fera économiser
             </p>
           </div>
+          <ROICalculator />
         </div>
       </section>
 
