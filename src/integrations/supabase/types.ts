@@ -76,6 +76,73 @@ export type Database = {
           },
         ]
       }
+      email_events: {
+        Row: {
+          action: string
+          created_at: string
+          email_id: string
+          id: string
+          lead_id: string | null
+          timestamp: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          email_id: string
+          id?: string
+          lead_id?: string | null
+          timestamp?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          email_id?: string
+          id?: string
+          lead_id?: string | null
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_sequence_triggers: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          sequence_id: string
+          triggered_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          sequence_id: string
+          triggered_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          sequence_id?: string
+          triggered_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_sequence_triggers_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funnel_events: {
         Row: {
           created_at: string
@@ -125,10 +192,16 @@ export type Database = {
       }
       leads: {
         Row: {
+          business_size: string | null
           created_at: string
           email: string
           id: string
+          industry: string | null
+          location: string | null
           name: string
+          score: number | null
+          scoring_data: Json | null
+          segment: string | null
           source: string | null
           updated_at: string
           utm_campaign: string | null
@@ -136,10 +209,16 @@ export type Database = {
           utm_source: string | null
         }
         Insert: {
+          business_size?: string | null
           created_at?: string
           email: string
           id?: string
+          industry?: string | null
+          location?: string | null
           name: string
+          score?: number | null
+          scoring_data?: Json | null
+          segment?: string | null
           source?: string | null
           updated_at?: string
           utm_campaign?: string | null
@@ -147,10 +226,16 @@ export type Database = {
           utm_source?: string | null
         }
         Update: {
+          business_size?: string | null
           created_at?: string
           email?: string
           id?: string
+          industry?: string | null
+          location?: string | null
           name?: string
+          score?: number | null
+          scoring_data?: Json | null
+          segment?: string | null
           source?: string | null
           updated_at?: string
           utm_campaign?: string | null

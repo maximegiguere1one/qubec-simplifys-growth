@@ -141,7 +141,7 @@ export const updateLeadScoring = async (leadId: string, quizResults: any, engage
       .update({
         score: leadScore.score,
         segment: leadScore.segment,
-        scoring_data: leadScore
+        scoring_data: JSON.parse(JSON.stringify(leadScore)) // Convert to plain object for JSON storage
       })
       .eq('id', leadId);
 
