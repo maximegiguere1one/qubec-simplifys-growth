@@ -127,14 +127,28 @@ const BookCall = () => {
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-6">
-            Réservez votre consultation{" "}
+            Vous méritez de{" "}
             <span className="bg-gradient-primary bg-clip-text text-transparent">
-              gratuite
+              retrouver votre temps
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            En 30 minutes, découvrez comment One Système peut vous faire gagner du temps, économiser de l'argent et simplifier votre gestion
+          <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
+            Profitez d'un diagnostic personnalisé gratuit de votre gestion actuelle. Ensemble, nous identifierons comment automatiser vos opérations pour vous libérer du temps et augmenter vos profits.
           </p>
+          <div className="flex justify-center items-center space-x-8 text-sm">
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success" />
+              <span>30 minutes qui peuvent transformer votre entreprise</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success" />
+              <span>100% gratuit et sans engagement</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success" />
+              <span>Avec un expert local qui comprend votre réalité</span>
+            </div>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-12">
@@ -242,18 +256,29 @@ const BookCall = () => {
                   </div>
                 </div>
 
+                <div className="bg-warning/20 border border-warning/50 rounded-lg p-4 mb-6">
+                  <p className="text-center text-sm font-semibold">
+                    ⚠️ Attention : Les places pour les consultations gratuites de cette semaine sont limitées
+                  </p>
+                </div>
+                
                 <Button
                   type="submit"
                   variant="cta-large"
-                  className="w-full"
+                  className="w-full pulse-animation"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Confirmation en cours..." : "Confirmer mon rendez-vous gratuit"}
+                  {isSubmitting ? "Réservation en cours..." : "Je réserve ma consultation gratuite MAINTENANT"}
                 </Button>
               </form>
 
-              <div className="mt-6 text-center text-sm text-muted-foreground">
-                <p>✓ Aucun engagement requis • ✓ Consultation 100% gratuite • ✓ Annulation possible 24h avant</p>
+              <div className="mt-6 text-center">
+                <p className="text-lg font-semibold text-primary mb-2">
+                  Vous méritez de retrouver du temps et de faire grandir votre entreprise sereinement.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  ✓ Aucun engagement requis • ✓ Consultation 100% gratuite • ✓ Annulation possible 24h avant
+                </p>
               </div>
             </Card>
           </div>
