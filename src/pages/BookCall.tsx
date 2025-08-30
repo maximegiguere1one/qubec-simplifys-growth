@@ -6,6 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Clock, Shield, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { trackBooking, trackEvent } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/usePageTracking";
+import { ABTest } from "@/components/ABTest";
 
 const BookCall = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -19,6 +22,9 @@ const BookCall = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  
+  // Track page view
+  usePageTracking();
 
   const availableDates = [
     "2024-09-02",
@@ -58,16 +64,29 @@ const BookCall = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    toast({
-      title: "Rendez-vous confirmé ! 🎉",
-      description: `Nous vous contacterons le ${formatDate(selectedDate)} à ${selectedTime}.`,
+    // Track booking in Supabase
+    const booking = await trackBooking({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      company: formData.company,
+      challenge: formData.challenge,
+      selectedDate,
+      selectedTime,
     });
     
-    // In a real app, this would integrate with Calendly or similar
-    console.log("Booking data:", { selectedDate, selectedTime, formData });
+    if (booking) {
+      toast({
+        title: "Rendez-vous confirmé ! 🎉",
+        description: `Nous vous contacterons le ${formatDate(selectedDate)} à ${selectedTime}.`,
+      });
+    } else {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
     
     setIsSubmitting(false);
   };

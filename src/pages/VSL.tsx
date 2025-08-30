@@ -3,17 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, CheckCircle2, Clock, TrendingUp } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/usePageTracking";
+import { ABTest } from "@/components/ABTest";
+import { MicroSurvey } from "@/components/MicroSurvey";
 
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
   const navigate = useNavigate();
+  
+  // Track page view
+  usePageTracking();
 
   useEffect(() => {
     const results = localStorage.getItem("quizResults");
     if (results) {
       setQuizResults(JSON.parse(results));
     }
+    
+    // Show survey after 60 seconds
+    const timer = setTimeout(() => setShowSurvey(true), 60000);
+    return () => clearTimeout(timer);
   }, []);
 
   const getPersonalizedMessage = () => {
@@ -87,14 +99,37 @@ const VSL = () => {
               <div className="relative bg-gradient-hero aspect-video flex items-center justify-center">
                 {!isVideoPlaying ? (
                   <div className="text-center text-white">
-                    <Button
-                      variant="cta-large"
-                      onClick={() => setIsVideoPlaying(true)}
-                      className="mb-4"
-                    >
-                      <Play className="w-8 h-8 mr-3" />
-                      Regarder la vidéo explicative (4 min)
-                    </Button>
+                    <ABTest
+                      testName="vsl_cta_button"
+                      variants={{
+                        control: (
+                          <Button
+                            variant="cta-large"
+                            onClick={() => {
+                              setIsVideoPlaying(true);
+                              trackEvent('vsl_play', { variant: 'control' });
+                            }}
+                            className="mb-4"
+                          >
+                            <Play className="w-8 h-8 mr-3" />
+                            Regarder la vidéo explicative (4 min)
+                          </Button>
+                        ),
+                        variant_a: (
+                          <Button
+                            variant="cta-large"
+                            onClick={() => {
+                              setIsVideoPlaying(true);
+                              trackEvent('vsl_play', { variant: 'variant_a' });
+                            }}
+                            className="mb-4"
+                          >
+                            <Play className="w-8 h-8 mr-3" />
+                            Découvrez comment économiser 15h/semaine
+                          </Button>
+                        ),
+                      }}
+                    />
                     <p className="text-lg opacity-90">
                       Découvrez la méthode exacte que nous utilisons pour transformer les entreprises
                     </p>
@@ -119,7 +154,10 @@ const VSL = () => {
             <Button
               variant="cta-large"
               size="xl"
-              onClick={() => navigate("/book-call")}
+              onClick={() => {
+                trackEvent('vsl_cta_click', { cta_location: 'primary' });
+                navigate("/book-call");
+              }}
               className="pulse-animation"
             >
               Réservez votre consultation gratuite maintenant
@@ -193,7 +231,10 @@ const VSL = () => {
           <Button
             variant="cta-large"
             size="xl"
-            onClick={() => navigate("/book-call")}
+            onClick={() => {
+              trackEvent('vsl_cta_click', { cta_location: 'final' });
+              navigate("/book-call");
+            }}
             className="transform hover:scale-105 transition-all duration-300"
           >
             Oui, je veux ma consultation gratuite !
@@ -203,6 +244,22 @@ const VSL = () => {
           </p>
         </div>
       </section>
+
+      {/* Micro Survey */}
+      {showSurvey && (
+        <MicroSurvey
+          surveyId="vsl_decision"
+          question="Qu'est-ce qui vous préoccupe le plus concernant une consultation ?"
+          options={[
+            { value: 'time', label: 'Je n\'ai pas le temps' },
+            { value: 'cost', label: 'Ça va coûter cher' },
+            { value: 'skeptical', label: 'Je suis sceptique' },
+            { value: 'ready', label: 'Je suis prêt à essayer' },
+          ]}
+          onComplete={() => setShowSurvey(false)}
+          onDismiss={() => setShowSurvey(false)}
+        />
+      )}
     </div>
   );
 };

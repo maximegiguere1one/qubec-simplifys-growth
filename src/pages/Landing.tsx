@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,13 +6,27 @@ import { Card } from "@/components/ui/card";
 import { CheckCircle2, Clock, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-image.jpg";
+import { createLead, trackEvent } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/usePageTracking";
+import { MicroSurvey } from "@/components/MicroSurvey";
+import { ABTest } from "@/components/ABTest";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Track page view
+  usePageTracking();
+
+  // Show micro-survey after 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSurvey(true), 30000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +41,15 @@ const Landing = () => {
 
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Create lead in Supabase
+    const lead = await createLead(email, name, 'landing_page');
+    
+    // Track form submission
+    await trackEvent('lp_submit_optin', {
+      email,
+      name,
+      lead_id: lead?.id,
+    });
     
     // Store user data in localStorage
     localStorage.setItem("userData", JSON.stringify({ email, name }));
@@ -88,13 +109,29 @@ const Landing = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                  Un seul système pour une gestion{" "}
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">
-                    10x plus simple
-                  </span>{" "}
-                  et efficace
-                </h1>
+                <ABTest
+                  testName="headline_variant"
+                  variants={{
+                    control: (
+                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                        Un seul système pour une gestion{" "}
+                        <span className="bg-gradient-primary bg-clip-text text-transparent">
+                          10x plus simple
+                        </span>{" "}
+                        et efficace
+                      </h1>
+                    ),
+                    variant_a: (
+                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                        Économisez{" "}
+                        <span className="bg-gradient-primary bg-clip-text text-transparent">
+                          15+ heures par semaine
+                        </span>{" "}
+                        avec One Système
+                      </h1>
+                    ),
+                  }}
+                />
                 <p className="text-xl text-muted-foreground leading-relaxed">
                   Découvrez comment simplifier votre entreprise québécoise en répondant à notre quiz rapide et gratuit. Plus de 500 entreprises nous font confiance.
                 </p>
@@ -224,12 +261,31 @@ const Landing = () => {
           </p>
           <Button 
             variant="cta-large"
-            onClick={() => document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => {
+              trackEvent('lp_submit_optin', { cta_location: 'final' });
+              document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             Commencer le quiz gratuit maintenant
           </Button>
         </div>
       </section>
+
+      {/* Micro Survey */}
+      {showSurvey && (
+        <MicroSurvey
+          surveyId="landing_interest"
+          question="Quel est votre principal défi actuellement ?"
+          options={[
+            { value: 'time', label: 'Manque de temps' },
+            { value: 'efficiency', label: 'Processus inefficaces' },
+            { value: 'errors', label: 'Trop d\'erreurs manuelles' },
+            { value: 'growth', label: 'Difficile de grandir' },
+          ]}
+          onComplete={() => setShowSurvey(false)}
+          onDismiss={() => setShowSurvey(false)}
+        />
+      )}
     </div>
   );
 };

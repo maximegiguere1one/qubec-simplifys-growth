@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,12 +7,25 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent } from "@/lib/analytics";
+import { usePageTracking } from "@/hooks/usePageTracking";
+import { MicroSurvey } from "@/components/MicroSurvey";
 
 const Quiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
+  const [quizStartTime] = useState(Date.now());
+  const [showSurvey, setShowSurvey] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Track page view and start quiz session
+  usePageTracking();
+  
+  useEffect(() => {
+    startQuizSession();
+  }, []);
 
   const questions = [
     {
@@ -64,6 +77,15 @@ const Quiz = () => {
       ...prev,
       [currentQuestion]: value
     }));
+    
+    // Track time spent on question
+    const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+    const question = questions[currentQuestion];
+    const option = question.options.find(opt => opt.value === value);
+    
+    if (option) {
+      trackQuizAnswer(currentQuestion, value, option.score, timeSpent);
+    }
   };
 
   const handleNext = () => {
@@ -78,13 +100,19 @@ const Quiz = () => {
 
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      setQuestionStartTime(Date.now());
     } else {
-      // Calculate total score
+      // Calculate total score and time
       const totalScore = Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
         const question = questions[parseInt(questionId)];
         const option = question.options.find(opt => opt.value === answerValue);
         return sum + (option?.score || 0);
       }, 0);
+      
+      const totalTimeSpent = Math.floor((Date.now() - quizStartTime) / 1000);
+
+      // Complete quiz session
+      completeQuizSession(totalScore, totalTimeSpent);
 
       // Store quiz results
       localStorage.setItem("quizResults", JSON.stringify({ answers, totalScore }));
@@ -183,6 +211,22 @@ const Quiz = () => {
             ✓ Vos réponses restent confidentielles • ✓ Aucune information vendue • ✓ Analyse gratuite
           </p>
         </div>
+
+        {/* Micro Survey for quiz abandonment */}
+        {currentQuestion > 1 && !showSurvey && (
+          <MicroSurvey
+            surveyId="quiz_experience"
+            question="Comment trouvez-vous ce quiz jusqu'à présent ?"
+            options={[
+              { value: 'easy', label: 'Facile à comprendre' },
+              { value: 'relevant', label: 'Très pertinent' },
+              { value: 'long', label: 'Un peu long' },
+              { value: 'confusing', label: 'Quelques questions confuses' },
+            ]}
+            onComplete={() => setShowSurvey(true)}
+            onDismiss={() => setShowSurvey(true)}
+          />
+        )}
       </div>
     </div>
   );
