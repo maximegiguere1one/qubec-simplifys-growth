@@ -7,24 +7,24 @@ export const ProcessSteps = () => {
       number: 1,
       icon: Calendar,
       title: "Diagnostic personnalisé (30 min)",
-      description: "Analyse gratuite de vos processus actuels et identification des gains possibles",
-      details: ["Audit de vos outils existants", "Calcul de votre ROI potentiel", "Plan d'automatisation sur mesure"],
+      description: "Analyse gratuite de vos besoins et conception du système idéal pour vous",
+      details: ["Audit de vos processus actuels", "Définition de votre système sur mesure", "Estimation des délais et investissement"],
       timing: "Cette semaine"
     },
     {
       number: 2,
       icon: Settings,
-      title: "Configuration & formation",
-      description: "Notre équipe configure One Système selon vos besoins et vous forme",
-      details: ["Migration sécurisée de vos données", "Paramétrage TPS/TVQ", "Formation complète de votre équipe"],
-      timing: "1-2 semaines"
+      title: "Développement & livraison",
+      description: "Notre équipe développe votre système sur mesure et vous accompagne au lancement",
+      details: ["Développement selon vos spécifications", "Tests et ajustements", "Formation personnalisée de votre équipe"],
+      timing: "4-12 semaines"
     },
     {
       number: 3,
       icon: TrendingUp,
-      title: "Résultats mesurables",
-      description: "Vous commencez à économiser du temps dès les premières semaines",
-      details: ["Automatisation active", "Support continu", "Optimisations régulières"],
+      title: "Support continu & évolutions",
+      description: "Votre système évolue avec votre entreprise grâce à notre support dédié",
+      details: ["Support technique illimité", "Ajout de nouvelles fonctionnalités", "Optimisations continues"],
       timing: "Dès le 1er mois"
     }
   ];
@@ -34,10 +34,10 @@ export const ProcessSteps = () => {
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
-            Voici exactement ce qui se passe après avoir réservé
+            Voici exactement comment nous procédons
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Un processus simple et transparent, sans surprise. Vous savez toujours où vous en êtes.
+            Un processus éprouvé pour créer LE système parfait pour votre entreprise
           </p>
         </div>
 
@@ -92,8 +92,8 @@ export const ProcessSteps = () => {
               <h3 className="text-2xl font-bold text-success">Satisfaction garantie</h3>
             </div>
             <p className="text-lg">
-              Si après 30 jours vous n'avez pas économisé au moins <strong>10 heures par semaine</strong>, 
-              nous vous remboursons intégralement. Point final.
+              Si votre système sur mesure ne vous fait pas gagner au moins <strong>10 heures par semaine</strong> 
+              après 30 jours d'utilisation, nous le reprenons et vous remboursons intégralement.
             </p>
             <div className="mt-4 text-sm text-muted-foreground">
               * Conditions détaillées disponibles lors de l'appel diagnostic

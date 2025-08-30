@@ -9,28 +9,28 @@ export const FAQ = () => {
   const faqs = [
     {
       icon: Clock,
-      question: "Combien de temps prend l'implantation de One Système ?",
-      answer: "La plupart de nos clients sont opérationnels en 1 à 2 semaines. Nous commençons par un diagnostic gratuit de 30 minutes, puis notre équipe configure votre système et forme votre équipe. 95% de nos clients maîtrisent One Système en moins d'une journée."
+      question: "Combien de temps prend le développement de mon système sur mesure ?",
+      answer: "Cela dépend de la complexité de vos besoins. Un système simple prend 4-6 semaines, un système plus complexe 8-12 semaines. Nous vous donnons une estimation précise lors du diagnostic gratuit de 30 minutes. 95% de nos clients sont opérationnels et à l'aise avec leur nouveau système en moins d'une semaine après la livraison."
     },
     {
       icon: Shield,
-      question: "Comment se passe la migration de mes données actuelles ?",
-      answer: "Nous nous occupons de tout ! Notre équipe technique migre vos données existantes (clients, produits, factures) de vos systèmes actuels vers One Système. Toutes vos données restent sécurisées au Canada et la migration se fait sans interruption de service."
+      question: "Comment gérez-vous mes données actuelles ?",
+      answer: "Nous analysons d'abord tous vos systèmes existants pour comprendre vos données. Si nécessaire, nous créons des connecteurs personnalisés pour récupérer vos informations importantes. Toutes vos données restent sécurisées au Canada et la transition se fait sans interruption de votre activité."
     },
     {
       icon: DollarSign,
-      question: "Quel est le coût d'One Système et y a-t-il des frais cachés ?",
-      answer: "L'abonnement démarre à 297$/mois pour une PME standard, tout inclus : logiciel, support, mises à jour et conformité TPS/TVQ. Pas de frais cachés. L'implantation initiale et la formation sont incluses. La plupart de nos clients économisent plus que le coût de l'abonnement dès le premier mois."
+      question: "Combien coûte un système sur mesure et comment ça fonctionne ?",
+      answer: "L'investissement varie selon la complexité de votre projet : de 15 000$ à 50 000$ pour le développement initial, puis un abonnement de support mensuel à partir de 297$. Beaucoup de nos clients financent le projet grâce aux économies réalisées dès les premiers mois. Consultation gratuite pour une estimation précise."
     },
     {
       icon: Headphones,
-      question: "Quel type de support recevrai-je ?",
-      answer: "Support technique complet par une équipe 100% québécoise, du lundi au vendredi de 9h à 17h par téléphone, email ou chat. Formation initiale incluse + ressources d'aide en ligne. Nous restons avec vous jusqu'à ce que vous soyez autonome et à l'aise."
+      question: "Quel support recevrai-je avec mon système personnalisé ?",
+      answer: "Support technique complet par une équipe 100% québécoise, du lundi au vendredi de 9h à 17h par téléphone, email ou chat. Formation complète incluse lors de la livraison + documentation personnalisée pour votre système. Support évolutif : nous ajoutons des fonctionnalités selon vos besoins futurs."
     },
     {
       icon: Zap,
-      question: "Mes données sont-elles sécurisées et hébergées au Canada ?",
-      answer: "Absolument ! Toutes vos données sont chiffrées et hébergées sur des serveurs canadiens certifiés. Nous respectons les lois québécoises et canadiennes sur la protection des données. Sauvegardes automatiques quotidiennes. Vous gardez le contrôle total de vos informations."
+      question: "Mes données sont-elles sécurisées et est-ce que je garde le contrôle ?",
+      answer: "Absolument ! Votre système sur mesure peut être hébergé où vous voulez : chez nous au Canada, sur votre serveur, ou chez un hébergeur de votre choix. Toutes les données sont chiffrées selon les standards canadiens. Vous gardez un contrôle total : c'est VOTRE système, pas le nôtre qu'on vous loue."
     }
   ];
 
@@ -84,11 +84,11 @@ export const FAQ = () => {
               <strong>Vous avez d'autres questions ?</strong>
             </p>
             <p className="text-muted-foreground mb-4">
-              Notre équipe québécoise est là pour vous répondre directement lors de votre diagnostic gratuit
+              Notre équipe québécoise répondra à toutes vos questions lors de votre consultation gratuite
             </p>
             <Button variant="outline" size="sm">
               <Headphones className="w-4 h-4 mr-2" />
-              Poser ma question lors du diagnostic
+              Poser ma question lors de la consultation
             </Button>
           </Card>
         </div>

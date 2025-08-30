@@ -7,16 +7,16 @@ export const ProductVisuals = () => {
     <section className="py-16 bg-secondary/30">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">À quoi ressemble One Système en action ?</h2>
+          <h2 className="text-4xl font-bold mb-4">Voici des exemples de systèmes que nous créons</h2>
           <p className="text-xl text-muted-foreground">
-            Découvrez l'interface simple que nos clients utilisent chaque jour
+            Chaque interface est conçue 100% sur mesure selon vos processus spécifiques
           </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {/* Facturation Automatique */}
           <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
-            <Badge className="mb-4 bg-success/20 text-success">Facturation TPS/TVQ</Badge>
+            <Badge className="mb-4 bg-success/20 text-success">Système de facturation personnalisé</Badge>
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 mb-4 min-h-[200px] flex items-center justify-center border">
               <div className="text-center">
                 <div className="bg-white rounded-lg p-4 shadow-sm border max-w-xs">
@@ -49,15 +49,15 @@ export const ProductVisuals = () => {
                 <p className="text-xs text-muted-foreground mt-1">Taxes calculées automatiquement</p>
               </div>
             </div>
-            <h3 className="text-lg font-bold mb-2">Facturation conforme en 1 clic</h3>
+            <h3 className="text-lg font-bold mb-2">Votre système de facturation unique</h3>
             <p className="text-sm text-muted-foreground">
-              Plus jamais d'erreurs de calcul TPS/TVQ. Factures conformes aux normes québécoises.
+              Conçu exactement selon VOS processus de facturation et règles fiscales québécoises.
             </p>
           </Card>
 
           {/* Dashboard Unifié */}
           <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
-            <Badge className="mb-4 bg-primary/20 text-primary">Tableau de Bord</Badge>
+            <Badge className="mb-4 bg-primary/20 text-primary">Dashboard sur mesure</Badge>
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 mb-4 min-h-[200px] flex items-center justify-center border">
               <div className="w-full">
                 <div className="grid grid-cols-2 gap-2 mb-3">
@@ -85,15 +85,15 @@ export const ProductVisuals = () => {
                 </div>
               </div>
             </div>
-            <h3 className="text-lg font-bold mb-2">Vue d'ensemble en temps réel</h3>
+            <h3 className="text-lg font-bold mb-2">Interface pensée pour VOUS</h3>
             <p className="text-sm text-muted-foreground">
-              Toutes vos données importantes sur un seul écran. Ventes, stock, tâches.
+              Chaque indicateur, chaque section organisée selon VOS priorités d'entreprise.
             </p>
           </Card>
 
           {/* Synchronisation */}
           <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
-            <Badge className="mb-4 bg-warning/20 text-warning">Synchronisation</Badge>
+            <Badge className="mb-4 bg-warning/20 text-warning">Intégrations personnalisées</Badge>
             <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 mb-4 min-h-[200px] flex items-center justify-center border">
               <div className="text-center space-y-4">
                 <div className="flex items-center justify-center space-x-2">
@@ -116,9 +116,9 @@ export const ProductVisuals = () => {
                 </div>
               </div>
             </div>
-            <h3 className="text-lg font-bold mb-2">Fini les doubles saisies</h3>
+            <h3 className="text-lg font-bold mb-2">Vos systèmes connectés intelligemment</h3>
             <p className="text-sm text-muted-foreground">
-              Une vente met à jour automatiquement le stock, la comptabilité et les relances.
+              Nous connectons vos outils existants OU créons les modules dont vous avez besoin.
             </p>
           </Card>
         </div>
@@ -126,10 +126,10 @@ export const ProductVisuals = () => {
         <div className="text-center mt-12">
           <div className="bg-primary/10 border border-primary/30 rounded-lg p-6 max-w-2xl mx-auto">
             <p className="text-lg font-medium">
-              🎯 <strong>Ces captures d'écran représentent une vraie journée</strong> avec One Système
+              🎯 <strong>Ces interfaces représentent du développement 100% personnalisé</strong>
             </p>
             <p className="text-muted-foreground mt-2">
-              Simple, efficace, et pensé pour vous faire gagner du temps dès le premier jour
+              Conçu spécialement pour chaque client selon ses processus uniques
             </p>
           </div>
         </div>

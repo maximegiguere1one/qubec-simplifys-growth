@@ -66,23 +66,23 @@ const Landing = () => {
   const benefits = [
     {
       icon: Clock,
-      title: "Économisez 10+ heures par semaine",
-      description: "Automatisez vos processus répétitifs"
+      title: "Conçu 100% sur mesure",
+      description: "Chaque fonction adaptée à VOS processus uniques"
     },
     {
       icon: TrendingUp,
-      title: "Augmentez votre productivité de 300%",
-      description: "Un seul système pour tout gérer"
+      title: "Aucun compromis",
+      description: "Vous obtenez exactement ce dont vous avez besoin"
     },
     {
       icon: Shield,
-      title: "Éliminez 95% des erreurs manuelles",
-      description: "Systèmes fiables et sécurisés"
+      title: "Support personnalisé",
+      description: "Formation et accompagnement inclus"
     },
     {
       icon: Zap,
-      title: "Résultats immédiats garantis",
-      description: "Implémentation rapide et efficace"
+      title: "Livraison rapide",
+      description: "De l'idée au système fonctionnel en semaines"
     }
   ];
 
@@ -90,14 +90,14 @@ const Landing = () => {
     {
       name: "Marie Dubois",
       company: "Restaurant Le Québec",
-      text: "Nous avons économisé 15 heures par semaine dès la première semaine !",
-      result: "300% d'efficacité en plus"
+      text: "Ils ont créé un système de gestion des commandes exactement comme on voulait. Aucun autre logiciel ne faisait ça !",
+      result: "Système parfaitement adapté"
     },
     {
       name: "Jean-Pierre Lavoie",
       company: "Construction Lavoie Inc.",
-      text: "One Système a révolutionné notre gestion. Plus d'erreurs, plus de temps perdu.",
-      result: "Zéro erreur en 6 mois"
+      text: "Notre système de devis et facturation a été conçu spécialement pour notre industrie. C'est du cousu main !",
+      result: "100% personnalisé"
     }
   ];
 
@@ -114,32 +114,41 @@ const Landing = () => {
                   variants={{
                     control: (
                       <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                        Un seul système pour une gestion{" "}
+                        Nous créons le{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          10x plus simple
+                          système parfait
                         </span>{" "}
-                        et efficace
+                        pour VOTRE entreprise
                       </h1>
                     ),
                     variant_a: (
                       <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                        Économisez{" "}
+                        Stop aux{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          15+ heures par semaine
+                          logiciels génériques
                         </span>{" "}
-                        avec One Système
+                        — Obtenez du 100% sur mesure
+                      </h1>
+                    ),
+                    variant_b: (
+                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                        Votre entreprise est{" "}
+                        <span className="bg-gradient-primary bg-clip-text text-transparent">
+                          unique
+                        </span>{" "}
+                        — Votre système aussi
                       </h1>
                     ),
                   }}
                 />
                 <p className="text-xl text-muted-foreground leading-relaxed">
-                  Découvrez comment simplifier votre entreprise québécoise en répondant à notre quiz rapide et gratuit. Plus de 500 entreprises nous font confiance.
+                  Fini les compromis avec des logiciels "presque parfaits". Nous concevons et livrons des systèmes 100% adaptés à VOS processus d'entreprise au Québec.
                 </p>
               </div>
 
               <Card className="p-8 shadow-card border-2 border-primary/20">
                 <h2 className="text-2xl font-bold mb-6 text-center">
-                  Commencez votre transformation dès maintenant
+                  Découvrez ce que nous pouvons créer pour vous
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -197,10 +206,10 @@ const Landing = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              Pourquoi choisir One Système ?
+              Pourquoi choisir du sur mesure ?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Rejoignez les centaines d'entrepreneurs québécois qui ont déjà transformé leur entreprise
+              Parce que votre entreprise québécoise mérite mieux qu'un logiciel générique qui ne répond qu'à 70% de vos besoins
             </p>
           </div>
 
@@ -254,10 +263,10 @@ const Landing = () => {
       <section className="py-20 bg-gradient-hero text-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-4">
-            Prêt à transformer votre entreprise ?
+            Prêt à obtenir VOTRE système sur mesure ?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Découvrez exactement comment One Système peut vous aider en 2 minutes
+            Découvrez exactement quel système nous pouvons créer pour vous en 2 minutes
           </p>
           <Button 
             variant="cta-large"

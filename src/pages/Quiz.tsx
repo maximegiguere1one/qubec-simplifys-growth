@@ -30,52 +30,52 @@ const Quiz = () => {
   const questions = [
     {
       id: 0,
-      question: "Combien d'heures par semaine passez-vous sur la paperasse administrative ?",
+      question: "Quel est votre plus gros défi de gestion actuellement ?",
       options: [
-        { value: "less-than-3", label: "Moins de 3 heures", score: 1 },
-        { value: "3-to-8", label: "3 à 8 heures", score: 2 },
-        { value: "8-to-15", label: "8 à 15 heures", score: 3 },
-        { value: "more-than-15", label: "Plus de 15 heures (je n'en peux plus !)", score: 4 }
+        { value: "inventory", label: "Gestion d'inventaire et stocks", score: 1, priority: "Système de gestion d'inventaire intelligent" },
+        { value: "billing", label: "Facturation et comptabilité", score: 2, priority: "Système de facturation automatisé" },
+        { value: "crm", label: "Suivi clients et relations", score: 3, priority: "CRM sur mesure" },
+        { value: "operations", label: "Coordination des opérations", score: 4, priority: "Plateforme de gestion opérationnelle" }
       ]
     },
     {
       id: 1,
-      question: "Utilisez-vous plus de 3 logiciels différents pour gérer votre entreprise ?",
+      question: "Combien d'outils différents utilisez-vous actuellement ?",
       options: [
-        { value: "one-system", label: "Non, j'ai un système unifié", score: 1 },
-        { value: "two-three", label: "Oui, 2 ou 3 logiciels", score: 2 },
-        { value: "four-six", label: "Oui, 4 à 6 logiciels différents", score: 3 },
-        { value: "too-many", label: "Trop ! J'ai perdu le compte...", score: 4 }
+        { value: "minimal", label: "Très peu (1-2)", score: 1 },
+        { value: "some", label: "Quelques-uns (3-5)", score: 2 },
+        { value: "many", label: "Beaucoup (6-10)", score: 3 },
+        { value: "chaos", label: "Trop ! C'est le chaos total", score: 4 }
       ]
     },
     {
       id: 2,
-      question: "À quel point vous arrive-t-il de repousser des tâches importantes faute de temps ?",
+      question: "Avez-vous déjà dit 'Si seulement il existait un logiciel qui...' ?",
       options: [
-        { value: "never", label: "Jamais, je suis très organisé(e)", score: 1 },
-        { value: "sometimes", label: "Parfois, quand c'est très chargé", score: 2 },
-        { value: "often", label: "Souvent, je cours toujours", score: 3 },
-        { value: "constantly", label: "Constamment ! Je suis débordé(e)", score: 4 }
+        { value: "never", label: "Non, jamais vraiment", score: 1 },
+        { value: "sometimes", label: "Oui, quelques fois", score: 2 },
+        { value: "often", label: "Oui, souvent même !", score: 3 },
+        { value: "constantly", label: "Tout le temps ! C'est mon quotidien", score: 4 }
       ]
     },
     {
       id: 3,
-      question: "Quelle est votre plus grande préoccupation en fin d'année fiscale ?",
+      question: "Quelle serait votre réaction si on vous créait LE système parfait pour votre entreprise ?",
       options: [
-        { value: "confident", label: "Tout est sous contrôle", score: 1 },
-        { value: "some-stress", label: "Un peu de stress avec les déclarations", score: 2 },
-        { value: "very-stressful", label: "C'est très stressant, j'ai peur des erreurs", score: 3 },
-        { value: "nightmare", label: "C'est un cauchemar ! TPS, TVQ... je panique", score: 4 }
+        { value: "skeptical", label: "Je serais sceptique", score: 1 },
+        { value: "interested", label: "Ça m'intéresserait", score: 2 },
+        { value: "excited", label: "Je serais très enthousiaste !", score: 3 },
+        { value: "dream", label: "Ce serait un rêve qui devient réalité !", score: 4 }
       ]
     },
     {
       id: 4,
-      question: "Si vous pouviez récupérer 10 heures par semaine, que feriez-vous ?",
+      question: "Quel type de système révolutionnerait le plus votre entreprise ?",
       options: [
-        { value: "rest", label: "Me reposer enfin", score: 2 },
-        { value: "family", label: "Passer plus de temps en famille", score: 3 },
-        { value: "growth", label: "Développer mon entreprise", score: 4 },
-        { value: "strategy", label: "Me concentrer sur la stratégie", score: 4 }
+        { value: "automation", label: "Automatisation complète des processus", score: 2, type: "Système d'automatisation" },
+        { value: "integration", label: "Unification de tous mes outils", score: 3, type: "Plateforme intégrée" },
+        { value: "custom", label: "Quelque chose de 100% adapté à mes besoins", score: 4, type: "Solution sur mesure complète" },
+        { value: "mobile", label: "Gestion mobile et en temps réel", score: 3, type: "Application mobile personnalisée" }
       ]
     }
   ];
@@ -150,15 +150,19 @@ const Quiz = () => {
   };
 
   const generateDiagnostic = (score: number, answers: Record<number, string>) => {
+    // Get the main priority from first question
+    const firstAnswer = questions[0].options.find(opt => opt.value === answers[0]);
+    const mainPriority = (firstAnswer as any)?.priority || "Système sur mesure adapté";
+    
     if (score >= 16) {
-      return "🚨 Votre situation est critique ! Vous passez visiblement énormément de temps sur des tâches manuelles répétitives qui freinent complètement la croissance de votre entreprise. La bonne nouvelle ? Il existe des moyens simples d'automatiser tout ça et de vous libérer au moins 15-20 heures par semaine. Imaginez ce que vous pourriez accomplir avec tout ce temps retrouvé !";
+      return `🎯 PARFAIT ! Votre profil indique que vous avez besoin d'un système vraiment sur mesure. Nous pourrions créer pour vous : ${mainPriority}. Avec votre niveau de complexité actuel, un système personnalisé vous libérerait facilement 15-20 heures par semaine tout en éliminant ces frustrations quotidiennes !`;
     } else if (score >= 12) {
-      return "⚠️ Attention ! Votre gestion actuelle vous fait perdre beaucoup trop de temps et d'argent. Entre la paperasse, les multiples logiciels et le stress administratif, vous pourriez facilement récupérer 10-15 heures par semaine avec les bons outils. Il est temps d'agir avant que ça vous épuise complètement.";
+      return `✨ EXCELLENT ! Vous êtes un candidat idéal pour du développement sur mesure. Priorité détectée : ${mainPriority}. Un système conçu spécialement pour vos processus vous ferait gagner 10-15 heures par semaine et transformerait votre façon de travailler.`;
     } else if (score >= 8) {
-      return "📈 Vous vous débrouillez, mais vous pourriez faire tellement mieux ! Vos réponses montrent qu'il y a encore pas mal de place à l'amélioration. En optimisant votre gestion, vous pourriez récupérer 6-10 heures par semaine et surtout, éliminer ce stress administratif qui vous pèse.";
+      return `💡 INTÉRESSANT ! Vous pourriez grandement bénéficier d'un système personnalisé. Focus suggéré : ${mainPriority}. Même avec une bonne organisation actuelle, un outil créé exactement pour vos besoins vous donnerait 6-10 heures supplémentaires par semaine.`;
     } else {
-      return "✅ Vous êtes déjà bien organisé, bravo ! Cependant, même les entreprises bien gérées peuvent bénéficier d'une optimisation. Il y a sûrement encore 3-5 heures par semaine à récupérer, et surtout, vous pourriez avoir l'esprit encore plus tranquille avec une gestion entièrement automatisée.";
-    }
+      return `👌 Vous êtes bien organisé ! Mais imaginez un système conçu à 100% pour VOUS. Domaine ciblé : ${mainPriority}. Même les entreprises efficaces gagnent 3-5 heures par semaine avec du sur mesure - et surtout, zéro frustration avec des logiciels qui "ne font pas exactement ce qu'on veut".`;
+    } 
   };
 
   const currentQ = questions[currentQuestion];
@@ -169,10 +173,10 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">
-            Marre de perdre votre temps sur la paperasse ?
+            Quel système sur mesure créer pour VOUS ?
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Répondez à ces 5 questions simples et découvrez combien d'heures vous pourriez récupérer chaque semaine
+            Répondez à ces 5 questions et découvrez exactement quel type de système personnalisé nous pouvons développer pour votre entreprise
           </p>
           
           {/* Progress Bar */}

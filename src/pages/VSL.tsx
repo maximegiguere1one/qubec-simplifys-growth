@@ -56,17 +56,17 @@ const VSL = () => {
   };
 
   const getPersonalizedMessage = () => {
-    if (!quizResults) return "Arrêtez de perdre 10-15h par semaine sur la paperasse";
+    if (!quizResults) return "Stop aux logiciels génériques qui ne vous conviennent qu'à moitié";
     
     const score = quizResults.totalScore;
     if (score >= 14) {
-      return "Votre priorité : récupérer ces 25h perdues chaque semaine";
+      return "Nous créons LE système qui vous fera gagner 25h par semaine";
     } else if (score >= 10) {
-      return "Votre priorité : récupérer ces 15h perdues chaque semaine";
+      return "Nous concevons LE système parfait pour récupérer vos 15h perdues";
     } else if (score >= 6) {
-      return "Votre priorité : récupérer ces 10h perdues chaque semaine";
+      return "Nous développons LE système sur mesure pour vous libérer 10h";
     } else {
-      return "Arrêtez de perdre 5-10h par semaine sur la paperasse";
+      return "Nous créons LE système idéal pour optimiser votre temps";
     }
   };
 
@@ -123,7 +123,7 @@ const VSL = () => {
               {getPersonalizedMessage()}
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
-              One Système automatise vos opérations (TPS/TVQ incluses) et réunit vos outils en une seule plateforme simple – <span className="font-semibold text-primary">100% québécoise</span>
+              Nous concevons et livrons des systèmes en ligne 100% sur mesure pour votre entreprise québécoise – <span className="font-semibold text-primary">exactement comme vous en rêvez</span>
             </p>
             
             {/* Personalized Alert */}
@@ -136,7 +136,7 @@ const VSL = () => {
                   </p>
                 </div>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Voici comment One Système résout exactement ce problème ↓
+                  Voici comment nous créons LE système parfait pour résoudre ce problème ↓
                 </p>
               </div>
             )}
@@ -159,7 +159,7 @@ const VSL = () => {
                   onClick={handleCTAClick}
                   className="w-full mb-4"
                 >
-                  Réserver mon diagnostic gratuit (30 min)
+                  Découvrir mon système sur mesure (30 min gratuit)
                 </Button>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center justify-center gap-2">
@@ -194,10 +194,10 @@ const VSL = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">
-              Calculez votre retour sur investissement
+              Calculez la rentabilité de votre système sur mesure
             </h2>
             <p className="text-xl text-muted-foreground">
-              Découvrez en 30 secondes combien One Système vous fera économiser
+              Découvrez en 30 secondes pourquoi investir dans du sur mesure est toujours rentable
             </p>
           </div>
           <ROICalculator />
@@ -251,7 +251,7 @@ const VSL = () => {
             </p>
             <div className="bg-success/20 border border-success/50 rounded-lg p-6 mt-12">
               <p className="text-2xl font-bold text-success">
-                ✅ C'est exactement ça, la liberté avec One Système !
+                ✅ C'est exactement ça, la liberté avec votre système sur mesure !
               </p>
             </div>
           </div>
@@ -262,47 +262,47 @@ const VSL = () => {
       <section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4">
-            Concrètement, voici ce que One Système fait pour vous
+            Concrètement, voici ce que nous créons pour vous
           </h2>
           <p className="text-xl text-center text-muted-foreground mb-16 max-w-3xl mx-auto">
-            Une solution 100% québécoise qui remplace jusqu'à 5 logiciels différents par une seule plateforme intuitive
+            Chaque système est conçu 100% sur mesure pour VOS processus spécifiques – par une équipe québécoise qui comprend votre réalité
           </p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <Clock className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">15 heures économisées dès la première semaine</h3>
-              <p className="text-muted-foreground">Toutes vos tâches répétitives automatisées : facturation, inventaire, relances clients...</p>
+              <h3 className="text-xl font-bold mb-3">Conçu exactement pour VOUS</h3>
+              <p className="text-muted-foreground">Chaque fonction, chaque écran, chaque bouton pensé selon VOS processus uniques</p>
             </Card>
             
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <CheckCircle2 className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">Plus simple qu'Excel, plus puissant que tout</h3>
-              <p className="text-muted-foreground">Interface pensée pour les non-experts : tout se fait en quelques clics depuis votre ordinateur ou téléphone</p>
+              <h3 className="text-xl font-bold mb-3">Interface conçue pour VOTRE équipe</h3>
+              <p className="text-muted-foreground">Design et navigation adaptés à votre façon de travailler – pas de compromis</p>
             </Card>
             
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <Shield className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">Support humain 100% québécois</h3>
-              <p className="text-muted-foreground">Une vraie équipe locale qui vous accompagne personnellement, formation incluse</p>
+              <h3 className="text-xl font-bold mb-3">Développement 100% québécois</h3>
+              <p className="text-muted-foreground">Équipe locale qui comprend vos défis spécifiques et parle votre langue</p>
             </Card>
             
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <TrendingUp className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">Conformité fiscale automatique</h3>
-              <p className="text-muted-foreground">TPS/TVQ calculées automatiquement, factures conformes aux normes québécoises. Fini le stress des audits !</p>
+              <h3 className="text-xl font-bold mb-3">Évolutif avec votre entreprise</h3>
+              <p className="text-muted-foreground">Votre système grandit avec vous – nouvelles fonctions ajoutées selon vos besoins</p>
             </Card>
             
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <Calendar className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">ROI garanti en moins de 3 mois</h3>
-              <p className="text-muted-foreground">Le temps et l'argent économisés payent l'abonnement. Après, c'est du profit pur !</p>
+              <h3 className="text-xl font-bold mb-3">Vous gardez le contrôle total</h3>
+              <p className="text-muted-foreground">C'est VOTRE système, hébergé comme vous voulez, avec vos données sécurisées</p>
             </Card>
             
             <Card className="p-6 shadow-card hover:shadow-medium transition-all duration-300">
               <MapPin className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-3">Solution 100% québécoise</h3>
-              <p className="text-muted-foreground">Conçue par et pour des entreprises d'ici, qui comprennent votre réalité</p>
+              <h3 className="text-xl font-bold mb-3">Livraison rapide et efficace</h3>
+              <p className="text-muted-foreground">De l'idée au système fonctionnel : généralement 4 à 12 semaines selon la complexité</p>
             </Card>
           </div>
         </div>
@@ -320,7 +320,7 @@ const VSL = () => {
                 💭 "Je ne suis pas doué avec les ordinateurs..."
               </h3>
               <p className="text-lg leading-relaxed">
-                <strong>Rassurez-vous !</strong> One Système a été conçu spécialement pour des gens comme vous. 95% de nos clients apprennent à l'utiliser en moins d'une journée. Et si vous avez la moindre question, notre équipe québécoise est là pour vous guider pas à pas.
+                <strong>Rassurez-vous !</strong> Chaque système que nous créons est conçu pour être intuitif. 95% de nos clients apprennent à l'utiliser en moins d'une journée. Et si vous avez la moindre question, notre équipe québécoise est là pour vous guider pas à pas.
               </p>
             </Card>
             
@@ -329,7 +329,7 @@ const VSL = () => {
                 💰 "Ça va sûrement me coûter cher..."
               </h3>
               <p className="text-lg leading-relaxed">
-                <strong>Au contraire !</strong> Si on vous dit que chaque mois vous économiserez au moins 500$ en temps et en erreurs évitées, et que l'abonnement coûte moins que ça... c'est un investissement qui se paie tout seul, non ?
+                <strong>Au contraire !</strong> Un système sur mesure coûte moins cher que vous pensez. Si on vous dit que chaque mois vous économiserez au moins 500$ en temps et erreurs évitées, et que l'investissement se paie en 6 mois maximum... c'est rentable, non ?
               </p>
             </Card>
             
@@ -338,7 +338,7 @@ const VSL = () => {
                 🔒 "Je vais perdre le contrôle sur mes données..."
               </h3>
               <p className="text-lg leading-relaxed">
-                <strong>Tout le contraire !</strong> One Système vous REND le contrôle. Toutes vos infos vitales au bout des doigts, en temps réel, depuis n'importe où. Plus jamais de "où j'ai mis ce fichier ?" ou de données perdues.
+                <strong>Tout le contraire !</strong> Avec votre système sur mesure, vous GARDEZ le contrôle total. Toutes vos infos vitales au bout des doigts, hébergé où vous voulez, avec vos règles de sécurité. Plus jamais de "le logiciel ne fait pas ce que je veux".
               </p>
             </Card>
           </div>
