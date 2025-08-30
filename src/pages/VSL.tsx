@@ -56,17 +56,18 @@ const VSL = () => {
   };
 
   const getPersonalizedMessage = () => {
-    if (!quizResults) return "Stop aux logiciels génériques qui ne vous conviennent qu'à moitié";
+    if (!quizResults) return "Arrêtez de perdre du temps avec la paperasse";
     
-    const score = quizResults.totalScore;
-    if (score >= 14) {
-      return "Nous créons LE système qui vous fera gagner 25h par semaine";
-    } else if (score >= 10) {
-      return "Nous concevons LE système parfait pour récupérer vos 15h perdues";
-    } else if (score >= 6) {
-      return "Nous développons LE système sur mesure pour vous libérer 10h";
+    const { totalScore } = quizResults;
+    
+    if (totalScore >= 16) {
+      return "Voici comment récupérer 15+ heures par semaine (sans rien apprendre de compliqué)";
+    } else if (totalScore >= 12) {
+      return "Simplifiez votre gestion sans apprendre de nouvelle technologie";
+    } else if (totalScore >= 8) {
+      return "Automatisez votre business en gardant vos habitudes";
     } else {
-      return "Nous créons LE système idéal pour optimiser votre temps";
+      return "Gagnez du temps sans vous casser la tête";
     }
   };
 
@@ -123,7 +124,7 @@ const VSL = () => {
               {getPersonalizedMessage()}
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
-              Nous concevons et livrons des systèmes en ligne 100% sur mesure pour votre entreprise québécoise – <span className="font-semibold text-primary">exactement comme vous en rêvez</span>
+              Vous en avez assez de perdre vos soirées dans la paperasse? De chercher des documents partout? De refaire les mêmes calculs encore et encore? Je vous montre comment tout automatiser, <span className="font-semibold text-primary">sans que vous ayez à apprendre quoi que ce soit de compliqué.</span>
             </p>
             
             {/* Personalized Alert */}

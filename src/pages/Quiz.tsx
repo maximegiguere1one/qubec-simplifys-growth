@@ -30,22 +30,23 @@ const Quiz = () => {
   const questions = [
     {
       id: 0,
-      question: "Quel est votre plus gros défi de gestion actuellement ?",
+      question: "Qu'est-ce qui vous fait perdre le plus de temps dans votre business?",
       options: [
-        { value: "inventory", label: "Gestion d'inventaire et stocks", score: 1, priority: "Système de gestion d'inventaire intelligent" },
-        { value: "billing", label: "Facturation et comptabilité", score: 2, priority: "Système de facturation automatisé" },
-        { value: "crm", label: "Suivi clients et relations", score: 3, priority: "CRM sur mesure" },
-        { value: "operations", label: "Coordination des opérations", score: 4, priority: "Plateforme de gestion opérationnelle" }
+        { value: "inventory", label: "Compter mon inventaire / mes stocks", score: 25, priority: "Gestion d'inventaire" },
+        { value: "billing", label: "Faire mes factures et ma comptabilité", score: 20, priority: "Facturation" },
+        { value: "hr", label: "Gérer les horaires et la paie", score: 15, priority: "Gestion des employés" },
+        { value: "projects", label: "Suivre mes projets et mes deadlines", score: 20, priority: "Suivi de projets" },
+        { value: "crm", label: "Tenir à jour mes contacts clients", score: 25, priority: "Gestion clients" }
       ]
     },
     {
       id: 1,
-      question: "Combien d'outils différents utilisez-vous actuellement ?",
+      question: "Combien d'heures par semaine vous passez dans la paperasse?",
       options: [
-        { value: "minimal", label: "Très peu (1-2)", score: 1 },
-        { value: "some", label: "Quelques-uns (3-5)", score: 2 },
-        { value: "many", label: "Beaucoup (6-10)", score: 3 },
-        { value: "chaos", label: "Trop ! C'est le chaos total", score: 4 }
+        { value: "low", label: "Moins de 5 heures (pas si pire)", score: 5 },
+        { value: "medium", label: "5 à 15 heures (ça commence à être lourd)", score: 15 },
+        { value: "high", label: "15 à 25 heures (c'est rendu ridicule)", score: 25 },
+        { value: "very_high", label: "Plus de 25 heures (je passe ma vie là-dedans!)", score: 35 }
       ]
     },
     {
@@ -173,10 +174,10 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">
-            Quel système sur mesure créer pour VOUS ?
+            Combien d'heures par semaine vous pourriez récupérer?
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            Répondez à ces 5 questions et découvrez exactement quel type de système personnalisé nous pouvons développer pour votre entreprise
+            5 questions simples pour voir où vous perdez votre temps
           </p>
           
           {/* Progress Bar */}

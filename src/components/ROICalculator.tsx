@@ -16,8 +16,8 @@ export const ROICalculator = () => {
     <Card className="p-8 shadow-card max-w-2xl mx-auto">
       <div className="text-center mb-6">
         <Calculator className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h3 className="text-2xl font-bold mb-2">Calculez vos économies personnalisées</h3>
-        <p className="text-muted-foreground">Ajustez les curseurs selon votre situation</p>
+        <h3 className="text-2xl font-bold mb-2">Combien vous pourriez sauver?</h3>
+        <p className="text-muted-foreground">Bougez les curseurs pour voir vos économies</p>
       </div>
 
       <div className="space-y-6">
@@ -73,7 +73,7 @@ export const ROICalculator = () => {
             
             <div className="bg-white/50 rounded p-3">
               <p className="text-sm font-medium">
-                🎯 <strong>Votre abonnement est rentabilisé dès {breakEvenHours}h/semaine d'économies</strong>
+                🎯 <strong>Ça devient rentable dès que vous sauvez {breakEvenHours}h par semaine</strong>
               </p>
             </div>
           </div>

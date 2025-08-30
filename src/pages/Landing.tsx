@@ -66,38 +66,38 @@ const Landing = () => {
   const benefits = [
     {
       icon: Clock,
-      title: "Conçu 100% sur mesure",
-      description: "Chaque fonction adaptée à VOS processus uniques"
-    },
-    {
-      icon: TrendingUp,
-      title: "Aucun compromis",
-      description: "Vous obtenez exactement ce dont vous avez besoin"
+      title: "Finies les heures perdues",
+      description: "Plus de paperasse, plus de calculs à la main. Votre système fait tout automatiquement."
     },
     {
       icon: Shield,
-      title: "Support personnalisé",
-      description: "Formation et accompagnement inclus"
+      title: "Zéro casse-tête technique",
+      description: "Je m'occupe de tout l'aspect technique. Vous, vous vous concentrez sur votre business."
     },
     {
       icon: Zap,
-      title: "Livraison rapide",
-      description: "De l'idée au système fonctionnel en semaines"
+      title: "Prêt à utiliser immédiatement",
+      description: "Je configure tout, je forme votre équipe. Vous commencez à sauver du temps dès le jour 1."
+    },
+    {
+      icon: TrendingUp,
+      title: "Plus de temps = plus d'argent",
+      description: "Le temps gagné, vous pouvez le réinvestir dans faire grandir votre entreprise."
     }
   ];
 
   const testimonials = [
     {
       name: "Marie Dubois",
-      company: "Restaurant Le Québec",
-      text: "Ils ont créé un système de gestion des commandes exactement comme on voulait. Aucun autre logiciel ne faisait ça !",
-      result: "Système parfaitement adapté"
+      company: "Garage MD, Rimouski",
+      text: "Avant, je passais mes soirées à faire ma paperasse d'inventaire. Maintenant, tout se fait automatiquement. Je rentre chez nous à 5h!",
+      result: "15 heures sauvées par semaine"
     },
     {
-      name: "Jean-Pierre Lavoie",
-      company: "Construction Lavoie Inc.",
-      text: "Notre système de devis et facturation a été conçu spécialement pour notre industrie. C'est du cousu main !",
-      result: "100% personnalisé"
+      name: "Pierre Gagnon", 
+      company: "Construction Gagnon, Lévis",
+      text: "J'étais sceptique au début - je pensais que c'était trop compliqué pour moi. Mais finalement, c'est plus simple que mon ancien système Excel!",
+      result: "Zéro formation requise"
     }
   ];
 
@@ -114,41 +114,41 @@ const Landing = () => {
                   variants={{
                     control: (
                       <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                        Nous créons le{" "}
+                        Finies les{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          système parfait
+                          heures perdues
                         </span>{" "}
-                        pour VOTRE entreprise
+                        dans la paperasse
                       </h1>
                     ),
                     variant_a: (
                       <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                        Stop aux{" "}
+                        Arrêtez de{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          logiciels génériques
+                          gérer votre business
                         </span>{" "}
-                        — Obtenez du 100% sur mesure
+                        à la main
                       </h1>
                     ),
                     variant_b: (
                       <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                        Votre entreprise est{" "}
+                        Sauvez{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          unique
+                          15 heures par semaine
                         </span>{" "}
-                        — Votre système aussi
+                        avec un système fait pour vous
                       </h1>
                     ),
                   }}
                 />
                 <p className="text-xl text-muted-foreground leading-relaxed">
-                  Fini les compromis avec des logiciels "presque parfaits". Nous concevons et livrons des systèmes 100% adaptés à VOS processus d'entreprise au Québec.
+                  Je crée pour vous un système simple qui gère votre inventaire, vos factures, vos clients... tout ce qui vous fait perdre du temps actuellement. Vous n'avez rien à apprendre, je m'occupe de tout l'aspect technique.
                 </p>
               </div>
 
               <Card className="p-8 shadow-card border-2 border-primary/20">
                 <h2 className="text-2xl font-bold mb-6 text-center">
-                  Découvrez ce que nous pouvons créer pour vous
+                  Voir combien de temps je peux vous sauver
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -177,7 +177,7 @@ const Landing = () => {
                     className="w-full"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Chargement..." : "Commencez le quiz maintenant – c'est gratuit !"}
+                    {isLoading ? "Envoi en cours..." : "Voir combien de temps je peux vous sauver →"}
                   </Button>
                 </form>
                 <p className="text-sm text-muted-foreground text-center mt-4">
@@ -206,10 +206,10 @@ const Landing = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              Pourquoi choisir du sur mesure ?
+              Pourquoi perdre du temps quand tout peut être automatisé?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Parce que votre entreprise québécoise mérite mieux qu'un logiciel générique qui ne répond qu'à 70% de vos besoins
+              Des centaines d'entrepreneurs au Québec ont déjà repris le contrôle de leur temps
             </p>
           </div>
 
@@ -230,10 +230,10 @@ const Landing = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">
-              Ce que disent nos clients
+              Des entrepreneurs comme vous qui ont repris leur temps
             </h2>
             <p className="text-xl text-muted-foreground">
-              Des résultats concrets pour des entreprises comme la vôtre
+              Ils géraient tout à la main. Maintenant, ils se concentrent sur faire grandir leur business.
             </p>
           </div>
 
@@ -263,10 +263,10 @@ const Landing = () => {
       <section className="py-20 bg-gradient-hero text-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-4">
-            Prêt à obtenir VOTRE système sur mesure ?
+            Prêt à arrêter de perdre votre temps?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Découvrez exactement quel système nous pouvons créer pour vous en 2 minutes
+            Découvrez exactement combien d'heures vous pourriez récupérer chaque semaine
           </p>
           <Button 
             variant="cta-large"
@@ -275,7 +275,7 @@ const Landing = () => {
               document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Commencer le quiz gratuit maintenant
+            Calculer mes heures perdues (gratuit)
           </Button>
         </div>
       </section>
