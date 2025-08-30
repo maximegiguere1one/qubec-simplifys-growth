@@ -14,7 +14,233 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          challenge: string | null
+          company: string | null
+          completed_at: string | null
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          lead_id: string | null
+          name: string
+          phone: string
+          selected_date: string
+          selected_time: string
+          session_id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          timezone: string | null
+        }
+        Insert: {
+          challenge?: string | null
+          company?: string | null
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lead_id?: string | null
+          name: string
+          phone: string
+          selected_date: string
+          selected_time: string
+          session_id: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          timezone?: string | null
+        }
+        Update: {
+          challenge?: string | null
+          company?: string | null
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string | null
+          name?: string
+          phone?: string
+          selected_date?: string
+          selected_time?: string
+          session_id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          timezone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funnel_events: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: Database["public"]["Enums"]["funnel_event_type"]
+          id: string
+          ip_address: unknown | null
+          lead_id: string | null
+          page_url: string | null
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: Database["public"]["Enums"]["funnel_event_type"]
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: Database["public"]["Enums"]["funnel_event_type"]
+          id?: string
+          ip_address?: unknown | null
+          lead_id?: string | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          source: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          source?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          source?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
+      quiz_answers: {
+        Row: {
+          answer_score: number
+          answer_value: string
+          answered_at: string
+          id: string
+          question_id: number
+          quiz_session_id: string
+          time_spent_seconds: number | null
+        }
+        Insert: {
+          answer_score: number
+          answer_value: string
+          answered_at?: string
+          id?: string
+          question_id: number
+          quiz_session_id: string
+          time_spent_seconds?: number | null
+        }
+        Update: {
+          answer_score?: number
+          answer_value?: string
+          answered_at?: string
+          id?: string
+          question_id?: number
+          quiz_session_id?: string
+          time_spent_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_answers_quiz_session_id_fkey"
+            columns: ["quiz_session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_sessions: {
+        Row: {
+          abandoned_at: string | null
+          completed_at: string | null
+          id: string
+          lead_id: string | null
+          session_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["quiz_session_status"]
+          time_spent_seconds: number | null
+          total_score: number | null
+        }
+        Insert: {
+          abandoned_at?: string | null
+          completed_at?: string | null
+          id?: string
+          lead_id?: string | null
+          session_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["quiz_session_status"]
+          time_spent_seconds?: number | null
+          total_score?: number | null
+        }
+        Update: {
+          abandoned_at?: string | null
+          completed_at?: string | null
+          id?: string
+          lead_id?: string | null
+          session_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["quiz_session_status"]
+          time_spent_seconds?: number | null
+          total_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +249,25 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status:
+        | "scheduled"
+        | "confirmed"
+        | "completed"
+        | "cancelled"
+        | "no_show"
+      funnel_event_type:
+        | "lp_view"
+        | "lp_submit_optin"
+        | "quiz_start"
+        | "quiz_question_answer"
+        | "quiz_complete"
+        | "vsl_view"
+        | "vsl_play"
+        | "vsl_cta_click"
+        | "bookcall_view"
+        | "bookcall_submit"
+        | "bookcall_confirm"
+      quiz_session_status: "started" | "completed" | "abandoned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +394,28 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: [
+        "scheduled",
+        "confirmed",
+        "completed",
+        "cancelled",
+        "no_show",
+      ],
+      funnel_event_type: [
+        "lp_view",
+        "lp_submit_optin",
+        "quiz_start",
+        "quiz_question_answer",
+        "quiz_complete",
+        "vsl_view",
+        "vsl_play",
+        "vsl_cta_click",
+        "bookcall_view",
+        "bookcall_submit",
+        "bookcall_confirm",
+      ],
+      quiz_session_status: ["started", "completed", "abandoned"],
+    },
   },
 } as const
