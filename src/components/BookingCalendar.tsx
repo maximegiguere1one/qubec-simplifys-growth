@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, User, Phone } from "lucide-react";
+import { SlotButton } from "@/components/booking/SlotButton";
+import { TimeSlot } from "@/types/booking";
+import { ANALYTICS_EVENTS, CTA_LOCATIONS } from "@/lib/constants/analytics";
 import { trackEvent } from "@/lib/analytics";
 
 export const BookingCalendar = () => {
@@ -9,7 +12,7 @@ export const BookingCalendar = () => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   // Prochains créneaux disponibles (simulation)
-  const availableSlots = [
+  const availableSlots: TimeSlot[] = [
     { date: "Aujourd'hui", time: "14:30", available: true },
     { date: "Demain", time: "10:00", available: true },
     { date: "Demain", time: "15:30", available: true },
@@ -18,9 +21,18 @@ export const BookingCalendar = () => {
     { date: "Lundi", time: "13:00", available: true },
   ];
 
+  const handleSlotSelect = (slot: TimeSlot) => {
+    setSelectedDate(slot.date);
+    setSelectedTime(slot.time);
+  };
+
   const handleBooking = () => {
     if (selectedDate && selectedTime) {
-      trackEvent('vsl_cta_click', { date: selectedDate, time: selectedTime, cta_location: 'calendar' });
+      trackEvent(ANALYTICS_EVENTS.BOOKING.CALENDAR_CLICK, { 
+        date: selectedDate, 
+        time: selectedTime, 
+        cta_location: CTA_LOCATIONS.CALENDAR 
+      });
       // Redirection vers formulaire ou modal de booking
       window.location.href = '/book-call';
     }
@@ -40,33 +52,13 @@ export const BookingCalendar = () => {
 
       <div className="space-y-3 mb-6">
         {availableSlots.filter(slot => slot.available).slice(0, 6).map((slot, index) => (
-          <button
+          <SlotButton
             key={index}
-            onClick={() => {
-              setSelectedDate(slot.date);
-              setSelectedTime(slot.time);
-            }}
-            className={`w-full p-3 border rounded-lg text-left transition-all hover:border-primary hover:bg-primary/5 btn-touch ${
-              selectedDate === slot.date && selectedTime === slot.time
-                ? 'border-primary bg-primary/10'
-                : 'border-border'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">{slot.date}</p>
-                  <p className="text-sm text-muted-foreground">{slot.time}</p>
-                </div>
-              </div>
-              {index === 0 && (
-                <span className="text-xs bg-success text-success-foreground px-2 py-1 rounded-full">
-                  Prochain
-                </span>
-              )}
-            </div>
-          </button>
+            slot={slot}
+            index={index}
+            isSelected={selectedDate === slot.date && selectedTime === slot.time}
+            onClick={() => handleSlotSelect(slot)}
+          />
         ))}
       </div>
 
