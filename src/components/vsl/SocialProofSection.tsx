@@ -4,6 +4,25 @@ export const SocialProofSection = () => {
   return (
     <section className="section-mobile bg-secondary/20">
       <div className="container mx-auto container-mobile">
+        {/* Logos section */}
+        <div className="text-center mb-12">
+          <p className="text-muted-foreground mb-6">Utilisé par des entreprises québécoises comme :</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 items-center justify-items-center opacity-60">
+            <div className="bg-muted/50 rounded-lg p-4 w-full h-16 flex items-center justify-center">
+              <span className="font-bold text-foreground">Restaurant Le Patio</span>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 w-full h-16 flex items-center justify-center">
+              <span className="font-bold text-foreground">Garage Pro-Mécanique</span>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 w-full h-16 flex items-center justify-center">
+              <span className="font-bold text-foreground">Clinique Santé Plus</span>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 w-full h-16 flex items-center justify-center">
+              <span className="font-bold text-foreground">Services Comptables JL</span>
+            </div>
+          </div>
+        </div>
+        
         <h2 className="heading-responsive font-bold text-center mb-4">
           Plus de 200 PME québécoises nous font déjà confiance
         </h2>
@@ -48,9 +67,19 @@ export const SocialProofSection = () => {
         </div>
         
         <div className="text-center mt-12">
-          <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-6 max-w-2xl mx-auto">
-            <p className="text-lg font-semibold mb-2">Note de satisfaction moyenne : 9.4/10</p>
-            <p className="text-muted-foreground">Basée sur 200+ avis clients vérifiés</p>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
+              <p className="text-2xl font-bold text-primary mb-1">15h</p>
+              <p className="text-sm text-muted-foreground">économisées par semaine en moyenne</p>
+            </div>
+            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
+              <p className="text-2xl font-bold text-primary mb-1">9.4/10</p>
+              <p className="text-sm text-muted-foreground">note de satisfaction client</p>
+            </div>
+            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
+              <p className="text-2xl font-bold text-primary mb-1">200+</p>
+              <p className="text-sm text-muted-foreground">PME québécoises satisfaites</p>
+            </div>
           </div>
         </div>
       </div>

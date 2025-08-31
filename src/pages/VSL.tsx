@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Zap } from "lucide-react";
 import { trackEvent, getABVariant } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
@@ -127,9 +128,11 @@ const VSL = () => {
               >
                 📞 Planifier mon appel gratuit
               </CTAButton>
-              <p className="text-sm text-muted-foreground mt-3">
-                ⚠️ Calendrier limité – 4 créneaux dispo cette semaine
-              </p>
+              <div className="flex justify-center mt-3">
+                <Badge variant="destructive" className="animate-pulse-gentle">
+                  ⚠️ Calendrier limité – 4 créneaux dispo cette semaine
+                </Badge>
+              </div>
             </div>
           </div>
 
