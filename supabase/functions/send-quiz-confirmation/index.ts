@@ -152,7 +152,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email via Resend
     const emailResponse = await resend.emails.send({
-      from: "One Système <info@onesysteme.com>",
+      from: "One Système <onboarding@resend.dev>",
+      reply_to: "info@agence1.com",
       to: [data.contactInfo.email],
       subject: emailContent.subject,
       html: emailContent.html,
@@ -169,7 +170,7 @@ const handler = async (req: Request): Promise<Response> => {
     await supabase.from('email_events').insert({
       lead_id: data.leadId,
       email_id: emailResponse.id,
-      action: 'quiz_confirmation_sent'
+      action: 'sent'
     });
 
     // Update leads table with quiz results
