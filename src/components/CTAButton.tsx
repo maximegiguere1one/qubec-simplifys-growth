@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { trackCTAClick } from "@/lib/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { cn } from "@/lib/utils";
-
 interface CTAButtonProps {
   children: React.ReactNode;
   location: string;
@@ -13,37 +12,23 @@ interface CTAButtonProps {
   size?: "default" | "cta" | "cta-large" | "outline" | "secondary";
   disabled?: boolean;
 }
-
-export const CTAButton = ({ 
-  children, 
-  location, 
-  variant, 
+export const CTAButton = ({
+  children,
+  location,
+  variant,
   destination,
-  onClick, 
+  onClick,
   className,
   size = "cta",
-  disabled 
+  disabled
 }: CTAButtonProps) => {
-  const { mobileButtonClass, animationClass } = useMobileOptimized();
-
+  const {
+    mobileButtonClass,
+    animationClass
+  } = useMobileOptimized();
   const handleClick = async () => {
     await trackCTAClick(location, variant, destination);
     onClick?.();
   };
-
-  return (
-    <Button
-      variant={size}
-      className={cn(
-        mobileButtonClass,
-        animationClass,
-        "btn-touch min-h-[44px] px-6 py-3", // Accessibility: min 44px touch target
-        className
-      )}
-      onClick={handleClick}
-      disabled={disabled}
-    >
-      {children}
-    </Button>
-  );
+  return;
 };
