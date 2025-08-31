@@ -21,18 +21,18 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="min-h-screen bg-gradient-background">
-      <div className="container mx-auto p-6">
+    <div className="min-h-[100dvh] bg-gradient-background">
+      <div className="container mx-auto container-mobile py-4 sm:py-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold">One Système Analytics</h1>
+              <h1 className="text-responsive-lg font-bold">One Système Analytics</h1>
               <p className="text-muted-foreground mt-2">
                 Tableau de bord complet pour optimiser votre funnel de conversion
               </p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Badge variant="outline" className="text-success border-success">
                 🟢 Live
               </Badge>
@@ -49,7 +49,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Leads Aujourd'hui</CardTitle>
@@ -97,7 +97,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
             <TabsTrigger value="overview" className="flex items-center">
               <BarChart3 className="h-4 w-4 mr-2" />
               Vue d'ensemble

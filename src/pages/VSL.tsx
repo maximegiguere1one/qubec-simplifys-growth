@@ -105,10 +105,10 @@ const VSL = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-[100dvh] bg-gradient-background">
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/30 border-b">
-        <div className="container mx-auto px-6 py-2">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/30 border-b safe-area-inset-top">
+        <div className="container mx-auto container-mobile py-2">
           <div className="flex items-center justify-center text-sm text-muted-foreground">
             <span className="mr-2">Étape 2/3 :</span>
             <span className="font-medium">Regardez la vidéo (4 min) puis réservez votre diagnostic</span>
@@ -117,13 +117,13 @@ const VSL = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20">
-        <div className="container mx-auto px-6 max-w-6xl">
+      <section className="pt-20 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20">
+        <div className="container mx-auto container-mobile max-w-6xl">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <h1 className="text-responsive-xl font-bold mb-4 sm:mb-6 leading-tight">
               {getPersonalizedMessage()}
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
+            <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
               Vous en avez assez de perdre vos soirées dans la paperasse? De chercher des documents partout? De refaire les mêmes calculs encore et encore? Je vous montre comment tout automatiser, <span className="font-semibold text-primary">sans que vous ayez à apprendre quoi que ce soit de compliqué.</span>
             </p>
             

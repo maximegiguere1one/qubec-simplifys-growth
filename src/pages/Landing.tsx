@@ -102,10 +102,10 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-[100dvh] bg-gradient-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="container mx-auto px-6 py-20">
+        <div className="container mx-auto container-mobile section-mobile">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
@@ -113,7 +113,7 @@ const Landing = () => {
                   testName="headline_variant"
                   variants={{
                     control: (
-                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                      <h1 className="heading-responsive font-bold leading-tight">
                         Finies les{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
                           heures perdues
@@ -122,7 +122,7 @@ const Landing = () => {
                       </h1>
                     ),
                     variant_a: (
-                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                      <h1 className="heading-responsive font-bold leading-tight">
                         Arrêtez de{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
                           gérer votre business
@@ -131,7 +131,7 @@ const Landing = () => {
                       </h1>
                     ),
                     variant_b: (
-                      <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                      <h1 className="heading-responsive font-bold leading-tight">
                         Sauvez{" "}
                         <span className="bg-gradient-primary bg-clip-text text-transparent">
                           15 heures par semaine
@@ -141,13 +141,13 @@ const Landing = () => {
                     ),
                   }}
                 />
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="subheading-responsive text-muted-foreground leading-relaxed">
                   Je crée pour vous un système simple qui gère votre inventaire, vos factures, vos clients... tout ce qui vous fait perdre du temps actuellement. Vous n'avez rien à apprendre, je m'occupe de tout l'aspect technique.
                 </p>
               </div>
 
-              <Card className="p-8 shadow-card border-2 border-primary/20">
-                <h2 className="text-2xl font-bold mb-6 text-center">
+              <Card className="p-4 sm:p-6 md:p-8 shadow-card border-2 border-primary/20">
+                <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 text-center">
                   Voir combien de temps je peux vous sauver
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,7 +157,7 @@ const Landing = () => {
                       placeholder="Votre nom complet"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="h-12 text-lg"
+                      className="h-11 sm:h-12 text-base sm:text-lg btn-touch"
                       required
                     />
                   </div>
@@ -167,14 +167,14 @@ const Landing = () => {
                       placeholder="Votre adresse courriel professionnelle"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 text-lg"
+                      className="h-11 sm:h-12 text-base sm:text-lg btn-touch"
                       required
                     />
                   </div>
                   <Button 
                     type="submit" 
                     variant="cta-large" 
-                    className="w-full"
+                    className="w-full btn-touch"
                     disabled={isLoading}
                   >
                     {isLoading ? "Envoi en cours..." : "Voir combien de temps je peux vous sauver →"}
@@ -191,10 +191,11 @@ const Landing = () => {
                 src={heroImage} 
                 alt="Entrepreneurs québécois utilisant One Système"
                 className="rounded-2xl shadow-strong w-full"
+                loading="lazy"
               />
-              <div className="absolute -bottom-6 -left-6 bg-success text-success-foreground p-4 rounded-xl shadow-medium">
-                <div className="text-2xl font-bold">95%</div>
-                <div className="text-sm">de satisfaction client</div>
+              <div className="absolute -bottom-3 -left-3 sm:-bottom-6 sm:-left-6 bg-success text-success-foreground p-2 sm:p-4 rounded-xl shadow-medium">
+                <div className="text-lg sm:text-2xl font-bold">95%</div>
+                <div className="text-xs sm:text-sm">de satisfaction client</div>
               </div>
             </div>
           </div>
@@ -202,22 +203,22 @@ const Landing = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-secondary/50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
+      <section className="section-mobile bg-secondary/50">
+        <div className="container mx-auto container-mobile">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-responsive-xl font-bold mb-4">
               Pourquoi perdre du temps quand tout peut être automatisé?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-responsive-base text-muted-foreground max-w-3xl mx-auto">
               Des centaines d'entrepreneurs au Québec ont déjà repris le contrôle de leur temps
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="p-6 text-center shadow-card hover:shadow-medium transition-all duration-300 transform hover:scale-105">
+              <Card key={index} className="p-4 sm:p-6 text-center shadow-card hover:shadow-medium transition-all duration-300 transform hover:scale-105">
                 <benefit.icon className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold mb-2">{benefit.title}</h3>
                 <p className="text-muted-foreground">{benefit.description}</p>
               </Card>
             ))}
@@ -226,24 +227,24 @@ const Landing = () => {
       </section>
 
       {/* Social Proof Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">
+      <section className="section-mobile">
+        <div className="container mx-auto container-mobile">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-responsive-xl font-bold mb-4">
               Des entrepreneurs comme vous qui ont repris leur temps
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-responsive-base text-muted-foreground">
               Ils géraient tout à la main. Maintenant, ils se concentrent sur faire grandir leur business.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="p-8 shadow-card">
+              <Card key={index} className="p-4 sm:p-6 md:p-8 shadow-card">
                 <div className="flex items-start space-x-4">
                   <CheckCircle2 className="w-8 h-8 text-success flex-shrink-0 mt-1" />
                   <div>
-                    <p className="text-lg mb-4 italic">"{testimonial.text}"</p>
+                    <p className="text-base sm:text-lg mb-4 italic">"{testimonial.text}"</p>
                     <div className="border-t pt-4">
                       <p className="font-bold">{testimonial.name}</p>
                       <p className="text-muted-foreground text-sm">{testimonial.company}</p>
@@ -260,16 +261,17 @@ const Landing = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-hero text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-4">
+      <section className="section-mobile bg-gradient-hero text-white">
+        <div className="container mx-auto container-mobile text-center">
+          <h2 className="text-responsive-xl font-bold mb-4">
             Prêt à arrêter de perdre votre temps?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-responsive-base mb-6 sm:mb-8 opacity-90">
             Découvrez exactement combien d'heures vous pourriez récupérer chaque semaine
           </p>
           <Button 
             variant="cta-large"
+            className="btn-touch"
             onClick={() => {
               trackEvent('lp_submit_optin', { cta_location: 'final' });
               document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });

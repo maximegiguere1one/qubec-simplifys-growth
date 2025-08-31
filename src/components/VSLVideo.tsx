@@ -117,10 +117,10 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="max-w-4xl mx-auto mb-16 relative">
+    <div className="max-w-4xl mx-auto mb-8 sm:mb-12 md:mb-16 relative px-4 sm:px-0">
       <Card className="overflow-hidden shadow-strong">
         {/* Video Player */}
-        <div className="relative bg-black aspect-video">
+        <div className="relative bg-black aspect-video touch-manipulation">
           {/* Actual Video Element */}
           <video
             ref={videoRef}
@@ -136,18 +136,18 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
           {/* Play button overlay for initial state */}
           {currentTime === 0 && !isPlaying && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-              <div className="text-center text-white px-8">
-                <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm" onClick={togglePlay}>
-                  <Play className="w-12 h-12 ml-2" />
+              <div className="text-center text-white px-4 sm:px-6 md:px-8">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm btn-touch" onClick={togglePlay}>
+                  <Play className="w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 ml-1" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 drop-shadow-lg">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 drop-shadow-lg">
                   One Système - Votre transformation commence ici
                 </h3>
-                <p className="text-lg opacity-90 max-w-2xl drop-shadow-md">
+                <p className="text-base sm:text-lg opacity-90 max-w-2xl drop-shadow-md">
                   Découvrez comment économiser 10-25h par semaine et automatiser votre PME québécoise
                 </p>
                 <div className="mt-4">
-                  <Button onClick={togglePlay} variant="cta-large" className="mb-2">
+                  <Button onClick={togglePlay} variant="cta-large" className="mb-2 btn-touch">
                     <Play className="w-6 h-6 mr-2" />
                     Regarder la vidéo (4 min)
                   </Button>
@@ -226,17 +226,17 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
         </div>
 
         {/* Video Description */}
-        <div className="p-6 bg-secondary/30">
-          <div className="flex items-start justify-between">
+        <div className="p-4 sm:p-6 bg-secondary/30">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <div>
-              <h4 className="text-lg font-semibold mb-2">
+              <h4 className="text-base sm:text-lg font-semibold mb-2">
                 One Système - La transformation de votre PME québécoise
               </h4>
               <p className="text-muted-foreground text-sm">
                 Découvrez comment plus de 200 entreprises du Québec ont automatisé leurs opérations et économisé 10-25 heures par semaine avec notre solution 100% locale.
               </p>
             </div>
-            <div className="text-right text-sm text-muted-foreground">
+            <div className="text-left sm:text-right text-sm text-muted-foreground">
               <p>4 min</p>
               <p>Québec, 2024</p>
             </div>

@@ -35,16 +35,16 @@ export const TrustBadges = () => {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 py-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 py-4 sm:py-6">
       {badges.map((badge, index) => (
         <div
           key={index}
-          className="flex flex-col items-center text-center p-4 bg-white/50 border border-primary/20 rounded-lg hover:bg-white/70 transition-colors"
+          className="flex flex-col items-center text-center p-2 sm:p-3 md:p-4 bg-white/50 border border-primary/20 rounded-lg hover:bg-white/70 transition-colors"
         >
-          <badge.icon className="w-6 h-6 text-primary mb-2" />
+          <badge.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary mb-1 sm:mb-2" />
           <div className="text-xs">
-            <p className="font-semibold text-foreground">{badge.title}</p>
-            <p className="text-muted-foreground">{badge.subtitle}</p>
+            <p className="font-semibold text-foreground text-xs sm:text-sm">{badge.title}</p>
+            <p className="text-muted-foreground text-xs">{badge.subtitle}</p>
           </div>
         </div>
       ))}

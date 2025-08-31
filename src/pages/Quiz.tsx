@@ -238,14 +238,14 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-background py-12">
-      <div className="container mx-auto px-6 max-w-4xl">
+    <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
+      <div className="container mx-auto container-mobile max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">
+        <div className="text-center mb-6 sm:mb-8 md:mb-12">
+          <h1 className="text-responsive-xl font-bold mb-4">
             {currentStep === 0 ? "Commençons par vous connaître!" : "Combien d'heures par semaine vous pourriez récupérer?"}
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
             {currentStep === 0 ? "Puis nous analyserons votre situation en 5 questions simples" : "5 questions simples pour voir où vous perdez votre temps"}
           </p>
           
@@ -263,9 +263,9 @@ const Quiz = () => {
 
         {/* Contact Capture or Question Card */}
         {currentStep === 0 ? (
-          <Card className="p-8 shadow-card max-w-3xl mx-auto">
+          <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 leading-relaxed">
+              <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 leading-relaxed">
                 Dites-nous qui vous êtes pour personnaliser votre analyse
               </h2>
               
@@ -279,7 +279,7 @@ const Quiz = () => {
                     placeholder="Ex: Marie Tremblay"
                     value={contactInfo.name}
                     onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
-                    className="mt-2 text-lg"
+                    className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="name"
                   />
                 </div>
@@ -294,7 +294,7 @@ const Quiz = () => {
                     placeholder="Ex: marie@monentreprise.com"
                     value={contactInfo.email}
                     onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
-                    className="mt-2 text-lg"
+                    className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="email"
                   />
                 </div>
@@ -314,7 +314,7 @@ const Quiz = () => {
                         setContactInfo(prev => ({ ...prev, phone: formatted }));
                       }
                     }}
-                    className="mt-2 text-lg"
+                    className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="tel"
                   />
                 </div>
@@ -327,7 +327,7 @@ const Quiz = () => {
                 variant="cta"
                 onClick={handleContactSubmit}
                 disabled={isSubmittingContact}
-                className="flex items-center gap-2 px-8"
+                className="flex items-center gap-2 px-6 sm:px-8 btn-touch"
               >
                 {isSubmittingContact ? "Un instant..." : "Commencer mon analyse"}
                 <ArrowRight className="w-4 h-4" />
@@ -335,9 +335,9 @@ const Quiz = () => {
             </div>
           </Card>
         ) : (
-          <Card className="p-8 shadow-card max-w-3xl mx-auto">
+          <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-6 leading-relaxed">
+              <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 leading-relaxed">
                 {questions[currentQuestion].question}
               </h2>
 
@@ -347,11 +347,11 @@ const Quiz = () => {
                 className="space-y-4"
               >
                 {questions[currentQuestion].options.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                  <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer btn-touch">
                     <RadioGroupItem value={option.value} id={option.value} />
                     <Label 
                       htmlFor={option.value} 
-                      className="text-lg cursor-pointer flex-1 leading-relaxed"
+                      className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
                     >
                       {option.label}
                     </Label>
@@ -375,7 +375,7 @@ const Quiz = () => {
               <Button
                 variant="cta"
                 onClick={handleNext}
-                className="flex items-center gap-2 px-8"
+                className="flex items-center gap-2 px-6 sm:px-8 btn-touch"
               >
                 {currentStep === totalSteps - 1 ? "Voir mes résultats" : "Suivant"}
                 <ArrowRight className="w-4 h-4" />
