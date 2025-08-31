@@ -326,24 +326,14 @@ const Quiz = () => {
       <div className="container mx-auto container-mobile max-w-4xl">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
-          {currentStep === 0 ? (
-            <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
-                Votre entreprise tourne au ralenti ?<br />
-                Répondez à 5 questions pour découvrir ce qui freine vos opérations…<br />
-                et comment tout automatiser sans vous casser la tête.
-              </h1>
-            </div>
-          ) : (
-            <div>
-              <h1 className="text-responsive-xl font-bold mb-4">
-                Découvrons ensemble votre potentiel d'économie de temps
-              </h1>
-              <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
-                Aidez-nous à comprendre votre réalité d'entrepreneur
-              </p>
-            </div>
-          )}
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
+              Découvrons ensemble votre potentiel d'économie de temps
+            </h1>
+            <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
+              Aidez-nous à comprendre votre réalité d'entrepreneur
+            </p>
+          </div>
           
           {/* Enhanced Progress Bar with A/B test */}
           <EnhancedQuizProgress 
