@@ -42,49 +42,45 @@ const BookCall = () => {
             </div>
           </div>
           
-          {/* Validation title and benefits */}
-          <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
-              🎉 Félicitations – vous êtes éligible à votre appel stratégique personnalisé (gratuit)
+          {/* 1. Titre fort (qualification + exclusivité) */}
+          <div className="mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
+              🎯 Félicitations – vous vous qualifiez pour un appel stratégique prioritaire 🚀
             </h1>
             
-            <div className="bg-primary/10 border border-primary/20 rounded-lg p-6 max-w-3xl mx-auto mb-6">
-              <h3 className="text-lg font-bold mb-4">📞 Cet appel vous permettra de :</h3>
-              <div className="grid sm:grid-cols-2 gap-3 text-left">
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>Identifier vos gaspillages de temps cachés</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>Voir comment automatiser votre entreprise</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>Découvrir nos systèmes sur mesure québécois</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>Obtenir un plan d'action personnalisé</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 max-w-2xl mx-auto mb-4">
-              <p className="font-medium text-warning">
-                ⚠️ Places limitées cette semaine : 3 appels disponibles
+            {/* 2. Rappel de la garantie */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-3xl mx-auto mb-6">
+              <p className="text-sm md:text-base text-green-700 font-medium text-center">
+                🔒 Durant cet appel, on vous montre comment gagner au moins 10h/mois… et si ce n'est pas le cas, on vous rembourse + on vous vire <span className="font-bold text-red-600">1 000 $ cash</span>.
               </p>
             </div>
-            
-            {/* Social proof */}
-            <div className="text-sm text-muted-foreground">
-              <p className="mb-2">💬 "Excellent service, vraiment à l'écoute de nos besoins" - Marie T., Entreprise locale</p>
-              <p>"En 30 minutes, j'ai eu plus de clarté qu'en 6 mois de recherche" - Pierre L., PME Montréal</p>
+          </div>
+
+          {/* 3. Bénéfices de l'appel */}
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-6 max-w-4xl mx-auto mb-8">
+            <h3 className="text-lg font-bold mb-6 text-center">📞 Ce qu'on va faire ensemble dans cet appel :</h3>
+            <div className="grid sm:grid-cols-2 gap-4 text-left max-w-3xl mx-auto">
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">📊</span>
+                <span><strong>Identifier vos gaspillages de temps</strong> (10 à 25h/mois)</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">🛠️</span>
+                <span><strong>Vous montrer un système</strong> qui les élimine automatiquement</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">💰</span>
+                <span><strong>Calculer vos économies réelles</strong> et mesurables</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary font-bold text-lg">🎯</span>
+                <span><strong>Vérifier si vous êtes admissible</strong> à notre programme garanti</span>
+              </div>
             </div>
           </div>
           
-          <p className="text-sm text-muted-foreground">
-            Dernière étape : réservez votre consultation personnalisée
+          <p className="text-sm text-muted-foreground mb-6">
+            Choisissez votre créneau pour cet appel stratégique personnalisé :
           </p>
         </div>
 
@@ -139,6 +135,35 @@ const BookCall = () => {
             )
           )}
         </ConversionOptimizer>
+
+        {/* 5. Bloc d'urgence / rareté sous le calendrier */}
+        {!bookingConfirmed && (
+          <div className="mt-8 text-center">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 max-w-2xl mx-auto mb-6">
+              <p className="text-sm md:text-base font-medium text-orange-700">
+                ⚠️ Les appels stratégiques sont limités à <strong>5 nouveaux entrepreneurs par mois</strong>. Réservez vite votre créneau.
+              </p>
+            </div>
+
+            {/* 6. Social proof / confiance */}
+            <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-3xl mx-auto">
+              <div className="grid sm:grid-cols-3 gap-4 text-center text-sm">
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-success" />
+                  <span><strong>Déjà utilisé par +247 PME québécoises</strong></span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-success" />
+                  <span><strong>Solution 100 % locale, en français</strong></span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-success" />
+                  <span><strong>Taux de satisfaction : 100 %</strong><br /><span className="text-muted-foreground">(0 client remboursé à ce jour)</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
