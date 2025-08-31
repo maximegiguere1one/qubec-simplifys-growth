@@ -16,6 +16,8 @@ export const SlotButton = ({
           ? 'border-primary bg-primary/10'
           : 'border-border'
       } ${className}`}
+      aria-pressed={isSelected}
+      aria-label={`Sélectionner le créneau ${slot.date} à ${slot.time}`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

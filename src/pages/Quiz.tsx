@@ -281,6 +281,7 @@ const Quiz = () => {
                     onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
                     className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="name"
+                    autoCapitalize="words"
                   />
                 </div>
                 
@@ -296,6 +297,8 @@ const Quiz = () => {
                     onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
                     className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="email"
+                    inputMode="email"
+                    autoCapitalize="none"
                   />
                 </div>
                 
@@ -316,6 +319,7 @@ const Quiz = () => {
                     }}
                     className="mt-2 text-base sm:text-lg btn-touch"
                     autoComplete="tel"
+                    inputMode="tel"
                   />
                 </div>
               </div>

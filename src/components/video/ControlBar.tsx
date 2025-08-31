@@ -26,6 +26,7 @@ export const ControlBar = ({
           size="sm"
           onClick={onTogglePlay}
           className="text-white hover:bg-white/10 p-2 btn-touch"
+          aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
         >
           {isPlaying ? <Pause className="w-4 h-4 sm:w-5 sm:h-5" /> : <Play className="w-4 h-4 sm:w-5 sm:h-5" />}
         </Button>
@@ -50,6 +51,7 @@ export const ControlBar = ({
           size="sm"
           onClick={onToggleMute}
           className="text-white hover:bg-white/10 p-2 btn-touch"
+          aria-label={isMuted ? "Activer le son" : "Couper le son"}
         >
           {isMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5" />}
         </Button>
@@ -60,6 +62,7 @@ export const ControlBar = ({
           size="sm"
           onClick={onToggleFullscreen}
           className="text-white hover:bg-white/10 p-2 btn-touch"
+          aria-label="Plein écran"
         >
           <Maximize className="w-4 h-4 sm:w-5 sm:h-5" />
         </Button>

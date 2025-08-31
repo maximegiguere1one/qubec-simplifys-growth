@@ -76,7 +76,7 @@ export const MicroSurvey = ({
 
         {!isSubmitted ? (
           <div className="space-y-3 sm:space-y-4">
-            <p className="text-xs sm:text-sm font-medium">{question}</p>
+            <p className="text-xs sm:text-sm font-medium" role="group" aria-labelledby="survey-question">{question}</p>
             
             <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer}>
               {options.map((option) => (
@@ -100,7 +100,7 @@ export const MicroSurvey = ({
             </Button>
           </div>
         ) : (
-          <div className="text-center py-2">
+          <div className="text-center py-2" role="status" aria-live="polite">
             <p className="text-xs sm:text-sm text-success font-medium">Merci pour votre réponse ! 🙏</p>
           </div>
         )}

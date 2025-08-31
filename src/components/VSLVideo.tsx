@@ -76,6 +76,7 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
           <VideoPlayer
             ref={videoRef}
             src={videoUrl}
+            poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzAwMCIvPiA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+T25lIFN5c3TDqG1lIC0gVm90cmUgdHJhbnNmb3JtYXRpb24gY29tbWVuY2UgaWNpPC90ZXh0PiA8L3N2Zz4="
             className="w-full h-full object-contain"
           />
 

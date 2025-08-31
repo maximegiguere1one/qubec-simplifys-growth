@@ -211,6 +211,7 @@ const BookCall = () => {
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         className="h-12 btn-touch"
                         autoComplete="name"
+                        autoCapitalize="words"
                         required
                       />
                     </div>
@@ -223,6 +224,7 @@ const BookCall = () => {
                         className="h-12 btn-touch"
                         autoComplete="email"
                         inputMode="email"
+                        autoCapitalize="none"
                         required
                       />
                     </div>
@@ -248,6 +250,7 @@ const BookCall = () => {
                         onChange={(e) => setFormData({...formData, company: e.target.value})}
                         className="h-12 btn-touch"
                         autoComplete="organization"
+                        autoCapitalize="words"
                       />
                     </div>
                   </div>
