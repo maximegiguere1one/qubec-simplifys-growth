@@ -357,62 +357,61 @@ const Quiz = () => {
         {currentStep === 0 ? (
           <Card id="contact-form" className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
             <div className="space-y-6">
-                <div>
-                  <Input
-                    id="name"
-                    placeholder="Prénom et nom"
-                    value={contactInfo.name}
-                    onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
-                    className="text-base sm:text-lg btn-touch"
-                    autoComplete="name"
-                    autoCapitalize="words"
-                  />
-                </div>
-                
-                <div>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Adresse email"
-                    value={contactInfo.email}
-                    onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
-                    className="text-base sm:text-lg btn-touch"
-                    autoComplete="email"
-                    inputMode="email"
-                    autoCapitalize="none"
-                  />
-                </div>
-                
-                <div>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="Numéro de téléphone"
-                    value={contactInfo.phone}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
-                      if (formatted.length <= 14) { // Max length for formatted phone
-                        setContactInfo(prev => ({ ...prev, phone: formatted }));
-                      }
-                    }}
-                    className="text-base sm:text-lg btn-touch"
-                    autoComplete="tel"
-                    inputMode="tel"
-                  />
-                </div>
+              <div>
+                <Input
+                  id="name"
+                  placeholder="Prénom et nom"
+                  value={contactInfo.name}
+                  onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
+                  className="text-base sm:text-lg btn-touch"
+                  autoComplete="name"
+                  autoCapitalize="words"
+                />
               </div>
               
-              <div className="text-center mt-6">
-                <Button
-                  variant="cta-large"
-                  onClick={handleContactSubmit}
-                  disabled={isSubmittingContact}
-                  className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
-                >
-                  {isSubmittingContact ? "Un instant..." : "Commencer maintenant"}
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
+              <div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Adresse email"
+                  value={contactInfo.email}
+                  onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
+                  className="text-base sm:text-lg btn-touch"
+                  autoComplete="email"
+                  inputMode="email"
+                  autoCapitalize="none"
+                />
               </div>
+              
+              <div>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="Numéro de téléphone"
+                  value={contactInfo.phone}
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    if (formatted.length <= 14) { // Max length for formatted phone
+                      setContactInfo(prev => ({ ...prev, phone: formatted }));
+                    }
+                  }}
+                  className="text-base sm:text-lg btn-touch"
+                  autoComplete="tel"
+                  inputMode="tel"
+                />
+              </div>
+            </div>
+            
+            <div className="text-center mt-6">
+              <Button
+                variant="cta-large"
+                onClick={handleContactSubmit}
+                disabled={isSubmittingContact}
+                className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
+              >
+                {isSubmittingContact ? "Un instant..." : "Commencer maintenant"}
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             </div>
           </Card>
         ) : (
