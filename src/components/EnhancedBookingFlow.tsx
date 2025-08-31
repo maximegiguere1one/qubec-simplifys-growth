@@ -9,6 +9,7 @@ import { Calendar, Clock, Star, Phone, MapPin, Briefcase, Target } from 'lucide-
 import { calculateLeadScore, LeadScore } from '@/lib/leadScoring';
 import { trackBooking } from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
+import { GuaranteeBlock } from '@/components/GuaranteeBlock';
 
 interface EnhancedBookingFlowProps {
   leadId?: string;
@@ -240,7 +241,7 @@ export const EnhancedBookingFlow = ({ leadId, quizResults, prefilledData }: Enha
   };
 
   const renderStep2 = () => (
-    <Card>
+    <Card id="booking-calendar">
       <CardHeader>
         <CardTitle className="flex items-center">
           <Calendar className="h-5 w-5 mr-2" />
@@ -438,6 +439,22 @@ export const EnhancedBookingFlow = ({ leadId, quizResults, prefilledData }: Enha
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      {/* Guarantee Block - Au-dessus du calendrier */}
+      {currentStep === 2 && (
+        <GuaranteeBlock 
+          location="bookcall_enhanced_pre_calendar"
+          variant="booking_guarantee"
+          destination="#booking-calendar"
+          onCTAClick={() => {
+            const calendarElement = document.getElementById('booking-calendar');
+            calendarElement?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          ctaText="📞 Réserver mon appel"
+          showCTA={false}
+          className="mb-6"
+        />
+      )}
+      
       {renderStepIndicator()}
 
       {currentStep === 1 && renderStep1()}

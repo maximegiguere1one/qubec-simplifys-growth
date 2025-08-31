@@ -75,7 +75,9 @@ export type FunnelEventType =
   | 'vsl_cta_click'
   | 'bookcall_view'
   | 'bookcall_submit'
-  | 'bookcall_confirm';
+  | 'bookcall_confirm'
+  | 'guarantee_view'
+  | 'guarantee_cta_click';
 
 // Track funnel events
 export const trackEvent = (

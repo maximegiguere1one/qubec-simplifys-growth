@@ -99,6 +99,52 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
           <a href="https://lbwjesrgernvjiorktia.lovableproject.com/vsl" style="display: inline-block; background: white; color: #ee5a24; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">🎥 Voir ma solution personnalisée</a>
         </div>
 
+        <!-- Guarantee Block -->
+        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 2px solid #3b82f6; border-radius: 12px; padding: 32px; margin: 24px 0; text-align: center;">
+          <div style="background: #3b82f6; color: white; display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin-bottom: 16px;">
+            🔐 GARANTIE ULTRA-MESURABLE
+          </div>
+          <h2 style="color: #1f2937; font-size: 24px; font-weight: bold; margin: 16px 0; line-height: 1.3;">
+            Je te garantis que tu vas gagner au moins 10 heures par mois, sinon je te rembourse + je te vire 1 000 $
+          </h2>
+          <p style="color: #3b82f6; font-size: 18px; font-weight: bold; margin: 16px 0;">
+            🔐 Tu gagnes du temps, ou tu gagnes de l'argent.
+          </p>
+          <div style="background: rgba(255,255,255,0.8); border-radius: 8px; padding: 20px; margin: 16px 0;">
+            <p style="color: #374151; margin: 0; line-height: 1.5;">
+              Je te garantis que tu ne te sentiras plus jamais mêlé, désorganisé ou dépassé.<br>
+              <strong style="color: #3b82f6;">Et en plus, tu vas gagner au moins 10 heures par mois, dès le premier mois.</strong>
+            </p>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0;">
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 16px; text-align: left;">
+              <h3 style="color: #dc2626; font-weight: bold; margin: 0 0 8px 0;">❌ Sinon ?</h3>
+              <ul style="margin: 0; padding-left: 16px; color: #374151;">
+                <li>Je te rembourse chaque dollar</li>
+                <li><strong>Et je te vire 1 000 $ cash</strong></li>
+              </ul>
+            </div>
+            <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 16px; text-align: left;">
+              <h3 style="color: #16a34a; font-weight: bold; margin: 0 0 8px 0;">✅ Aucun risque</h3>
+              <p style="margin: 0; color: #374151; font-size: 14px;">
+                Paiement basé uniquement sur les économies réelles mesurées
+              </p>
+            </div>
+          </div>
+          <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 20px; margin: 16px 0;">
+            <p style="color: #3b82f6; font-weight: bold; margin: 0 0 8px 0;">
+              👉 Tu gagnes du temps ou tu repars payé.
+            </p>
+            <p style="color: #6b7280; margin: 0;">
+              Clique ci-dessous pour voir ce que ça peut changer dans ta business.
+            </p>
+          </div>
+          <a href="https://lbwjesrgernvjiorktia.lovableproject.com/vsl" 
+             style="display: inline-block; background: #3b82f6; color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">
+            📞 Voir la vidéo complète
+          </a>
+        </div>
+
         <h3 style="color: #333; font-size: 18px; margin-top: 30px;">💡 Pourquoi choisir One Système ?</h3>
         <div style="background: #f0f8ff; padding: 20px; border-radius: 5px; margin: 15px 0;">
           <ul style="margin: 0; padding-left: 20px;">

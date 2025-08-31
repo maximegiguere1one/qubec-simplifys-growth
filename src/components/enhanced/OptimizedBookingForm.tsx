@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { trackBooking, trackEvent, getABVariant, trackABConversion } from "@/lib/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { MultiStepBookingForm } from "./MultiStepBookingForm";
+import { GuaranteeBlock } from "@/components/GuaranteeBlock";
 
 interface OptimizedBookingFormProps {
   prefilledData?: {
@@ -308,8 +309,21 @@ export const OptimizedBookingForm = ({ prefilledData, onSuccess }: OptimizedBook
         </div>
       </div>
 
+      {/* Guarantee Block - Au-dessus du calendrier */}
+      <GuaranteeBlock 
+        location="bookcall_pre_calendar"
+        variant="booking_guarantee"
+        destination="#booking-form"
+        onCTAClick={() => {
+          const formElement = document.getElementById('booking-form');
+          formElement?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        ctaText="📞 Réserver mon appel"
+        showCTA={false}
+      />
+
       {/* Form Card */}
-      <Card className="p-6 sm:p-8 md:p-10 shadow-card border-2 border-primary/20">
+      <Card id="booking-form" className="p-6 sm:p-8 md:p-10 shadow-card border-2 border-primary/20">
         {formVariant === "multi_step" ? (
           <MultiStepBookingForm
             formData={formData}

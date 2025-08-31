@@ -24,6 +24,8 @@ import { SolutionSection } from "@/components/vsl/SolutionSection";
 import { ObjectionsSection } from "@/components/vsl/ObjectionsSection";
 import { SocialProofSection } from "@/components/vsl/SocialProofSection";
 import { UrgencySection } from "@/components/vsl/UrgencySection";
+import { GuaranteeBlock } from "@/components/GuaranteeBlock";
+
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
   const [showSurvey, setShowSurvey] = useState(false);
@@ -132,6 +134,15 @@ const VSL = () => {
             
             {layoutVariant === "enhanced" ? <EnhancedVSLPlayer onCTAClick={handleCTAClick} quizScore={quizResults?.totalScore || 0} /> : <VSLVideo onCTAClick={handleCTAClick} />}
           </div>
+
+          {/* Guarantee Block - Sous la vidéo */}
+          <GuaranteeBlock 
+            location="vsl_post_video"
+            variant="vsl_guarantee"
+            destination="/book-call"
+            onCTAClick={handleCTAClick}
+            ctaText="📞 Commencer maintenant"
+          />
 
           <div className="text-center">
             {/* Bullets optimisés orientés résultats */}

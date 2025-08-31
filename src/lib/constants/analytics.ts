@@ -9,6 +9,10 @@ export const ANALYTICS_EVENTS = {
     SUBMIT: 'bookcall_submit',
     CONFIRM: 'bookcall_confirm',
   },
+  GUARANTEE: {
+    VIEW: 'guarantee_view',
+    CTA_CLICK: 'guarantee_cta_click',
+  },
 } as const;
 
 export const CTA_LOCATIONS = {
