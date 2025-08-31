@@ -11,6 +11,7 @@ import { usePageTracking } from "@/hooks/usePageTracking";
 import { ABTest } from "@/components/ABTest";
 import { EnhancedBookingFlow } from "@/components/EnhancedBookingFlow";
 import { EnhancedBookingForm } from "@/components/enhanced/EnhancedBookingForm";
+import { OptimizedBookingForm } from "@/components/enhanced/OptimizedBookingForm";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 const BookCall = () => {
@@ -30,14 +31,15 @@ const BookCall = () => {
     <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
       <div className="container mx-auto container-mobile max-w-7xl">
         {bookingVariant === "simple" ? (
-          <EnhancedBookingForm 
+          <OptimizedBookingForm 
             prefilledData={{
               name: quizResults?.contactInfo?.name,
               email: quizResults?.contactInfo?.email,
               phone: quizResults?.contactInfo?.phone,
             }}
             onSuccess={() => {
-              // Handle success - could navigate to thank you page
+              // Navigate to thank you page or show success message
+              window.location.href = '/?success=booking';
             }}
           />
         ) : (

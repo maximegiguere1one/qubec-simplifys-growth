@@ -8,9 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead } from "@/lib/analytics";
+import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, getABVariant, trackABConversion } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
+import { EnhancedQuizProgress } from "@/components/enhanced/EnhancedQuizProgress";
+import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
@@ -20,8 +22,30 @@ const Quiz = () => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+  const [exitIntentShown, setExitIntentShown] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isMobile, mobileButtonClass, animationClass } = useMobileOptimized();
+  
+  // A/B test for personalization
+  const personalizationVariant = getABVariant("quiz_personalization", ["standard", "dynamic"]);
+  
+  // Track quiz abandonment
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (currentStep > 0 && currentStep < questions.length && !exitIntentShown) {
+        trackEvent('quiz_question_answer', { 
+          event_type: 'quiz_abandonment', 
+          current_step: currentStep,
+          answers_completed: Object.keys(answers).length 
+        });
+        setExitIntentShown(true);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [currentStep, answers, exitIntentShown]);
   
   // Track page view and start quiz session
   usePageTracking();
@@ -254,25 +278,30 @@ const Quiz = () => {
             {currentStep === 0 ? "Quelques infos pour personnaliser votre analyse" : "Aidez-nous à comprendre votre réalité d'entrepreneur"}
           </p>
           
-          {/* Progress Bar */}
-          <div className="max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-medium">
-                {currentStep === 0 ? "Informations de contact" : `Question ${currentQuestion + 1} sur ${questions.length}`}
-              </span>
-              <span className="text-sm font-medium">{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} className="h-3" />
-          </div>
+          {/* Enhanced Progress Bar with A/B test */}
+          <EnhancedQuizProgress 
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            questions={questions}
+          />
         </div>
 
         {/* Contact Capture or Question Card */}
         {currentStep === 0 ? (
-          <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
+          <Card className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
             <div className="mb-8">
-              <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 leading-relaxed">
-                Dites-nous qui vous êtes pour personnaliser votre analyse
+              <h2 className="text-responsive-lg font-bold mb-6 leading-relaxed text-center">
+                {personalizationVariant === "dynamic" 
+                  ? "👋 Bonjour ! Personnalisons votre analyse gratuite" 
+                  : "Dites-nous qui vous êtes pour personnaliser votre analyse"}
               </h2>
+              
+              {/* Value reinforcement */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
+                <p className="text-center text-sm text-muted-foreground">
+                  🎯 <strong className="text-foreground">Analyse 100% gratuite</strong> • ⏱️ 2 minutes • 📊 Résultats personnalisés • 🔒 Données sécurisées
+                </p>
+              </div>
               
               <div className="space-y-6">
                 <div>
@@ -333,13 +362,13 @@ const Quiz = () => {
             {/* Navigation */}
             <div className="flex justify-center">
               <Button
-                variant="cta"
+                variant="cta-large"
                 onClick={handleContactSubmit}
                 disabled={isSubmittingContact}
-                className="flex items-center gap-2 px-6 sm:px-8 btn-touch"
+                className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
               >
-                {isSubmittingContact ? "Un instant..." : "Commencer mon analyse"}
-                <ArrowRight className="w-4 h-4" />
+                {isSubmittingContact ? "🔄 Un instant..." : "🚀 Commencer mon analyse gratuite"}
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
           </Card>

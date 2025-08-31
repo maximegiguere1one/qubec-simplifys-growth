@@ -8,6 +8,7 @@ import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { usePersonalizedMessaging } from "@/hooks/usePersonalizedMessaging";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { CTAButton } from "@/components/CTAButton";
 import { VSLVideo } from "@/components/VSLVideo";
 import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
 import { ProductVisuals } from "@/components/ProductVisuals";
@@ -36,6 +37,10 @@ const VSL = () => {
   
   // A/B test for VSL layout
   const layoutVariant = getABVariant("vsl_layout", ["classic", "enhanced"]);
+  
+  // A/B test for autoplay (mobile-sensitive)
+  const autoplayVariant = getABVariant("vsl_autoplay", ["autoplay", "click_to_play"]);
+  const shouldAutoplay = autoplayVariant === "autoplay" && !isMobile;
 
   useEffect(() => {
     const results = localStorage.getItem("quizResults");
@@ -146,38 +151,54 @@ const VSL = () => {
             <TrustBadges />
           </div>
 
-          {/* Primary CTA with Calendar */}
-          <div className="text-center mb-12">
-            <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {/* Main CTA */}
-              <div className="lg:order-2">
-                <Button
-                  variant="cta-large"
-                  size="xl"
-                  onClick={handleCTAClick}
-                  className="w-full mb-4 text-sm sm:text-base px-4 sm:px-6 max-w-full"
+          {/* Enhanced Primary CTA with generous whitespace */}
+          <div className="text-center py-8 sm:py-12 px-4 sm:px-8 mb-12">
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                🎯 Prêt à récupérer 15+ heures par semaine ?
+              </h3>
+              
+              <CTAButton
+                location="vsl_primary"
+                variant="main_cta"
+                destination="/book-call"
+                size="cta-large"
+                className="w-full sm:w-auto h-14 sm:h-16 text-base sm:text-lg font-semibold px-8 sm:px-12 shadow-2xl hover:shadow-3xl transition-all duration-300"
+                onClick={handleCTAClick}
+              >
+                📞 Réserver ma consultation gratuite
+              </CTAButton>
+              
+              {/* Safety net CTA */}
+              <div className="pt-4">
+                <CTAButton
+                  location="vsl_secondary"
+                  variant="brochure_download"
+                  destination="#"
+                  size="outline"
+                  className="text-primary border-primary/30 hover:bg-primary/10"
+                  onClick={() => {
+                    // Trigger brochure download or info modal
+                    console.log("Download brochure");
+                  }}
                 >
-                  <span className="truncate">Découvrir mon système sur mesure (gratuit)</span>
-                </Button>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>100% gratuit et sans engagement</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>Avec un expert local qui comprend votre réalité</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    <span>Créneaux limités cette semaine</span>
-                  </div>
-                </div>
+                  📄 Télécharger la brochure gratuite
+                </CTAButton>
               </div>
               
-              {/* Integrated Calendar */}
-              <div className="lg:order-1">
-                <BookingCalendar />
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  <span>100% gratuit et sans engagement</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  <span>Expert local qui comprend votre réalité</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  <span>🔒 Vos données restent confidentielles</span>
+                </div>
               </div>
             </div>
           </div>
@@ -219,6 +240,22 @@ const VSL = () => {
 
       {/* Urgency Section */}
       <UrgencySection onCTAClick={handleCTAClick} />
+
+      {/* Sticky CTA Button */}
+      {showStickyButton && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full">
+          <CTAButton
+            location="vsl_sticky"
+            variant="sticky_cta"
+            destination="/book-call"
+            size="cta-large"
+            className="w-full shadow-2xl animate-pulse-gentle"
+            onClick={handleCTAClick}
+          >
+            📞 Réserver maintenant (gratuit)
+          </CTAButton>
+        </div>
+      )}
 
       {/* Micro Survey */}
       {showSurvey && (
