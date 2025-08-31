@@ -127,6 +127,8 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
             className="w-full h-full object-contain"
             poster=""
             preload="metadata"
+            playsInline
+            webkit-playsinline="true"
             onClick={togglePlay}
           >
             <source src={videoUrl} type="video/mp4" />
@@ -176,24 +178,24 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
 
           {/* Video Controls */}
           {duration > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 safe-area-inset-bottom">
               <div className="flex items-center gap-4">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={togglePlay}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-white/20 btn-touch"
                 >
                   {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                 </Button>
 
                 <div className="flex-1">
                   <div 
-                    className="flex-1 bg-white/30 rounded-full h-1 cursor-pointer mb-2"
+                    className="flex-1 bg-white/30 rounded-full h-2 cursor-pointer mb-2"
                     onClick={handleSeek}
                   >
                     <div
-                      className="bg-white h-1 rounded-full transition-all duration-200"
+                      className="bg-white h-2 rounded-full transition-all duration-200"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
@@ -207,7 +209,7 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={toggleMute}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-white/20 btn-touch"
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </Button>
@@ -216,7 +218,7 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={toggleFullscreen}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-white/20 btn-touch"
                 >
                   <Maximize2 className="w-4 h-4" />
                 </Button>

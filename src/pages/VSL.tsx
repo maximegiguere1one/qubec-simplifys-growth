@@ -191,13 +191,13 @@ const VSL = () => {
       <ProductVisuals />
 
       {/* ROI Calculator */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-6">
+      <section className="section-mobile bg-background">
+        <div className="container mx-auto container-mobile">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">
+            <h2 className="heading-responsive font-bold mb-4">
               Calculez la rentabilité de votre système sur mesure
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-responsive-base text-muted-foreground">
               Découvrez en 30 secondes pourquoi investir dans du sur mesure est toujours rentable
             </p>
           </div>
@@ -206,9 +206,9 @@ const VSL = () => {
       </section>
 
       {/* Problem Amplification Section */}
-      <section className="py-20 bg-destructive/10">
-        <div className="container mx-auto px-6 max-w-4xl text-center">
-          <h2 className="text-4xl font-bold mb-8 text-destructive">
+      <section className="section-mobile bg-destructive/10">
+        <div className="container mx-auto container-mobile max-w-4xl text-center">
+          <h2 className="heading-responsive font-bold mb-8 text-destructive">
             Si rien ne change, voici ce qui vous attend...
           </h2>
           <div className="space-y-6 text-lg">
@@ -224,7 +224,7 @@ const VSL = () => {
             <p className="leading-relaxed">
               • Le <strong>risque de burn-out</strong> augmentera chaque mois qui passe
             </p>
-            <p className="text-xl font-bold mt-8 text-destructive">
+            <p className="text-responsive-base font-bold mt-8 text-destructive">
               🚨 Il est URGENT d'agir maintenant !
             </p>
           </div>
@@ -232,22 +232,22 @@ const VSL = () => {
       </section>
 
       {/* Solution Section */}
-      <section className="py-20 bg-gradient-to-b from-secondary/20 to-background">
-        <div className="container mx-auto px-6 max-w-4xl">
+      <section className="section-mobile bg-gradient-to-b from-secondary/20 to-background">
+        <div className="container mx-auto container-mobile max-w-4xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-8">
+            <h2 className="heading-responsive font-bold mb-8">
               Mais imaginez maintenant que...
             </h2>
-            <p className="text-xl leading-relaxed mb-8">
+            <p className="text-responsive-base leading-relaxed mb-8">
               🌅 <strong>Vous arrivez au bureau le matin</strong>, votre café à la main, et en quelques clics vous avez une vue complète sur vos ventes, votre inventaire et vos finances
             </p>
-            <p className="text-xl leading-relaxed mb-8">
+            <p className="text-responsive-base leading-relaxed mb-8">
               ⚡ <strong>Vos factures se génèrent automatiquement</strong> avec les bonnes taxes (TPS/TVQ), vos clients reçoivent leurs documents conformes sans que vous leviez le petit doigt
             </p>
-            <p className="text-xl leading-relaxed mb-8">
+            <p className="text-responsive-base leading-relaxed mb-8">
               🏠 <strong>À 17h, vous fermez votre ordinateur</strong> sereinement car vous savez que tout est à jour, synchronisé et conforme
             </p>
-            <p className="text-xl leading-relaxed mb-8">
+            <p className="text-responsive-base leading-relaxed mb-8">
               🎯 <strong>Vous dormez tranquille</strong> car vous savez qu'en cas d'audit fiscal, tout est parfaitement en ordre
             </p>
             <div className="bg-success/20 border border-success/50 rounded-lg p-6 mt-12">
@@ -260,12 +260,12 @@ const VSL = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-secondary/30">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4">
+      <section className="section-mobile bg-secondary/30">
+        <div className="container mx-auto container-mobile">
+          <h2 className="heading-responsive font-bold text-center mb-4">
             Concrètement, voici ce que nous créons pour vous
           </h2>
-          <p className="text-xl text-center text-muted-foreground mb-16 max-w-3xl mx-auto">
+          <p className="text-responsive-base text-center text-muted-foreground mb-16 max-w-3xl mx-auto">
             Chaque système est conçu 100% sur mesure pour VOS processus spécifiques – par une équipe québécoise qui comprend votre réalité
           </p>
           
@@ -310,9 +310,9 @@ const VSL = () => {
       </section>
 
       {/* Objections Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <h2 className="text-4xl font-bold text-center mb-16">
+      <section className="section-mobile bg-background">
+        <div className="container mx-auto container-mobile max-w-4xl">
+          <h2 className="heading-responsive font-bold text-center mb-16">
             "Oui mais... j'ai des inquiétudes"
           </h2>
           <div className="space-y-8">
@@ -347,9 +347,9 @@ const VSL = () => {
       </section>
 
       {/* Social Proof Section */}
-      <section className="py-20 bg-secondary/20">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4">
+      <section className="section-mobile bg-secondary/20">
+        <div className="container mx-auto container-mobile">
+          <h2 className="heading-responsive font-bold text-center mb-4">
             Plus de 200 PME québécoises nous font déjà confiance
           </h2>
           <p className="text-center text-muted-foreground mb-16">Voici leurs résultats concrets après seulement quelques semaines</p>

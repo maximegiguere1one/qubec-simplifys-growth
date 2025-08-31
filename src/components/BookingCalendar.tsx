@@ -46,7 +46,7 @@ export const BookingCalendar = () => {
               setSelectedDate(slot.date);
               setSelectedTime(slot.time);
             }}
-            className={`w-full p-3 border rounded-lg text-left transition-all hover:border-primary hover:bg-primary/5 ${
+            className={`w-full p-3 border rounded-lg text-left transition-all hover:border-primary hover:bg-primary/5 btn-touch ${
               selectedDate === slot.date && selectedTime === slot.time
                 ? 'border-primary bg-primary/10'
                 : 'border-border'
