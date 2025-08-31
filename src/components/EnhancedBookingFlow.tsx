@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Star, Phone, MapPin, Briefcase, Target } from 'lucide-react';
 import { calculateLeadScore, LeadScore } from '@/lib/leadScoring';
 import { trackBooking } from '@/lib/analytics';
-import { OneSystemeTracking } from '@/lib/pixelTracking';
 import { useToast } from '@/hooks/use-toast';
 
 interface EnhancedBookingFlowProps {
@@ -392,11 +391,6 @@ export const EnhancedBookingFlow = ({ leadId, quizResults, prefilledData }: Enha
       };
 
       await trackBooking(bookingData);
-
-      // Track pixel events
-      if (leadId) {
-        OneSystemeTracking.trackBookingConversion(leadId, leadScore?.score || 0 > 70 ? 5000 : 2500);
-      }
 
       toast({
         title: "Consultation confirmée !",

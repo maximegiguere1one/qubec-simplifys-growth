@@ -6,6 +6,7 @@ import { SlotButton } from "@/components/booking/SlotButton";
 import { TimeSlot } from "@/types/booking";
 import { ANALYTICS_EVENTS, CTA_LOCATIONS } from "@/lib/constants/analytics";
 import { trackEvent } from "@/lib/analytics";
+import { NavigationService } from "@/lib/navigation";
 
 export const BookingCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -34,7 +35,7 @@ export const BookingCalendar = () => {
         cta_location: CTA_LOCATIONS.CALENDAR 
       });
       // Redirection vers formulaire ou modal de booking
-      window.location.href = '/book-call';
+      NavigationService.goToBookCall();
     }
   };
 
