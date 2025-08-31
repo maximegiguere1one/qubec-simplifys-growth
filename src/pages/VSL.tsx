@@ -12,12 +12,12 @@ import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { CTAButton } from "@/components/CTAButton";
 import { VSLVideo } from "@/components/VSLVideo";
 import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
+import { LazySection } from "@/components/LazySection";
+import { lazy } from "react";
+
 import { ProductVisuals } from "@/components/ProductVisuals";
 import { ROICalculator } from "@/components/ROICalculator";
-import { BookingCalendar } from "@/components/BookingCalendar";
 import { TrustBadges } from "@/components/TrustBadges";
-import { FAQ } from "@/components/FAQ";
-import { ProcessSteps } from "@/components/ProcessSteps";
 import { BenefitsSection } from "@/components/vsl/BenefitsSection";
 import { ProblemAmplificationSection } from "@/components/vsl/ProblemAmplificationSection";
 import { SolutionSection } from "@/components/vsl/SolutionSection";
@@ -253,41 +253,57 @@ const VSL = () => {
         </div>
       </section>
 
-      {/* Product Visuals */}
-      <ProductVisuals />
+      {/* Product Visuals - Lazy loaded */}
+      <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
+        <ProductVisuals />
+      </LazySection>
 
-      {/* ROI Calculator */}
-      <section className="section-mobile bg-background">
-        <div className="container mx-auto container-mobile">
-          <div className="text-center mb-12">
-            <h2 className="heading-responsive font-bold mb-4">
-              Calculez la rentabilité de votre système sur mesure
-            </h2>
-            <p className="text-responsive-base text-muted-foreground">
-              Découvrez en 30 secondes pourquoi investir dans du sur mesure est toujours rentable
-            </p>
+      {/* ROI Calculator - Lazy loaded */}
+      <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
+        <section className="section-mobile bg-background">
+          <div className="container mx-auto container-mobile">
+            <div className="text-center mb-12">
+              <h2 className="heading-responsive font-bold mb-4">
+                Calculez la rentabilité de votre système sur mesure
+              </h2>
+              <p className="text-responsive-base text-muted-foreground">
+                Découvrez en 30 secondes pourquoi investir dans du sur mesure est toujours rentable
+              </p>
+            </div>
+            <ROICalculator />
           </div>
-          <ROICalculator />
-        </div>
-      </section>
+        </section>
+      </LazySection>
 
-      {/* Problem Amplification Section */}
-      <ProblemAmplificationSection />
+      {/* Problem Amplification Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <ProblemAmplificationSection />
+      </LazySection>
 
-      {/* Solution Section */}
-      <SolutionSection />
+      {/* Solution Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <SolutionSection />
+      </LazySection>
 
-      {/* Benefits Section */}
-      <BenefitsSection />
+      {/* Benefits Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <BenefitsSection />
+      </LazySection>
 
-      {/* Objections Section */}
-      <ObjectionsSection />
+      {/* Objections Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <ObjectionsSection />
+      </LazySection>
 
-      {/* Social Proof Section */}
-      <SocialProofSection />
+      {/* Social Proof Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <SocialProofSection />
+      </LazySection>
 
-      {/* Urgency Section */}
-      <UrgencySection onCTAClick={handleCTAClick} />
+      {/* Urgency Section - Lazy loaded */}
+      <LazySection fallback={<div className="h-64 bg-muted/20 animate-pulse" />}>
+        <UrgencySection onCTAClick={handleCTAClick} />
+      </LazySection>
 
 
       {/* Sticky CTA Button */}

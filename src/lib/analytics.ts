@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { analyticsQueue } from "@/lib/analyticsQueue";
 
 // Generate session ID for anonymous tracking
 export const getSessionId = (): string => {
@@ -77,26 +78,26 @@ export type FunnelEventType =
   | 'bookcall_confirm';
 
 // Track funnel events
-export const trackEvent = async (
-  eventType: FunnelEventType,
+export const trackEvent = (
+  eventType: FunnelEventType, 
   eventData: Record<string, any> = {},
   leadId?: string | null
 ) => {
   try {
     const sessionId = getSessionId();
     const currentLeadId = leadId || getLeadId();
-
-    await supabase.from('funnel_events').insert({
+    
+    // Use analytics queue for batching instead of immediate DB write
+    analyticsQueue.add(eventType, {
+      ...eventData,
       session_id: sessionId,
-      lead_id: currentLeadId,
-      event_type: eventType,
-      event_data: eventData,
-      page_url: window.location.href,
-      referrer: document.referrer,
+      timestamp: new Date().toISOString(),
       user_agent: navigator.userAgent,
-    });
+      referrer: document.referrer,
+      url: window.location.href,
+    }, currentLeadId);
   } catch (error) {
-    console.error('Error tracking event:', error);
+    console.error('Analytics tracking error:', error);
   }
 };
 

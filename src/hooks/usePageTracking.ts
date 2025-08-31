@@ -5,7 +5,7 @@ import { trackEvent } from '@/lib/analytics';
 // Map routes to event types
 const routeEventMap: Record<string, string> = {
   '/': 'lp_view',
-  '/quiz': 'quiz_start',
+  '/quiz': 'quiz_view', // Changed from quiz_start to avoid duplication
   '/vsl': 'vsl_view',
   '/book-call': 'bookcall_view',
 };
