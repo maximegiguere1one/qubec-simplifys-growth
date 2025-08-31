@@ -174,10 +174,12 @@ const Landing = () => {
                   <Button 
                     type="submit" 
                     variant="cta-large" 
-                    className="w-full btn-touch"
+                    className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Envoi en cours..." : "Voir combien de temps je peux vous sauver →"}
+                    <span className="truncate">
+                      {isLoading ? "Envoi en cours..." : "Voir combien de temps je peux vous sauver"}
+                    </span>
                   </Button>
                 </form>
                 <p className="text-sm text-muted-foreground text-center mt-4">
@@ -193,9 +195,9 @@ const Landing = () => {
                 className="rounded-2xl shadow-strong w-full"
                 loading="lazy"
               />
-              <div className="absolute -bottom-3 -left-3 sm:-bottom-6 sm:-left-6 bg-success text-success-foreground p-2 sm:p-4 rounded-xl shadow-medium">
-                <div className="text-lg sm:text-2xl font-bold">95%</div>
-                <div className="text-xs sm:text-sm">de satisfaction client</div>
+              <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 bg-success text-success-foreground p-2 sm:p-3 rounded-lg shadow-medium max-w-[100px] sm:max-w-none">
+                <div className="text-sm sm:text-lg font-bold">95%</div>
+                <div className="text-xs whitespace-nowrap">satisfaction</div>
               </div>
             </div>
           </div>
@@ -271,13 +273,13 @@ const Landing = () => {
           </p>
           <Button 
             variant="cta-large"
-            className="btn-touch"
+            className="btn-touch text-sm sm:text-base px-4 sm:px-6 max-w-full"
             onClick={() => {
               trackEvent('lp_submit_optin', { cta_location: 'final' });
               document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Calculer mes heures perdues (gratuit)
+            <span className="truncate">Calculer mes heures perdues</span>
           </Button>
         </div>
       </section>

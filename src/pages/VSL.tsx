@@ -131,9 +131,9 @@ const VSL = () => {
                   variant="cta-large"
                   size="xl"
                   onClick={handleCTAClick}
-                  className="w-full mb-4"
+                  className="w-full mb-4 text-sm sm:text-base px-4 sm:px-6 max-w-full"
                 >
-                  Découvrir mon système sur mesure (30 min gratuit)
+                  <span className="truncate">Découvrir mon système sur mesure (gratuit)</span>
                 </Button>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <div className="flex items-center justify-center gap-2">

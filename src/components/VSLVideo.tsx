@@ -69,9 +69,9 @@ export const VSLVideo = ({ onCTAClick }: VSLVideoProps) => {
 
   return (
     <div className="max-w-4xl mx-auto section-mobile relative">
-      <Card className="overflow-hidden shadow-strong">
+      <Card className="overflow-hidden shadow-strong max-w-full">
         {/* Video Player */}
-        <div className="relative bg-black aspect-video touch-manipulation">
+        <div className="relative bg-black aspect-video touch-manipulation overflow-hidden">
           {/* Actual Video Element */}
           <VideoPlayer
             ref={videoRef}

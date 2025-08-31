@@ -184,16 +184,16 @@ const BookCall = () => {
                     <Clock className="inline w-5 h-5 mr-2" />
                     Sélectionnez l'heure
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                     {availableTimes.map((time) => (
                       <Button
                         key={time}
                         type="button"
                         variant={selectedTime === time ? "cta" : "outline"}
                         onClick={() => setSelectedTime(time)}
-                        className="h-12 btn-touch"
+                        className="h-12 btn-touch text-sm sm:text-base max-w-full flex-shrink-0"
                       >
-                        {time}
+                        <span className="truncate">{time}</span>
                       </Button>
                     ))}
                   </div>
@@ -275,10 +275,12 @@ const BookCall = () => {
                 <Button
                   type="submit"
                   variant="cta-large"
-                  className="w-full pulse-animation btn-touch"
+                  className="w-full pulse-animation btn-touch text-sm sm:text-base px-4 sm:px-6 max-w-full"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Réservation en cours..." : "Je réserve ma consultation gratuite MAINTENANT"}
+                  <span className="truncate">
+                    {isSubmitting ? "Réservation en cours..." : "Je réserve ma consultation gratuite"}
+                  </span>
                 </Button>
               </form>
 
