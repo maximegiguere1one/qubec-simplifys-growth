@@ -395,35 +395,42 @@ const Quiz = () => {
         {currentStep === 0 ? (
           <Card id="contact-form" className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
             <div className="mb-8">
-              <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">👋</span>
+                  <span className="text-2xl">🎯</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold leading-relaxed">
-                  Personnalisons votre analyse gratuite
+                <h2 className="text-xl sm:text-2xl font-bold leading-tight text-center">
+                  Recevez votre plan d'action personnalisé pour simplifier la gestion de votre entreprise
                 </h2>
               </div>
               
-              {/* Indicateurs de confiance avec icônes */}
+              {/* Sous-titre confiance + bénéfice */}
+              <p className="text-center text-lg text-muted-foreground mb-4">
+                Une analyse rapide. Des recommandations concrètes. Aucune obligation.
+              </p>
+              
+              {/* Accroche émotionnelle */}
+              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 mb-6 max-w-2xl mx-auto">
+                <p className="text-center text-warning font-medium">
+                  🟠 Fatigué de tout faire à la main ? Gagnez en clarté et en temps dès aujourd'hui.
+                </p>
+              </div>
+              
+              {/* Badge optimisé */}
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-lg">🎯</span>
-                    <span className="text-xs font-medium">100% gratuit</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-lg">⏱️</span>
-                    <span className="text-xs font-medium">2 minutes</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-lg">📊</span>
-                    <span className="text-xs font-medium">Résultats personnalisés</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-lg">🔒</span>
-                    <span className="text-xs font-medium">Données sécurisées</span>
-                  </div>
-                </div>
+                <p className="text-center text-sm font-medium">
+                  ✅ <span className="text-primary">Analyse 100% gratuite</span> • ⏱ <span className="text-primary">Moins de 2 minutes</span> • 🔐 <span className="text-primary">Données 100% sécurisées</span>
+                </p>
+              </div>
+              
+              {/* Rappel bénéfice avant formulaire */}
+              <div className="text-center mb-6">
+                <p className="text-success font-medium">
+                  🟢 Un diagnostic rapide. Des recommandations claires. Aucune obligation.
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Cette analyse est gratuite, rapide, sans engagement.
+                </p>
               </div>
               
               <div className="space-y-6">
@@ -490,17 +497,22 @@ const Quiz = () => {
                 </div>
               </div>
               
-              {/* Navigation */}
-              <div className="flex justify-center">
+              {/* Navigation avec CTA optimisé */}
+              <div className="text-center">
                 <Button
                   variant="cta-large"
                   onClick={handleContactSubmit}
                   disabled={isSubmittingContact}
                   className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
-                  {isSubmittingContact ? "🔄 Un instant..." : "🚀 Commencer mon analyse gratuite"}
+                  {isSubmittingContact ? "🔄 Un instant..." : "🧡 Commencer mon diagnostic maintenant"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
+                
+                {/* Preuve sociale sous le bouton */}
+                <p className="text-xs text-muted-foreground mt-3">
+                  ✅ Déjà utilisé par +247 PME québécoises
+                </p>
               </div>
             </div>
           </Card>
