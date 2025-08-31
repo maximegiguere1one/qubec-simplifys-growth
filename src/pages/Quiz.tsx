@@ -36,53 +36,53 @@ const Quiz = () => {
   const questions = [
     {
       id: 1,
-      question: "Qu'est-ce qui vous fait perdre le plus de temps dans votre business?",
+      question: "En ce moment, qu'est-ce qui vous fait perdre le plus de temps dans votre quotidien d'entrepreneur ?",
       options: [
-        { value: "inventory", label: "Compter mon inventaire / mes stocks", score: 25, priority: "Gestion d'inventaire" },
-        { value: "billing", label: "Faire mes factures et ma comptabilité", score: 20, priority: "Facturation" },
-        { value: "hr", label: "Gérer les horaires et la paie", score: 15, priority: "Gestion des employés" },
-        { value: "projects", label: "Suivre mes projets et mes deadlines", score: 20, priority: "Suivi de projets" },
-        { value: "crm", label: "Tenir à jour mes contacts clients", score: 25, priority: "Gestion clients" }
+        { value: "inventory", label: "Compter mon inventaire et suivre mes stocks", score: 25, priority: "Gestion d'inventaire" },
+        { value: "billing", label: "Faire mes factures et tenir mes livres à jour", score: 20, priority: "Facturation" },
+        { value: "hr", label: "Gérer les horaires et calculer la paie", score: 15, priority: "Gestion des employés" },
+        { value: "projects", label: "Suivre mes projets et respecter mes échéances", score: 20, priority: "Suivi de projets" },
+        { value: "crm", label: "Tenir à jour mes contacts et suivre mes clients", score: 25, priority: "Gestion clients" }
       ]
     },
     {
       id: 2,
-      question: "Combien d'heures par semaine vous passez dans la paperasse?",
+      question: "Quand vous pensez aux heures que vous passez dans la paperasse chaque semaine, que ressentez-vous ?",
       options: [
-        { value: "low", label: "Moins de 5 heures (pas si pire)", score: 5 },
-        { value: "medium", label: "5 à 15 heures (ça commence à être lourd)", score: 15 },
-        { value: "high", label: "15 à 25 heures (c'est rendu ridicule)", score: 25 },
-        { value: "very_high", label: "Plus de 25 heures (je passe ma vie là-dedans!)", score: 35 }
+        { value: "low", label: "Moins de 5 heures - c'est gérable", score: 5 },
+        { value: "medium", label: "5 à 15 heures - ça commence à peser", score: 15 },
+        { value: "high", label: "15 à 25 heures - c'est vraiment trop", score: 25 },
+        { value: "very_high", label: "Plus de 25 heures - j'en ai assez !", score: 35 }
       ]
     },
     {
       id: 3,
-      question: "Avez-vous déjà dit 'Si seulement il existait un logiciel qui...' ?",
+      question: "Avez-vous déjà pensé : 'Si seulement il existait un outil qui faisait exactement ce dont j'ai besoin' ?",
       options: [
-        { value: "never", label: "Non, jamais vraiment", score: 1 },
-        { value: "sometimes", label: "Oui, quelques fois", score: 2 },
-        { value: "often", label: "Oui, souvent même !", score: 3 },
-        { value: "constantly", label: "Tout le temps ! C'est mon quotidien", score: 4 }
+        { value: "never", label: "Non, mes outils actuels me conviennent", score: 1 },
+        { value: "sometimes", label: "Oui, de temps en temps", score: 2 },
+        { value: "often", label: "Oui, assez souvent même !", score: 3 },
+        { value: "constantly", label: "Tout le temps ! C'est frustrant", score: 4 }
       ]
     },
     {
       id: 4,
-      question: "Quelle serait votre réaction si on vous créait LE système parfait pour votre entreprise ?",
+      question: "Si quelqu'un pouvait créer pour vous l'outil parfait adapté à votre entreprise, comment réagiriez-vous ?",
       options: [
-        { value: "skeptical", label: "Je serais sceptique", score: 1 },
-        { value: "interested", label: "Ça m'intéresserait", score: 2 },
+        { value: "skeptical", label: "Je serais prudent, ça semble trop beau", score: 1 },
+        { value: "interested", label: "Ça m'intéresserait vraiment", score: 2 },
         { value: "excited", label: "Je serais très enthousiaste !", score: 3 },
-        { value: "dream", label: "Ce serait un rêve qui devient réalité !", score: 4 }
+        { value: "dream", label: "Ce serait un rêve qui se réalise !", score: 4 }
       ]
     },
     {
       id: 5,
-      question: "Quel type de système révolutionnerait le plus votre entreprise ?",
+      question: "Quel type de solution transformerait le plus votre façon de travailler ?",
       options: [
-        { value: "automation", label: "Automatisation complète des processus", score: 2, type: "Système d'automatisation" },
-        { value: "integration", label: "Unification de tous mes outils", score: 3, type: "Plateforme intégrée" },
-        { value: "custom", label: "Quelque chose de 100% adapté à mes besoins", score: 4, type: "Solution sur mesure complète" },
-        { value: "mobile", label: "Gestion mobile et en temps réel", score: 3, type: "Application mobile personnalisée" }
+        { value: "automation", label: "Que tout se fasse automatiquement", score: 2, type: "Système d'automatisation" },
+        { value: "integration", label: "Avoir tous mes outils dans un seul endroit", score: 3, type: "Plateforme intégrée" },
+        { value: "custom", label: "Quelque chose conçu spécifiquement pour moi", score: 4, type: "Solution sur mesure complète" },
+        { value: "mobile", label: "Pouvoir tout gérer depuis mon téléphone", score: 3, type: "Application mobile personnalisée" }
       ]
     }
   ];
@@ -243,10 +243,10 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
           <h1 className="text-responsive-xl font-bold mb-4">
-            {currentStep === 0 ? "Commençons par vous connaître!" : "Combien d'heures par semaine vous pourriez récupérer?"}
+            {currentStep === 0 ? "Commençons par vous connaître !" : "Découvrons ensemble votre potentiel d'économie de temps"}
           </h1>
           <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
-            {currentStep === 0 ? "Puis nous analyserons votre situation en 5 questions simples" : "5 questions simples pour voir où vous perdez votre temps"}
+            {currentStep === 0 ? "Quelques infos pour personnaliser votre analyse" : "Aidez-nous à comprendre votre réalité d'entrepreneur"}
           </p>
           
           {/* Progress Bar */}

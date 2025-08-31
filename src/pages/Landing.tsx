@@ -66,23 +66,23 @@ const Landing = () => {
   const benefits = [
     {
       icon: Clock,
-      title: "Finies les heures perdues",
-      description: "Plus de paperasse, plus de calculs à la main. Votre système fait tout automatiquement."
+      title: "Retrouvez votre temps précieux",
+      description: "Des clients québécois économisent en moyenne 15h par semaine grâce à l'automatisation intelligente."
     },
     {
       icon: Shield,
-      title: "Zéro casse-tête technique",
-      description: "Je m'occupe de tout l'aspect technique. Vous, vous vous concentrez sur votre business."
+      title: "Dormez sur vos deux oreilles",
+      description: "Vos données sont protégées selon les standards québécois avec des sauvegardes automatiques."
     },
     {
       icon: Zap,
-      title: "Prêt à utiliser immédiatement",
-      description: "Je configure tout, je forme votre équipe. Vous commencez à sauver du temps dès le jour 1."
+      title: "Un partenaire qui vous comprend",
+      description: "Notre équipe locale connaît vos défis d'entrepreneur québécois et parle votre langue."
     },
     {
       icon: TrendingUp,
-      title: "Plus de temps = plus d'argent",
-      description: "Le temps gagné, vous pouvez le réinvestir dans faire grandir votre entreprise."
+      title: "Faites grandir votre entreprise sereinement",
+      description: "Concentrez-vous sur ce qui compte vraiment pendant que vos processus fonctionnent en autonomie."
     }
   ];
 
@@ -148,13 +148,16 @@ const Landing = () => {
 
               <Card className="p-4 sm:p-6 md:p-8 shadow-card border-2 border-primary/20">
                 <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 text-center">
-                  Voir combien de temps je peux vous sauver
+                  Combien de temps pourriez-vous récupérer ?
                 </h2>
+                <p className="text-center text-muted-foreground mb-6 max-w-2xl mx-auto">
+                  Nos clients québécois ont en moyenne récupéré 15 heures par semaine. Et vous ?
+                </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Input
                       type="text"
-                      placeholder="Votre nom complet"
+                      placeholder="Votre nom"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="h-11 sm:h-12 text-base sm:text-lg btn-touch"
@@ -164,23 +167,54 @@ const Landing = () => {
                   <div>
                     <Input
                       type="email"
-                      placeholder="Votre adresse courriel professionnelle"
+                      placeholder="Votre courriel"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="h-11 sm:h-12 text-base sm:text-lg btn-touch"
                       required
                     />
                   </div>
-                  <Button 
-                    type="submit" 
-                    variant="cta-large" 
-                    className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
-                    disabled={isLoading}
-                  >
-                    <span className="truncate">
-                      {isLoading ? "Envoi en cours..." : "Voir combien de temps je peux vous sauver"}
-                    </span>
-                  </Button>
+                  <ABTest
+                    testName="landing_cta"
+                    variants={{
+                      control: (
+                        <Button 
+                          type="submit" 
+                          variant="cta-large" 
+                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
+                          disabled={isLoading}
+                        >
+                          <span className="truncate">
+                            {isLoading ? "Analyse en cours..." : "Découvrir mon potentiel d'économie de temps"}
+                          </span>
+                        </Button>
+                      ),
+                      variant_a: (
+                        <Button 
+                          type="submit" 
+                          variant="cta-large" 
+                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
+                          disabled={isLoading}
+                        >
+                          <span className="truncate">
+                            {isLoading ? "Analyse en cours..." : "Voir combien d'heures je peux récupérer"}
+                          </span>
+                        </Button>
+                      ),
+                      variant_b: (
+                        <Button 
+                          type="submit" 
+                          variant="cta-large" 
+                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
+                          disabled={isLoading}
+                        >
+                          <span className="truncate">
+                            {isLoading ? "Analyse en cours..." : "Commencer mon analyse personnalisée"}
+                          </span>
+                        </Button>
+                      )
+                    }}
+                  />
                 </form>
                 <p className="text-sm text-muted-foreground text-center mt-4">
                   ✓ Aucun engagement • ✓ 100% gratuit • ✓ Résultats en 2 minutes
@@ -299,6 +333,26 @@ const Landing = () => {
           onDismiss={() => setShowSurvey(false)}
         />
       )}
+
+      {/* Legal Footer */}
+      <footer className="border-t border-border/50 mt-16 sm:mt-20 pt-8 sm:pt-12 bg-background">
+        <div className="container mx-auto container-mobile">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-sm text-muted-foreground mb-6">
+              <a href="#" className="hover:text-foreground transition-colors">Conditions d'utilisation</a>
+              <a href="#" className="hover:text-foreground transition-colors">Politique de confidentialité</a>
+              <a href="#" className="hover:text-foreground transition-colors">Mentions légales</a>
+              <a href="#" className="hover:text-foreground transition-colors">Nous contacter</a>
+            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              © 2024 One Système. Tous droits réservés.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Les résultats peuvent varier selon l'entreprise. Les témoignages reflètent l'expérience individuelle des clients.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
