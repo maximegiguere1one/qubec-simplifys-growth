@@ -326,14 +326,16 @@ const Quiz = () => {
       <div className="container mx-auto container-mobile max-w-4xl">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
-          <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
-              Découvrons ensemble votre potentiel d'économie de temps
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
-              Aidez-nous à comprendre votre réalité d'entrepreneur
-            </p>
-          </div>
+          {currentStep === 0 && (
+            <div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                Découvrons ensemble votre potentiel d'économie de temps
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
+                Aidez-nous à comprendre votre réalité d'entrepreneur
+              </p>
+            </div>
+          )}
           
           {/* Enhanced Progress Bar with A/B test */}
           <EnhancedQuizProgress 
