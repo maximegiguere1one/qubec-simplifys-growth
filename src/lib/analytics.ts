@@ -143,6 +143,53 @@ export const trackABConversion = async (testName: string, variant: string, conve
   });
 };
 
+// Send quiz confirmation email
+export const sendQuizConfirmationEmail = async (
+  leadId: string,
+  totalScore: number,
+  timeSpent: number,
+  answers: Record<number, string>,
+  diagnostic: string,
+  contactInfo: { name: string; email: string; phone: string }
+) => {
+  try {
+    const response = await supabase.functions.invoke('send-quiz-confirmation', {
+      body: {
+        leadId,
+        totalScore,
+        timeSpent,
+        answers,
+        diagnostic,
+        contactInfo
+      }
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    // Track email send success
+    await trackEvent('quiz_complete', {
+      event_type: 'confirmation_email_sent',
+      email_id: response.data?.emailId,
+      total_score: totalScore
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error sending quiz confirmation email:', error);
+    
+    // Track email send failure
+    await trackEvent('quiz_complete', {
+      event_type: 'confirmation_email_failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      total_score: totalScore
+    });
+
+    throw error;
+  }
+};
+
 // VSL specific tracking
 export const trackVSLEvent = async (eventType: 'play' | 'pause' | 'progress' | 'complete' | 'cta_click' | 'cta_show', data: Record<string, any> = {}) => {
   await trackEvent('vsl_play', {

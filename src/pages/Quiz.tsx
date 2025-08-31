@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, getABVariant, trackABConversion } from "@/lib/analytics";
+import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, getABVariant, trackABConversion, sendQuizConfirmationEmail, getLeadId } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { EnhancedQuizProgress } from "@/components/enhanced/EnhancedQuizProgress";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { QuizCompletionDialog } from "@/components/QuizCompletionDialog";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
@@ -26,6 +27,10 @@ const Quiz = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSessionStarted, setQuizSessionStarted] = useState(false);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState<string>("");
+  const [currentDiagnostic, setCurrentDiagnostic] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isMobile, mobileButtonClass, animationClass } = useMobileOptimized();
@@ -222,7 +227,7 @@ const Quiz = () => {
     }, 600);
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // Only validate if this is a manual click (not auto-advance)
     if (!isAdvancingRef.current && !answers[currentQuestion]) {
       toast({
@@ -257,6 +262,7 @@ const Quiz = () => {
 
       // Generate personalized diagnostic message including name
       const diagnosticMessage = generateDiagnostic(totalScore, answers);
+      setCurrentDiagnostic(diagnosticMessage);
       
       // Store quiz results with diagnostic and contact info
       localStorage.setItem("quizResults", JSON.stringify({ 
@@ -265,13 +271,30 @@ const Quiz = () => {
         diagnostic: diagnosticMessage,
         contactInfo 
       }));
-      
-      toast({
-        title: "Analyse terminée !",
-        description: "Découvrez votre diagnostic personnalisé.",
-      });
-      
-      navigate("/vsl");
+
+      // Show completion dialog immediately
+      setShowCompletionDialog(true);
+
+      // Send confirmation email asynchronously
+      const leadId = getLeadId();
+      if (leadId) {
+        try {
+          await sendQuizConfirmationEmail(
+            leadId,
+            totalScore,
+            totalTimeSpent,
+            answers,
+            diagnosticMessage,
+            contactInfo
+          );
+          setEmailSent(true);
+        } catch (error) {
+          setEmailError(error instanceof Error ? error.message : "Erreur inconnue");
+          console.error("Failed to send confirmation email:", error);
+        }
+      } else {
+        setEmailError("Impossible de récupérer l'ID du lead");
+      }
     }
   };
 
@@ -497,6 +520,21 @@ const Quiz = () => {
             onDismiss={() => setShowSurvey(true)}
           />
         )}
+
+        {/* Quiz Completion Dialog */}
+        <QuizCompletionDialog
+          isOpen={showCompletionDialog}
+          onClose={() => setShowCompletionDialog(false)}
+          diagnostic={currentDiagnostic}
+          contactName={contactInfo.name}
+          totalScore={Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
+            const question = questions[parseInt(questionId)];
+            const option = question.options.find(opt => opt.value === answerValue);
+            return sum + (option?.score || 0);
+          }, 0)}
+          emailSent={emailSent}
+          emailError={emailError}
+        />
       </div>
     </div>
   );
