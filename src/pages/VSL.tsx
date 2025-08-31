@@ -103,9 +103,26 @@ const VSL = () => {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
               {getPersonalizedMessage()}
             </h1>
+          </div>
+
+          {/* VSL Video - Priorité visuelle #1 */}
+          <div id="vsl-video" className="scroll-mt-20 mb-8">
+            <div className="text-center mb-4">
+              <p className="text-sm text-muted-foreground">
+                👉 Découvrez en 4 min comment économiser 10–25h par semaine
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                🛠️ Une solution testée au Québec, prête en 30 jours
+              </p>
+            </div>
             
+            {layoutVariant === "enhanced" ? <EnhancedVSLPlayer onCTAClick={handleCTAClick} quizScore={quizResults?.totalScore || 0} /> : <VSLVideo onCTAClick={handleCTAClick} />}
+          </div>
+
+          {/* Badge et bloc qualification APRÈS la vidéo */}
+          <div className="text-center mb-6">
             {quizResults?.totalScore >= 12 && (
-              <Badge variant="secondary" className="mb-2">
+              <Badge variant="secondary" className="mb-4">
                 🎯 Vous vous qualifiez pour notre service : solution prioritaire détectée
               </Badge>
             )}
@@ -119,13 +136,24 @@ const VSL = () => {
                 <p className="text-sm md:text-base text-foreground leading-relaxed">
                   👉 Vous êtes éligible à un système sur mesure qui vous les rend, et votre situation est considérée comme prioritaire.
                 </p>
-                <p className="text-sm md:text-base font-bold text-green-600">
-                  🔒 Si vous ne gagnez pas au moins 10h dès le premier mois, nous vous remboursons + nous vous versons <span className="text-red-600">1 000 $ cash</span>.
-                </p>
+                
+                {/* Garantie ultra-mesurable séparée */}
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+                  <p className="text-sm md:text-base font-bold text-green-700 mb-1">
+                    🔒 Garantie ultra-mesurable :
+                  </p>
+                  <p className="text-sm md:text-base text-green-700">
+                    Si vous ne gagnez pas au moins 10h dès le premier mois →
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-2 mt-2">
+                    <span className="text-sm font-medium text-green-700">✅ On vous rembourse</span>
+                    <span className="text-sm font-bold text-red-600">💰 + On vous vire 1 000 $ cash</span>
+                  </div>
+                </div>
               </div>
             )}
             
-            {/* CTA au-dessus de la vidéo */}
+            {/* CTA principal APRÈS qualification */}
             <div className="mb-4">
               <CTAButton location="vsl_top" variant="primary_cta" destination="/book-call" size="cta" className="px-8 py-3 font-semibold" onClick={handleCTAClick}>
                 📞 Planifier mon appel gratuit
@@ -134,27 +162,10 @@ const VSL = () => {
               {/* Urgence douce sous le CTA */}
               {quizResults?.totalScore >= 12 && (
                 <p className="text-xs text-muted-foreground mt-2">
-                  ⚠️ Nombre de places limité pour les nouveaux clients chaque mois.
+                  ⚠️ Nombre de places limité pour les nouveaux clients ce mois-ci.
                 </p>
               )}
             </div>
-          </div>
-          
-          {/* Ligne d'intro au-dessus de la vidéo */}
-          <div className="text-center mb-6">
-            
-          </div>
-
-          {/* VSL Video avec titre optimisé */}
-          <div id="vsl-video" className="scroll-mt-20 mb-8">
-            <div className="text-center mb-4">
-              
-              <p className="text-sm text-muted-foreground mt-2">
-                🛠️ Une solution testée au Québec, prête en 30 jours
-              </p>
-            </div>
-            
-            {layoutVariant === "enhanced" ? <EnhancedVSLPlayer onCTAClick={handleCTAClick} quizScore={quizResults?.totalScore || 0} /> : <VSLVideo onCTAClick={handleCTAClick} />}
           </div>
 
           <div className="text-center">
