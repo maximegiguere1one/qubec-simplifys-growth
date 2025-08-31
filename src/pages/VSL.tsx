@@ -90,12 +90,20 @@ const VSL = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="pt-20 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20">
+      <section className="pt-14 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20">
         <div className="container mx-auto container-mobile max-w-6xl">
-          <div className="text-center mb-12">
-            <h1 className="text-responsive-xl font-bold mb-4 sm:mb-6 leading-tight">
+          <div className="text-center mb-8">
+            <h1 className="text-responsive-xl font-bold mb-6 sm:mb-8 leading-tight">
               {getPersonalizedMessage()}
             </h1>
+          </div>
+
+          {/* VSL Video */}
+          <div id="vsl-video" className="scroll-mt-20 mb-8">
+            <VSLVideo onCTAClick={handleCTAClick} />
+          </div>
+
+          <div className="text-center">
             <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
               Vous en avez assez de perdre vos soirées dans la paperasse? De chercher des documents partout? De refaire les mêmes calculs encore et encore? Je vous montre comment tout automatiser, <span className="font-semibold text-primary">sans que vous ayez à apprendre quoi que ce soit de compliqué.</span>
             </p>
@@ -118,9 +126,6 @@ const VSL = () => {
             {/* Trust Badges */}
             <TrustBadges />
           </div>
-
-          {/* VSL Video */}
-          <VSLVideo onCTAClick={handleCTAClick} />
 
           {/* Primary CTA with Calendar */}
           <div className="text-center mb-12">
