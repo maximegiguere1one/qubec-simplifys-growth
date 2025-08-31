@@ -17,6 +17,8 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
   const [progress, setProgress] = useState(0);
   const [showCTA, setShowCTA] = useState(false);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   
   const { isMobile, mobileButtonClass, animationClass } = useMobileOptimized();
   
@@ -24,14 +26,9 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
   const videoVariant = getABVariant("vsl_video", ["main", "short", "personalized"]);
   const ctaVariant = getABVariant("vsl_cta", ["standard", "urgent", "personal"]);
   
-  // Select video source based on variant and quiz score
+  // Use the working Supabase video URL for all variants
   const getVideoSource = () => {
-    if (videoVariant === "personalized" && quizScore >= 16) {
-      return "/vsl-high-intent.mp4";
-    } else if (videoVariant === "short") {
-      return "/vsl-short.mp4";
-    }
-    return "/vsl-main.mp4";
+    return "https://lbwjesrgernvjiorktia.supabase.co/storage/v1/object/public/vsl%20et%20marketing/VSL%20V3%20.mp4";
   };
 
   const getCTAText = () => {
@@ -98,16 +95,23 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
       trackABConversion("vsl_video", videoVariant, "complete");
     };
 
+    const handleError = () => {
+      setHasError(true);
+      console.error('Video loading error');
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
     video.addEventListener('ended', handleEnded);
+    video.addEventListener('error', handleError);
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('error', handleError);
     };
   }, [hasStartedPlaying, progress, showCTA, videoVariant, ctaVariant]);
 
@@ -138,19 +142,38 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
 
   return (
     <Card className="overflow-hidden shadow-strong">
-      <div className="relative group">
+      <div className="relative group" 
+           onMouseEnter={() => setShowControls(true)}
+           onMouseLeave={() => setShowControls(false)}
+           onTouchStart={() => setShowControls(true)}>
         <video
           ref={videoRef}
           src={getVideoSource()}
-          poster="/vsl-poster.jpg"
+          poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzAwMCIvPiA8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+T25lIFN5c3TDqW1lIC0gVm90cmUgdHJhbnNmb3JtYXRpb24gY29tbWVuY2UgaWNpPC90ZXh0PiA8L3N2Zz4="
           className="w-full h-auto"
           playsInline
+          webkit-playsinline="true"
           preload="metadata"
           muted={isMuted}
         />
         
-        {/* Custom Controls Overlay */}
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+        {/* Central Play Button for initial state */}
+        {!hasStartedPlaying && !isPlaying && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <div className="text-center text-white">
+              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm" onClick={togglePlay}>
+                <Play className="w-10 h-10 ml-1" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">One Système - Votre transformation commence ici</h3>
+              <p className="text-sm opacity-90">Découvrez comment économiser 10-25h par semaine</p>
+            </div>
+          </div>
+        )}
+        
+        {/* Mobile-friendly Controls */}
+        <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 flex items-center justify-center ${
+          isMobile ? (showControls ? 'opacity-100' : 'opacity-0') : 'opacity-0 group-hover:opacity-100'
+        }`}>
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
