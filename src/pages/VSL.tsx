@@ -244,7 +244,7 @@ const VSL = () => {
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-success" />
-                  
+                  <span>Résultats garantis ou remboursé</span>
                 </div>
               </div>
             </div>
