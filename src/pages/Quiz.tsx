@@ -327,50 +327,12 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
           {currentStep === 0 ? (
-            <div className="space-y-6">
-              {/* Titre principal optimisé mobile */}
-              <div>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
-                  Votre entreprise tourne au ralenti ?
-                </h1>
-                <p className="text-lg sm:text-xl font-semibold text-primary mb-4">
-                  Répondez à 5 questions simples pour découvrir ce qui freine votre entreprise… et comment tout automatiser sans vous casser la tête.
-                </p>
-              </div>
-
-              {/* Accroche émotionnelle en haut */}
-              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 max-w-3xl mx-auto">
-                <p className="text-destructive font-medium flex items-center justify-center gap-2">
-                  🔴 <span>Fatigué de tout faire à la main ? Ce quiz vous montre par où commencer pour simplifier votre quotidien.</span>
-                </p>
-              </div>
-
-              {/* Bénéfices avec exemple concret */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-center gap-2 text-success font-medium">
-                  ✅ <span>Plan d'action personnalisé livré en moins de 3 minutes</span>
-                </div>
-                <div className="text-sm text-muted-foreground italic">
-                  🟢 Ex : Gagnez 10h/semaine en réduisant vos tâches manuelles.
-                </div>
-                <div className="flex items-center justify-center gap-2 text-success font-medium">
-                  ✅ <span>+247 PME québécoises ont déjà complété ce diagnostic</span>
-                </div>
-              </div>
-
-              {/* CTA visible immédiatement */}
-              <div className="pt-4">
-                <Button
-                  size="lg"
-                  className="text-lg font-bold px-8 py-4 h-auto"
-                  onClick={() => {
-                    const contactSection = document.querySelector('#contact-form');
-                    contactSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  ➡️ Commencer le quiz maintenant
-                </Button>
-              </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                Votre entreprise tourne au ralenti ?<br />
+                Répondez à 5 questions pour découvrir ce qui freine vos opérations…<br />
+                et comment tout automatiser sans vous casser la tête.
+              </h1>
             </div>
           ) : (
             <div>
@@ -394,78 +356,27 @@ const Quiz = () => {
         {/* Contact Capture or Question Card */}
         {currentStep === 0 ? (
           <Card id="contact-form" className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
-            <div className="mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-bold leading-tight text-center">
-                  Recevez votre plan d'action personnalisé pour simplifier la gestion de votre entreprise
-                </h2>
-              </div>
-              
-              {/* Sous-titre confiance + bénéfice */}
-              <p className="text-center text-lg text-muted-foreground mb-4">
-                Une analyse rapide. Des recommandations concrètes. Aucune obligation.
-              </p>
-              
-              {/* Accroche émotionnelle */}
-              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 mb-6 max-w-2xl mx-auto">
-                <p className="text-center text-warning font-medium">
-                  🟠 Fatigué de tout faire à la main ? Gagnez en clarté et en temps dès aujourd'hui.
-                </p>
-              </div>
-              
-              {/* Badge optimisé */}
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
-                <p className="text-center text-sm font-medium">
-                  ✅ <span className="text-primary">Analyse 100% gratuite</span> • ⏱ <span className="text-primary">Moins de 2 minutes</span> • 🔐 <span className="text-primary">Données 100% sécurisées</span>
-                </p>
-              </div>
-              
-              {/* Rappel bénéfice avant formulaire */}
-              <div className="text-center mb-6">
-                <p className="text-success font-medium">
-                  🟢 Un diagnostic rapide. Des recommandations claires. Aucune obligation.
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Cette analyse est gratuite, rapide, sans engagement.
-                </p>
-              </div>
-              
-              <div className="space-y-6">
+            <div className="space-y-6">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">👤</span>
-                    <Label htmlFor="name" className="text-lg font-medium">
-                      Votre prénom et nom <span className="text-destructive">*</span>
-                    </Label>
-                  </div>
                   <Input
                     id="name"
-                    placeholder="Ex: Marie Tremblay"
+                    placeholder="Prénom et nom"
                     value={contactInfo.name}
                     onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
-                    className="mt-2 text-base sm:text-lg btn-touch"
+                    className="text-base sm:text-lg btn-touch"
                     autoComplete="name"
                     autoCapitalize="words"
                   />
                 </div>
                 
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">📧</span>
-                    <Label htmlFor="email" className="text-lg font-medium">
-                      Votre adresse email <span className="text-destructive">*</span>
-                    </Label>
-                  </div>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Ex: marie@monentreprise.com"
+                    placeholder="Adresse email"
                     value={contactInfo.email}
                     onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
-                    className="mt-2 text-base sm:text-lg btn-touch"
+                    className="text-base sm:text-lg btn-touch"
                     autoComplete="email"
                     inputMode="email"
                     autoCapitalize="none"
@@ -473,16 +384,10 @@ const Quiz = () => {
                 </div>
                 
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">📱</span>
-                    <Label htmlFor="phone" className="text-lg font-medium">
-                      Votre numéro de téléphone <span className="text-destructive">*</span>
-                    </Label>
-                  </div>
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="(514) 555-1234"
+                    placeholder="Numéro de téléphone"
                     value={contactInfo.phone}
                     onChange={(e) => {
                       const formatted = formatPhoneNumber(e.target.value);
@@ -490,29 +395,23 @@ const Quiz = () => {
                         setContactInfo(prev => ({ ...prev, phone: formatted }));
                       }
                     }}
-                    className="mt-2 text-base sm:text-lg btn-touch"
+                    className="text-base sm:text-lg btn-touch"
                     autoComplete="tel"
                     inputMode="tel"
                   />
                 </div>
               </div>
               
-              {/* Navigation avec CTA optimisé */}
-              <div className="text-center">
+              <div className="text-center mt-6">
                 <Button
                   variant="cta-large"
                   onClick={handleContactSubmit}
                   disabled={isSubmittingContact}
                   className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
                 >
-                  {isSubmittingContact ? "🔄 Un instant..." : "🧡 Commencer mon diagnostic maintenant"}
+                  {isSubmittingContact ? "Un instant..." : "Commencer maintenant"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                
-                {/* Preuve sociale sous le bouton */}
-                <p className="text-xs text-muted-foreground mt-3">
-                  ✅ Déjà utilisé par +247 PME québécoises
-                </p>
               </div>
             </div>
           </Card>
