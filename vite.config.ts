@@ -11,12 +11,52 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
+    // Performance optimization plugin
+    {
+      name: "inject-preloads",
+      transformIndexHtml(html: string) {
+        return {
+          html,
+          tags: [
+            { 
+              tag: "link", 
+              attrs: { 
+                rel: "preload", 
+                as: "image", 
+                href: "/src/assets/hero-image.jpg"
+              }, 
+              injectTo: "head" as const
+            },
+            { 
+              tag: "link", 
+              attrs: { 
+                rel: "preload", 
+                as: "font", 
+                href: "/fonts/Inter-roman.var.woff2", 
+                type: "font/woff2", 
+                crossorigin: "anonymous" 
+              }, 
+              injectTo: "head" as const
+            }
+          ]
+        };
+      }
+    }
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-button', '@radix-ui/react-card'],
+        }
+      }
+    }
+  }
 }));

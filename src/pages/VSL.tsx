@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Zap } from "lucide-react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, getABVariant } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { usePersonalizedMessaging } from "@/hooks/usePersonalizedMessaging";
+import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { VSLVideo } from "@/components/VSLVideo";
+import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
 import { ProductVisuals } from "@/components/ProductVisuals";
 import { ROICalculator } from "@/components/ROICalculator";
 import { BookingCalendar } from "@/components/BookingCalendar";
@@ -27,9 +29,13 @@ const VSL = () => {
   const [showStickyButton, setShowStickyButton] = useState(false);
   const navigate = useNavigate();
   const { getPersonalizedVSL } = usePersonalizedMessaging();
+  const { isMobile } = useMobileOptimized();
   
   // Track page view
   usePageTracking();
+  
+  // A/B test for VSL layout
+  const layoutVariant = getABVariant("vsl_layout", ["classic", "enhanced"]);
 
   useEffect(() => {
     const results = localStorage.getItem("quizResults");
@@ -58,7 +64,11 @@ const VSL = () => {
   }, []);
 
   const handleCTAClick = () => {
-    trackEvent('vsl_cta_click', { cta_location: 'primary' });
+    trackEvent('vsl_cta_click', {
+      section: 'primary_cta',
+      quiz_score: quizResults?.totalScore || 0,
+      layout_variant: layoutVariant,
+    });
     navigate("/book-call");
   };
 
@@ -102,7 +112,14 @@ const VSL = () => {
 
           {/* VSL Video */}
           <div id="vsl-video" className="scroll-mt-20 mb-8">
-            <VSLVideo onCTAClick={handleCTAClick} />
+            {layoutVariant === "enhanced" ? (
+              <EnhancedVSLPlayer 
+                onCTAClick={handleCTAClick} 
+                quizScore={quizResults?.totalScore || 0}
+              />
+            ) : (
+              <VSLVideo onCTAClick={handleCTAClick} />
+            )}
           </div>
 
           <div className="text-center">

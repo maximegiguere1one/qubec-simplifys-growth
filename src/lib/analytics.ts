@@ -116,6 +116,9 @@ export const getABVariant = (testName: string, variants: string[]): string => {
     const index = Math.abs(hash) % variants.length;
     variant = variants[index];
     localStorage.setItem(storageKey, variant);
+    
+    // Track A/B test exposure immediately
+    trackABTest(testName, variant);
   }
   
   return variant;
@@ -123,11 +126,38 @@ export const getABVariant = (testName: string, variants: string[]): string => {
 
 // Track A/B test assignment
 export const trackABTest = async (testName: string, variant: string) => {
-  // Track as a general quiz question answer event with A/B test data
   await trackEvent('quiz_question_answer', { 
     event_type: 'ab_test_assignment',
     test_name: testName, 
     variant 
+  });
+};
+
+// Track A/B test conversion
+export const trackABConversion = async (testName: string, variant: string, conversionType: string = 'click') => {
+  await trackEvent('quiz_question_answer', {
+    event_type: 'ab_test_conversion',
+    test_name: testName,
+    variant,
+    conversion_type: conversionType
+  });
+};
+
+// VSL specific tracking
+export const trackVSLEvent = async (eventType: 'play' | 'pause' | 'progress' | 'complete' | 'cta_click' | 'cta_show', data: Record<string, any> = {}) => {
+  await trackEvent('vsl_play', {
+    vsl_event_type: eventType,
+    ...data
+  });
+};
+
+// Enhanced CTA tracking with location and variant
+export const trackCTAClick = async (location: string, variant?: string, destination?: string) => {
+  await trackEvent('vsl_cta_click', {
+    cta_location: location,
+    variant,
+    destination,
+    timestamp: Date.now()
   });
 };
 

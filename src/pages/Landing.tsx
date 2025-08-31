@@ -6,10 +6,11 @@ import { Card } from "@/components/ui/card";
 import { CheckCircle2, Clock, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-image.jpg";
-import { createLead, trackEvent } from "@/lib/analytics";
+import { createLead, trackEvent, getABVariant, trackABConversion } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { ABTest } from "@/components/ABTest";
+import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -18,15 +19,55 @@ const Landing = () => {
   const [showSurvey, setShowSurvey] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isMobile, mobileButtonClass, mobileContainerClass, animationClass, imageLoadingStrategy } = useMobileOptimized();
   
   // Track page view
   usePageTracking();
+
+  // A/B test variants
+  const headlineVariant = getABVariant("landing_headline", ["control", "value_focused", "time_specific"]);
+  const ctaVariant = getABVariant("landing_cta_destination", ["quiz", "direct_booking"]);
 
   // Show micro-survey after 30 seconds
   useEffect(() => {
     const timer = setTimeout(() => setShowSurvey(true), 30000);
     return () => clearTimeout(timer);
   }, []);
+
+  const getHeadlineByVariant = () => {
+    switch (headlineVariant) {
+      case "value_focused":
+        return (
+          <>
+            Récupérez{" "}
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              15+ heures par semaine
+            </span>{" "}
+            sans effort
+          </>
+        );
+      case "time_specific":
+        return (
+          <>
+            Arrêtez de{" "}
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              perdre 20h/semaine
+            </span>{" "}
+            dans la paperasse
+          </>
+        );
+      default:
+        return (
+          <>
+            Finies les{" "}
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              heures perdues
+            </span>{" "}
+            dans la paperasse
+          </>
+        );
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,11 +85,17 @@ const Landing = () => {
     // Create lead in Supabase
     const lead = await createLead(email, name, 'landing_page');
     
+    // Track A/B test conversion
+    await trackABConversion("landing_headline", headlineVariant, "form_submit");
+    await trackABConversion("landing_cta_destination", ctaVariant, "form_submit");
+    
     // Track form submission
     await trackEvent('lp_submit_optin', {
       email,
       name,
       lead_id: lead?.id,
+      headline_variant: headlineVariant,
+      cta_variant: ctaVariant,
     });
     
     // Store user data in localStorage
@@ -56,10 +103,14 @@ const Landing = () => {
     
     toast({
       title: "Parfait !",
-      description: "Commençons par le quiz pour identifier vos besoins.",
+      description: ctaVariant === "direct_booking" 
+        ? "Réservons votre consultation !" 
+        : "Commençons par le quiz pour identifier vos besoins.",
     });
     
-    navigate("/quiz");
+    // Navigate based on A/B test
+    const destination = ctaVariant === "direct_booking" ? "/book-call" : "/quiz";
+    navigate(destination);
     setIsLoading(false);
   };
 
@@ -102,45 +153,16 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-background">
+    <div className={`min-h-[100dvh] bg-gradient-background ${mobileContainerClass}`}>
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="container mx-auto container-mobile section-mobile">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <ABTest
-                  testName="headline_variant"
-                  variants={{
-                    control: (
-                      <h1 className="heading-responsive font-bold leading-tight">
-                        Finies les{" "}
-                        <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          heures perdues
-                        </span>{" "}
-                        dans la paperasse
-                      </h1>
-                    ),
-                    variant_a: (
-                      <h1 className="heading-responsive font-bold leading-tight">
-                        Arrêtez de{" "}
-                        <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          gérer votre business
-                        </span>{" "}
-                        à la main
-                      </h1>
-                    ),
-                    variant_b: (
-                      <h1 className="heading-responsive font-bold leading-tight">
-                        Sauvez{" "}
-                        <span className="bg-gradient-primary bg-clip-text text-transparent">
-                          15 heures par semaine
-                        </span>{" "}
-                        avec un système fait pour vous
-                      </h1>
-                    ),
-                  }}
-                />
+                <h1 className="heading-responsive font-bold leading-tight">
+                  {getHeadlineByVariant()}
+                </h1>
                 <p className="subheading-responsive text-muted-foreground leading-relaxed">
                   Je crée pour vous un système simple qui gère votre inventaire, vos factures, vos clients... tout ce qui vous fait perdre du temps actuellement. Vous n'avez rien à apprendre, je m'occupe de tout l'aspect technique.
                 </p>
@@ -174,47 +196,19 @@ const Landing = () => {
                       required
                     />
                   </div>
-                  <ABTest
-                    testName="landing_cta"
-                    variants={{
-                      control: (
-                        <Button 
-                          type="submit" 
-                          variant="cta-large" 
-                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
-                          disabled={isLoading}
-                        >
-                          <span className="truncate">
-                            {isLoading ? "Analyse en cours..." : "Découvrir mon potentiel d'économie de temps"}
-                          </span>
-                        </Button>
-                      ),
-                      variant_a: (
-                        <Button 
-                          type="submit" 
-                          variant="cta-large" 
-                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
-                          disabled={isLoading}
-                        >
-                          <span className="truncate">
-                            {isLoading ? "Analyse en cours..." : "Voir combien d'heures je peux récupérer"}
-                          </span>
-                        </Button>
-                      ),
-                      variant_b: (
-                        <Button 
-                          type="submit" 
-                          variant="cta-large" 
-                          className="w-full btn-touch text-sm sm:text-base px-4 sm:px-6"
-                          disabled={isLoading}
-                        >
-                          <span className="truncate">
-                            {isLoading ? "Analyse en cours..." : "Commencer mon analyse personnalisée"}
-                          </span>
-                        </Button>
-                      )
-                    }}
-                  />
+                  <Button 
+                    type="submit" 
+                    variant="cta-large" 
+                    className={`${mobileButtonClass} btn-touch text-sm sm:text-base px-4 sm:px-6 ${animationClass}`}
+                    disabled={isLoading}
+                  >
+                    <span className="truncate">
+                      {isLoading ? "Analyse en cours..." : 
+                       ctaVariant === "direct_booking" 
+                         ? "Réserver ma consultation gratuite"
+                         : "Découvrir mon potentiel d'économie de temps"}
+                    </span>
+                  </Button>
                 </form>
                 <p className="text-sm text-muted-foreground text-center mt-4">
                   ✓ Aucun engagement • ✓ 100% gratuit • ✓ Résultats en 2 minutes
@@ -223,12 +217,16 @@ const Landing = () => {
             </div>
 
             <div className="relative">
-              <img 
-                src={heroImage} 
-                alt="Entrepreneurs québécois utilisant One Système"
-                className="rounded-2xl shadow-strong w-full"
-                loading="lazy"
-              />
+              {!isMobile && (
+                <img 
+                  src={heroImage} 
+                  alt="Entrepreneurs québécois utilisant One Système"
+                  className={`rounded-2xl shadow-strong w-full ${animationClass}`}
+                  loading={imageLoadingStrategy as any}
+                  width="600"
+                  height="400"
+                />
+              )}
               <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 bg-success text-success-foreground p-2 sm:p-3 rounded-lg shadow-medium max-w-[100px] sm:max-w-none">
                 <div className="text-sm sm:text-lg font-bold">95%</div>
                 <div className="text-xs whitespace-nowrap">satisfaction</div>
