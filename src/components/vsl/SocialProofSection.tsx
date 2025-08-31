@@ -1,8 +1,6 @@
 import { Card } from "@/components/ui/card";
-
 export const SocialProofSection = () => {
-  return (
-    <section className="section-mobile bg-secondary/20">
+  return <section className="section-mobile bg-secondary/20">
       <div className="container mx-auto container-mobile">
         {/* Logos section */}
         <div className="text-center mb-12">
@@ -32,9 +30,7 @@ export const SocialProofSection = () => {
           <Card className="p-8 shadow-card border-l-4 border-success">
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <div key={star} className="w-5 h-5 bg-warning rounded-full"></div>
-                ))}
+                {[1, 2, 3, 4, 5].map(star => <div key={star} className="w-5 h-5 bg-warning rounded-full"></div>)}
               </div>
               <p className="text-lg italic mb-4">"Martin, propriétaire d'une boutique à Québec, économisait déjà 10 heures par semaine après 15 jours avec One Système. Ses ventes ont augmenté de 15% car il peut enfin se concentrer sur ses clients plutôt que sur sa paperasse."</p>
             </div>
@@ -50,9 +46,7 @@ export const SocialProofSection = () => {
           <Card className="p-8 shadow-card border-l-4 border-primary">
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <div key={star} className="w-5 h-5 bg-warning rounded-full"></div>
-                ))}
+                {[1, 2, 3, 4, 5].map(star => <div key={star} className="w-5 h-5 bg-warning rounded-full"></div>)}
               </div>
               <p className="text-lg italic mb-4">"Julie, comptable à Sherbrooke, nous a dit : 'Je dormais mal avant chaque période de déclarations. Maintenant, avec One Système, tout est automatique et conforme. Je peux enfin profiter de mes weekends !'"</p>
             </div>
@@ -67,22 +61,8 @@ export const SocialProofSection = () => {
         </div>
         
         <div className="text-center mt-12">
-          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
-            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
-              <p className="text-2xl font-bold text-primary mb-1">15h</p>
-              <p className="text-sm text-muted-foreground">économisées par semaine en moyenne</p>
-            </div>
-            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
-              <p className="text-2xl font-bold text-primary mb-1">9.4/10</p>
-              <p className="text-sm text-muted-foreground">note de satisfaction client</p>
-            </div>
-            <div className="bg-gradient-primary/20 border border-primary/30 rounded-lg p-4">
-              <p className="text-2xl font-bold text-primary mb-1">200+</p>
-              <p className="text-sm text-muted-foreground">PME québécoises satisfaites</p>
-            </div>
-          </div>
+          
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };

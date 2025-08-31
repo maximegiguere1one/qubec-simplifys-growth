@@ -14,7 +14,6 @@ import { VSLVideo } from "@/components/VSLVideo";
 import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
 import { LazySection } from "@/components/LazySection";
 import { lazy } from "react";
-
 import { ProductVisuals } from "@/components/ProductVisuals";
 import { ROICalculator } from "@/components/ROICalculator";
 import { TrustBadges } from "@/components/TrustBadges";
@@ -24,8 +23,6 @@ import { SolutionSection } from "@/components/vsl/SolutionSection";
 import { ObjectionsSection } from "@/components/vsl/ObjectionsSection";
 import { SocialProofSection } from "@/components/vsl/SocialProofSection";
 import { UrgencySection } from "@/components/vsl/UrgencySection";
-import { GuaranteeBlock } from "@/components/GuaranteeBlock";
-
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
   const [showSurvey, setShowSurvey] = useState(false);
@@ -135,15 +132,6 @@ const VSL = () => {
             {layoutVariant === "enhanced" ? <EnhancedVSLPlayer onCTAClick={handleCTAClick} quizScore={quizResults?.totalScore || 0} /> : <VSLVideo onCTAClick={handleCTAClick} />}
           </div>
 
-          {/* Guarantee Block - Sous la vidéo */}
-          <GuaranteeBlock 
-            location="vsl_post_video"
-            variant="vsl_guarantee"
-            destination="/book-call"
-            onCTAClick={handleCTAClick}
-            ctaText="📞 Commencer maintenant"
-          />
-
           <div className="text-center">
             {/* Bullets optimisés orientés résultats */}
             <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-4xl mx-auto mb-8">
@@ -180,17 +168,7 @@ const VSL = () => {
             </p>
             
             {/* Personalized Alert */}
-            {quizResults && <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 max-w-2xl mx-auto mb-8">
-                <div className="flex items-center gap-3">
-                  <Zap className="w-5 h-5 text-warning" />
-                  <p className="font-medium">
-                    <strong>Votre priorité n°1 :</strong> {quizResults.mainPriority || "Automatisation des processus"}
-                  </p>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Voici comment nous créons LE système parfait pour résoudre ce problème ↓
-                </p>
-              </div>}
+            {quizResults}
 
             {/* Trust Badges */}
             <TrustBadges />
@@ -256,7 +234,7 @@ const VSL = () => {
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-success" />
-                  <span>🔒 Vos données restent confidentielles</span>
+                  
                 </div>
               </div>
             </div>
