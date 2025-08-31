@@ -326,29 +326,62 @@ const Quiz = () => {
       <div className="container mx-auto container-mobile max-w-4xl">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
-          <h1 className="text-responsive-xl font-bold mb-4">
-            {currentStep === 0 
-              ? "Répondez à 5 questions pour découvrir ce qui freine votre entreprise… et comment l'automatiser sans vous casser la tête." 
-              : "Découvrons ensemble votre potentiel d'économie de temps"}
-          </h1>
-          {currentStep === 0 && (
-            <div className="mb-6">
-              <p className="text-responsive-lg text-primary font-semibold mb-3">
-                Recevez un mini diagnostic et un plan d'action personnalisé en moins de 3 minutes.
-              </p>
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-3xl mx-auto mb-4">
-                <p className="text-foreground font-medium">
-                  ✅ +247 PME québécoises ont déjà complété ce diagnostic
+          {currentStep === 0 ? (
+            <div className="space-y-6">
+              {/* Titre principal optimisé mobile */}
+              <div>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 leading-tight">
+                  Votre entreprise tourne au ralenti ?
+                </h1>
+                <p className="text-lg sm:text-xl font-semibold text-primary mb-4">
+                  Répondez à 5 questions simples pour découvrir ce qui freine votre entreprise… et comment tout automatiser sans vous casser la tête.
                 </p>
               </div>
-              <p className="text-muted-foreground italic">
-                Fatigué de gérer tout à la main ? Trop de paperasse ? Ce quiz va vous montrer par où commencer pour simplifier votre quotidien.
+
+              {/* Accroche émotionnelle en haut */}
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 max-w-3xl mx-auto">
+                <p className="text-destructive font-medium flex items-center justify-center gap-2">
+                  🔴 <span>Fatigué de tout faire à la main ? Ce quiz vous montre par où commencer pour simplifier votre quotidien.</span>
+                </p>
+              </div>
+
+              {/* Bénéfices avec exemple concret */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-2 text-success font-medium">
+                  ✅ <span>Plan d'action personnalisé livré en moins de 3 minutes</span>
+                </div>
+                <div className="text-sm text-muted-foreground italic">
+                  🟢 Ex : Gagnez 10h/semaine en réduisant vos tâches manuelles.
+                </div>
+                <div className="flex items-center justify-center gap-2 text-success font-medium">
+                  ✅ <span>+247 PME québécoises ont déjà complété ce diagnostic</span>
+                </div>
+              </div>
+
+              {/* CTA visible immédiatement */}
+              <div className="pt-4">
+                <Button
+                  size="lg"
+                  className="text-lg font-bold px-8 py-4 h-auto"
+                  onClick={() => {
+                    const contactSection = document.querySelector('#contact-form');
+                    contactSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  ➡️ Commencer le quiz maintenant
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h1 className="text-responsive-xl font-bold mb-4">
+                Découvrons ensemble votre potentiel d'économie de temps
+              </h1>
+              <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
+                Aidez-nous à comprendre votre réalité d'entrepreneur
               </p>
             </div>
           )}
-          <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
-            {currentStep === 0 ? "Quelques infos pour personnaliser votre analyse" : "Aidez-nous à comprendre votre réalité d'entrepreneur"}
-          </p>
           
           {/* Enhanced Progress Bar with A/B test */}
           <EnhancedQuizProgress 
@@ -360,26 +393,47 @@ const Quiz = () => {
 
         {/* Contact Capture or Question Card */}
         {currentStep === 0 ? (
-          <Card className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
+          <Card id="contact-form" className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
             <div className="mb-8">
-              <h2 className="text-responsive-lg font-bold mb-6 leading-relaxed text-center">
-                {personalizationVariant === "dynamic" 
-                  ? "👋 Bonjour ! Personnalisons votre analyse gratuite" 
-                  : "Dites-nous qui vous êtes pour personnaliser votre analyse"}
-              </h2>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">👋</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold leading-relaxed">
+                  Personnalisons votre analyse gratuite
+                </h2>
+              </div>
               
-              {/* Value reinforcement */}
+              {/* Indicateurs de confiance avec icônes */}
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
-                <p className="text-center text-sm text-muted-foreground">
-                  🎯 <strong className="text-foreground">Analyse 100% gratuite</strong> • ⏱️ 2 minutes • 📊 Résultats personnalisés • 🔒 Données sécurisées
-                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-lg">🎯</span>
+                    <span className="text-xs font-medium">100% gratuit</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-lg">⏱️</span>
+                    <span className="text-xs font-medium">2 minutes</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-lg">📊</span>
+                    <span className="text-xs font-medium">Résultats personnalisés</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-lg">🔒</span>
+                    <span className="text-xs font-medium">Données sécurisées</span>
+                  </div>
+                </div>
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="name" className="text-lg font-medium">
-                    Votre prénom et nom <span className="text-destructive">*</span>
-                  </Label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">👤</span>
+                    <Label htmlFor="name" className="text-lg font-medium">
+                      Votre prénom et nom <span className="text-destructive">*</span>
+                    </Label>
+                  </div>
                   <Input
                     id="name"
                     placeholder="Ex: Marie Tremblay"
@@ -392,9 +446,12 @@ const Quiz = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="email" className="text-lg font-medium">
-                    Votre adresse email <span className="text-destructive">*</span>
-                  </Label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">📧</span>
+                    <Label htmlFor="email" className="text-lg font-medium">
+                      Votre adresse email <span className="text-destructive">*</span>
+                    </Label>
+                  </div>
                   <Input
                     id="email"
                     type="email"
@@ -409,9 +466,12 @@ const Quiz = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="phone" className="text-lg font-medium">
-                    Votre numéro de téléphone <span className="text-destructive">*</span>
-                  </Label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">📱</span>
+                    <Label htmlFor="phone" className="text-lg font-medium">
+                      Votre numéro de téléphone <span className="text-destructive">*</span>
+                    </Label>
+                  </div>
                   <Input
                     id="phone"
                     type="tel"
@@ -429,19 +489,19 @@ const Quiz = () => {
                   />
                 </div>
               </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-center">
-              <Button
-                variant="cta-large"
-                onClick={handleContactSubmit}
-                disabled={isSubmittingContact}
-                className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
-              >
-                {isSubmittingContact ? "🔄 Un instant..." : "🚀 Commencer mon analyse gratuite"}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              
+              {/* Navigation */}
+              <div className="flex justify-center">
+                <Button
+                  variant="cta-large"
+                  onClick={handleContactSubmit}
+                  disabled={isSubmittingContact}
+                  className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
+                >
+                  {isSubmittingContact ? "🔄 Un instant..." : "🚀 Commencer mon analyse gratuite"}
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
             </div>
           </Card>
         ) : (
