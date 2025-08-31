@@ -77,6 +77,10 @@
 
     /* Animation variables */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Quiz feedback animations */
+    --feedback-scale: 1.02;
+    --feedback-shadow: 0 4px 20px hsl(var(--primary) / 0.15);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Quebec business styling */
@@ -185,6 +189,22 @@
     50% {
       transform: scale(1.02);
       box-shadow: 0 0 0 15px hsl(var(--cta) / 0);
+    }
+  }
+
+  /* Quiz feedback animation */
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  @keyframes scale-in {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
     }
   }
 

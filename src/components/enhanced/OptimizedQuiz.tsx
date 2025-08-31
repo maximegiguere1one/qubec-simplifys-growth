@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Clock } from "lucide-react";
+import { ArrowRight, ArrowLeft, Clock, CheckCircle } from "lucide-react";
 import { getABVariant, trackQuizAnswer, trackABConversion } from "@/lib/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
@@ -31,6 +31,8 @@ export const OptimizedQuiz = ({
 }: OptimizedQuizProps) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [questionStartTime] = useState(Date.now());
+  const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [showFeedback, setShowFeedback] = useState(false);
   const { mobileButtonClass, touchTargetClass, animationClass } = useMobileOptimized();
   
   // A/B test for progress indicator style
@@ -49,12 +51,20 @@ export const OptimizedQuiz = ({
   const question = questions[currentQuestion];
 
   const handleAnswerSelect = (value: string) => {
+    setSelectedAnswer(value);
+    setShowFeedback(true);
     onAnswerChange(value);
     
     // Track A/B test conversion for engagement
     if (currentQuestion === 0) {
       trackABConversion("quiz_progress", progressVariant, "first_answer");
     }
+
+    // Auto-advance after showing feedback
+    setTimeout(() => {
+      setShowFeedback(false);
+      setSelectedAnswer("");
+    }, 600);
   };
 
   return (
@@ -95,20 +105,31 @@ export const OptimizedQuiz = ({
           onValueChange={handleAnswerSelect}
           className="space-y-4"
         >
-          {question.options.map((option: any) => (
-            <div 
-              key={option.value} 
-              className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border hover:bg-accent/50 ${animationClass} cursor-pointer ${touchTargetClass}`}
-            >
-              <RadioGroupItem value={option.value} id={option.value} />
-              <Label 
-                htmlFor={option.value} 
-                className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
+          {question.options.map((option: any) => {
+            const isSelected = answers[currentQuestion] === option.value;
+            const isCurrentSelection = selectedAnswer === option.value;
+            
+            return (
+              <div 
+                key={option.value} 
+                className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border transition-all duration-300 cursor-pointer ${touchTargetClass}
+                  ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-accent/50'}
+                  ${isCurrentSelection && showFeedback ? 'bg-green-50 border-green-400 scale-[1.02]' : ''}
+                  ${animationClass}`}
               >
-                {option.label}
-              </Label>
-            </div>
-          ))}
+                <RadioGroupItem value={option.value} id={option.value} />
+                <Label 
+                  htmlFor={option.value} 
+                  className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
+                >
+                  {option.label}
+                </Label>
+                {isCurrentSelection && showFeedback && (
+                  <CheckCircle className="w-5 h-5 text-green-600 animate-scale-in" />
+                )}
+              </div>
+            );
+          })}
         </RadioGroup>
       </div>
 

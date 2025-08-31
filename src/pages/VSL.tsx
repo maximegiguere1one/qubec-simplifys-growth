@@ -23,6 +23,7 @@ import { SolutionSection } from "@/components/vsl/SolutionSection";
 import { ObjectionsSection } from "@/components/vsl/ObjectionsSection";
 import { SocialProofSection } from "@/components/vsl/SocialProofSection";
 import { UrgencySection } from "@/components/vsl/UrgencySection";
+import { EmailSequences } from "@/components/EmailSequences";
 
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
@@ -265,6 +266,18 @@ const VSL = () => {
 
       {/* Urgency Section */}
       <UrgencySection onCTAClick={handleCTAClick} />
+
+      {/* Email Sequences Section */}
+      <section className="section-mobile bg-accent/30">
+        <div className="container mx-auto container-mobile">
+          <EmailSequences 
+            leadSegment={quizResults?.totalScore >= 16 ? 'qualified' : 
+                        quizResults?.totalScore >= 12 ? 'hot' : 
+                        quizResults?.totalScore >= 8 ? 'warm' : 'cold'}
+            leadName={quizResults?.contactInfo?.name?.split(' ')[0] || 'Marie'}
+          />
+        </div>
+      </section>
 
       {/* Sticky CTA Button */}
       {showStickyButton && (

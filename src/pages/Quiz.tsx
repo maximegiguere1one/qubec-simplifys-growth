@@ -164,10 +164,7 @@ const Quiz = () => {
         source: 'quiz'
       });
 
-      toast({
-        title: "Parfait !",
-        description: `Merci ${contactInfo.name.split(' ')[0]} ! Commençons votre analyse...`,
-      });
+      // Removed toast notification as requested
 
       setCurrentStep(1); // Move to first quiz question
     } catch (error) {
@@ -195,6 +192,11 @@ const Quiz = () => {
     if (option) {
       trackQuizAnswer(currentQuestion + 1, value, option.score, timeSpent); // +1 to adjust for 0-based index
     }
+
+    // Auto-advance to next question after short delay for visual feedback
+    setTimeout(() => {
+      handleNext();
+    }, 800);
   };
 
   const handleNext = () => {
