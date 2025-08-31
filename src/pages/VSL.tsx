@@ -104,7 +104,11 @@ const VSL = () => {
               {getPersonalizedMessage()}
             </h1>
             
-            {quizResults?.totalScore >= 12}
+            {quizResults?.totalScore >= 12 && (
+              <Badge variant="secondary" className="mb-2">
+                🎯 Score élevé détecté : Solution prioritaire recommandée
+              </Badge>
+            )}
             
             {/* CTA au-dessus de la vidéo */}
             <div className="mb-6">
@@ -168,7 +172,13 @@ const VSL = () => {
             </p>
             
             {/* Personalized Alert */}
-            {quizResults}
+            {quizResults && (
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-2xl mx-auto mb-6">
+                <p className="text-sm font-medium">
+                  🎯 Basé sur vos réponses (score: {quizResults.totalScore}/20), voici votre profil prioritaire.
+                </p>
+              </div>
+            )}
 
             {/* Trust Badges */}
             <TrustBadges />
