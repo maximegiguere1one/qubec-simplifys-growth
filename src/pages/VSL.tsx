@@ -80,18 +80,18 @@ const VSL = () => {
   };
 
   const getPersonalizedMessage = () => {
-    if (!quizResults) return "Arrêtez de perdre du temps avec la paperasse";
+    if (!quizResults) return "Fatigué de courir après le temps ?";
     
     const { totalScore } = quizResults;
     
     if (totalScore >= 16) {
-      return "Voici comment récupérer 15+ heures par semaine (sans rien apprendre de compliqué)";
+      return "Fatigué de courir après le temps ? Découvrez comment on aide les entrepreneurs comme vous à récupérer 15h/semaine… sans changer vos habitudes.";
     } else if (totalScore >= 12) {
-      return "Simplifiez votre gestion sans apprendre de nouvelle technologie";
+      return "Votre entreprise tourne déjà bien, mais imaginez avec 10h de plus par semaine ? Voici comment les PME québécoises y arrivent.";
     } else if (totalScore >= 8) {
-      return "Automatisez votre business en gardant vos habitudes";
+      return "Vous gérez bien, mais on peut faire mieux. Découvrez comment automatiser intelligemment sans tout bouleverser.";
     } else {
-      return "Gagnez du temps sans vous casser la tête";
+      return "Vous êtes organisé, parfait ! Voici comment passer au niveau supérieur avec l'automatisation.";
     }
   };
 
@@ -103,7 +103,7 @@ const VSL = () => {
         <div className="container mx-auto container-mobile py-2">
           <div className="flex items-center justify-center text-sm text-muted-foreground">
             <span className="mr-2">Étape 2/3 :</span>
-            <span className="font-medium">Regardez la vidéo (4 min) puis réservez votre diagnostic</span>
+            <span className="font-medium">Regardez la vidéo pour découvrir comment reprendre le contrôle de votre entreprise (en 4 min)</span>
           </div>
         </div>
       </div>
@@ -111,13 +111,19 @@ const VSL = () => {
       {/* Hero Section */}
       <section className="pt-14 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20">
         <div className="container mx-auto container-mobile max-w-6xl">
-          <div className="text-center mb-8">
-            <h1 className="text-responsive-xl font-bold mb-6 sm:mb-8 leading-tight">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
               {getPersonalizedMessage()}
             </h1>
             
-            {/* CTA above video */}
-            <div className="mb-8">
+            {quizResults?.totalScore >= 12 && (
+              <p className="text-lg text-muted-foreground mb-6">
+                Voici comment +200 entrepreneurs québécois ont récupéré 15 heures par semaine… sans recruter ni tout changer.
+              </p>
+            )}
+            
+            {/* CTA au-dessus de la vidéo */}
+            <div className="mb-6">
               <CTAButton
                 location="vsl_top"
                 variant="primary_cta"
@@ -130,14 +136,32 @@ const VSL = () => {
               </CTAButton>
               <div className="flex justify-center mt-3">
                 <Badge variant="destructive" className="animate-pulse-gentle">
-                  ⚠️ Calendrier limité – 4 créneaux dispo cette semaine
+                  ⚠️ 4 créneaux dispo cette semaine
                 </Badge>
               </div>
             </div>
           </div>
+          
+          {/* Ligne d'intro au-dessus de la vidéo */}
+          <div className="text-center mb-6">
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-4xl mx-auto">
+              <p className="text-foreground font-medium">
+                🔐 Une solution 100% québécoise, testée sur +200 PME locales, qui automatise vos opérations sans casse-tête.
+              </p>
+            </div>
+          </div>
 
-          {/* VSL Video */}
+          {/* VSL Video avec titre optimisé */}
           <div id="vsl-video" className="scroll-mt-20 mb-8">
+            <div className="text-center mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-primary">
+                🎥 "Découvrez le système qui fait gagner du temps à +200 PME québécoises"
+              </h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                🛠️ Une solution testée au Québec, prête en 30 jours
+              </p>
+            </div>
+            
             {layoutVariant === "enhanced" ? (
               <EnhancedVSLPlayer 
                 onCTAClick={handleCTAClick} 
@@ -149,28 +173,41 @@ const VSL = () => {
           </div>
 
           <div className="text-center">
-            {/* Text summary below video */}
+            {/* Bullets optimisés orientés résultats */}
             <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-4xl mx-auto mb-8">
-              <h3 className="text-xl font-bold mb-4">👉 Ce que vous allez découvrir dans cette vidéo :</h3>
-              <div className="grid md:grid-cols-3 gap-4 text-left">
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Pour qui est cette solution</h4>
-                  <p className="text-sm text-muted-foreground">PME québécoises qui perdent 10+ heures/semaine dans la gestion</p>
+              <h3 className="text-xl font-bold mb-6">👉 Ce que vous allez découvrir dans cette vidéo :</h3>
+              <div className="space-y-4 text-left max-w-3xl mx-auto">
+                <div className="flex items-start gap-3">
+                  <span className="text-success mt-1">✅</span>
+                  <span><strong>Comment économiser 10 à 25 heures chaque semaine</strong> sans embaucher</span>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Pourquoi c'est différent</h4>
-                  <p className="text-sm text-muted-foreground">100% sur mesure, créé spécifiquement pour VOS processus</p>
+                <div className="flex items-start gap-3">
+                  <span className="text-success mt-1">✅</span>
+                  <span><strong>Le système utilisé par +200 PME locales</strong> (et comment il fonctionne)</span>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-primary mb-2">Les bénéfices concrets</h4>
-                  <p className="text-sm text-muted-foreground">
-                    ✅ Économisez jusqu'à 15h/semaine<br/>
-                    ✅ Automatisez sans complexité<br/>
-                    ✅ 100% québécois et humain<br/>
-                    ✅ Prêt en 30 jours
-                  </p>
+                <div className="flex items-start gap-3">
+                  <span className="text-success mt-1">✅</span>
+                  <span><strong>Pourquoi cette méthode fonctionne,</strong> même si vous n'aimez pas la technologie</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-success mt-1">✅</span>
+                  <span><strong>Et comment l'implanter en moins de 30 jours</strong> sans perturber votre équipe</span>
                 </div>
               </div>
+            </div>
+            
+            {/* 2e CTA sous la vidéo */}
+            <div className="my-8">
+              <CTAButton
+                location="vsl_post_video"
+                variant="primary_cta"
+                destination="/book-call"
+                size="cta-large"
+                className="text-lg font-bold px-12 py-4"
+                onClick={handleCTAClick}
+              >
+                📞 Oui, je veux un appel pour voir comment ça s'applique à mon entreprise
+              </CTAButton>
             </div>
             
             <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
