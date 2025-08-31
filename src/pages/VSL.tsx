@@ -114,6 +114,23 @@ const VSL = () => {
             <h1 className="text-responsive-xl font-bold mb-6 sm:mb-8 leading-tight">
               {getPersonalizedMessage()}
             </h1>
+            
+            {/* CTA above video */}
+            <div className="mb-8">
+              <CTAButton
+                location="vsl_top"
+                variant="primary_cta"
+                destination="/book-call"
+                size="cta"
+                className="px-8 py-3 font-semibold"
+                onClick={handleCTAClick}
+              >
+                📞 Planifier mon appel gratuit
+              </CTAButton>
+              <p className="text-sm text-muted-foreground mt-3">
+                ⚠️ Calendrier limité – 4 créneaux dispo cette semaine
+              </p>
+            </div>
           </div>
 
           {/* VSL Video */}
@@ -129,6 +146,30 @@ const VSL = () => {
           </div>
 
           <div className="text-center">
+            {/* Text summary below video */}
+            <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-4xl mx-auto mb-8">
+              <h3 className="text-xl font-bold mb-4">👉 Ce que vous allez découvrir dans cette vidéo :</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-left">
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">Pour qui est cette solution</h4>
+                  <p className="text-sm text-muted-foreground">PME québécoises qui perdent 10+ heures/semaine dans la gestion</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">Pourquoi c'est différent</h4>
+                  <p className="text-sm text-muted-foreground">100% sur mesure, créé spécifiquement pour VOS processus</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">Les bénéfices concrets</h4>
+                  <p className="text-sm text-muted-foreground">
+                    ✅ Économisez jusqu'à 15h/semaine<br/>
+                    ✅ Automatisez sans complexité<br/>
+                    ✅ 100% québécois et humain<br/>
+                    ✅ Prêt en 30 jours
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
               Vous en avez assez de perdre vos soirées dans la paperasse? De chercher des documents partout? De refaire les mêmes calculs encore et encore? Je vous montre comment tout automatiser, <span className="font-semibold text-primary">sans que vous ayez à apprendre quoi que ce soit de compliqué.</span>
             </p>

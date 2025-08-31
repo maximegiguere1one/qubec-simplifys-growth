@@ -327,8 +327,25 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
           <h1 className="text-responsive-xl font-bold mb-4">
-            {currentStep === 0 ? "Commençons par vous connaître !" : "Découvrons ensemble votre potentiel d'économie de temps"}
+            {currentStep === 0 
+              ? "Répondez à 5 questions pour découvrir ce qui freine votre entreprise… et comment l'automatiser sans vous casser la tête." 
+              : "Découvrons ensemble votre potentiel d'économie de temps"}
           </h1>
+          {currentStep === 0 && (
+            <div className="mb-6">
+              <p className="text-responsive-lg text-primary font-semibold mb-3">
+                Recevez un mini diagnostic et un plan d'action personnalisé en moins de 3 minutes.
+              </p>
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-3xl mx-auto mb-4">
+                <p className="text-foreground font-medium">
+                  ✅ +247 PME québécoises ont déjà complété ce diagnostic
+                </p>
+              </div>
+              <p className="text-muted-foreground italic">
+                Fatigué de gérer tout à la main ? Trop de paperasse ? Ce quiz va vous montrer par où commencer pour simplifier votre quotidien.
+              </p>
+            </div>
+          )}
           <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8">
             {currentStep === 0 ? "Quelques infos pour personnaliser votre analyse" : "Aidez-nous à comprendre votre réalité d'entrepreneur"}
           </p>

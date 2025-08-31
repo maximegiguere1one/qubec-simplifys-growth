@@ -105,6 +105,11 @@ export const QuizCompletionDialog = ({
               <Clock className="w-5 h-5" />
               Prochaine étape (2 minutes)
             </h4>
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4">
+              <p className="text-primary font-medium text-center">
+                🎥 Bravo ! On vous a préparé une vidéo personnalisée avec les prochaines étapes.
+              </p>
+            </div>
             <p className="text-muted-foreground mb-4">
               Découvrez maintenant comment nous pourrions transformer votre quotidien avec une solution sur mesure.
             </p>
