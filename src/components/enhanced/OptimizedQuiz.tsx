@@ -64,6 +64,7 @@ export const OptimizedQuiz = ({
     setTimeout(() => {
       setShowFeedback(false);
       setSelectedAnswer("");
+      onNext(); // Call the parent's onNext to advance
     }, 600);
   };
 

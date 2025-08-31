@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, getABVariant, trackABConversion } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
@@ -23,9 +23,16 @@ const Quiz = () => {
   const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [exitIntentShown, setExitIntentShown] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [quizSessionStarted, setQuizSessionStarted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isMobile, mobileButtonClass, animationClass } = useMobileOptimized();
+  
+  // Refs to prevent double-triggering
+  const advanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isAdvancingRef = useRef(false);
   
   // A/B test for personalization
   const personalizationVariant = getABVariant("quiz_personalization", ["standard", "dynamic"]);
@@ -51,11 +58,12 @@ const Quiz = () => {
   usePageTracking();
   
   useEffect(() => {
-    // Only start quiz session after contact capture
-    if (currentStep > 0) {
+    // Only start quiz session once after contact capture
+    if (currentStep > 0 && !quizSessionStarted) {
       startQuizSession();
+      setQuizSessionStarted(true);
     }
-  }, [currentStep]);
+  }, [currentStep, quizSessionStarted]);
 
   const questions = [
     {
@@ -179,10 +187,16 @@ const Quiz = () => {
   };
 
   const handleAnswerChange = (value: string) => {
+    // Prevent double-triggering
+    if (isAdvancingRef.current) return;
+    
     setAnswers(prev => ({
       ...prev,
       [currentQuestion]: value
     }));
+    
+    setSelectedAnswer(value);
+    setShowFeedback(true);
     
     // Track time spent on question
     const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
@@ -193,20 +207,36 @@ const Quiz = () => {
       trackQuizAnswer(currentQuestion + 1, value, option.score, timeSpent); // +1 to adjust for 0-based index
     }
 
+    // Clear any existing timeout
+    if (advanceTimeoutRef.current) {
+      clearTimeout(advanceTimeoutRef.current);
+    }
+
     // Auto-advance to next question after short delay for visual feedback
-    setTimeout(() => {
+    advanceTimeoutRef.current = setTimeout(() => {
+      setShowFeedback(false);
+      setSelectedAnswer("");
+      isAdvancingRef.current = true;
       handleNext();
-    }, 800);
+      isAdvancingRef.current = false;
+    }, 600);
   };
 
   const handleNext = () => {
-    if (!answers[currentQuestion]) {
+    // Only validate if this is a manual click (not auto-advance)
+    if (!isAdvancingRef.current && !answers[currentQuestion]) {
       toast({
         title: "Réponse requise",
         description: "Veuillez sélectionner une réponse avant de continuer.",
         variant: "destructive",
       });
       return;
+    }
+
+    // Clear any existing timeout
+    if (advanceTimeoutRef.current) {
+      clearTimeout(advanceTimeoutRef.current);
+      advanceTimeoutRef.current = null;
     }
 
     if (currentStep < totalSteps - 1) {
@@ -391,17 +421,31 @@ const Quiz = () => {
                 onValueChange={handleAnswerChange}
                 className="space-y-4"
               >
-                {questions[currentQuestion].options.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer btn-touch">
-                    <RadioGroupItem value={option.value} id={option.value} />
-                    <Label 
-                      htmlFor={option.value} 
-                      className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
+                {questions[currentQuestion].options.map((option) => {
+                  const isSelected = answers[currentQuestion] === option.value;
+                  const isCurrentSelection = selectedAnswer === option.value;
+                  
+                  return (
+                    <div 
+                      key={option.value} 
+                      className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border transition-all duration-300 cursor-pointer btn-touch
+                        ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-accent/50'}
+                        ${isCurrentSelection && showFeedback ? 'bg-green-50 border-green-400 scale-[1.02]' : ''}
+                        ${animationClass}`}
                     >
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
+                      <RadioGroupItem value={option.value} id={option.value} />
+                      <Label 
+                        htmlFor={option.value} 
+                        className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
+                      >
+                        {option.label}
+                      </Label>
+                      {isCurrentSelection && showFeedback && (
+                        <CheckCircle className="w-5 h-5 text-green-600 animate-scale-in" />
+                      )}
+                    </div>
+                  );
+                })}
               </RadioGroup>
             </div>
 
@@ -410,8 +454,8 @@ const Quiz = () => {
               <Button
                 variant="outline"
                 onClick={handlePrevious}
-                disabled={currentStep === 0}
-                className="flex items-center gap-2"
+                disabled={currentStep === 1}
+                className={`flex items-center gap-2 btn-touch ${animationClass}`}
               >
                 <ArrowLeft className="w-4 h-4" />
                 Précédent
@@ -420,7 +464,9 @@ const Quiz = () => {
               <Button
                 variant="cta"
                 onClick={handleNext}
-                className="flex items-center gap-2 px-6 sm:px-8 btn-touch"
+                disabled={!answers[currentQuestion] || isAdvancingRef.current}
+                className={`flex items-center gap-2 px-6 sm:px-8 btn-touch ${mobileButtonClass} ${animationClass} ${isAdvancingRef.current ? 'opacity-50' : ''}`}
+                style={{ display: showFeedback ? 'none' : 'flex' }}
               >
                 {currentStep === totalSteps - 1 ? "Voir mes résultats" : "Suivant"}
                 <ArrowRight className="w-4 h-4" />
