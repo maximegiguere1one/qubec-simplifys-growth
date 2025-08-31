@@ -172,6 +172,22 @@
     }
   }
 
+  /* Gentle pulse animation variant */
+  .animate-pulse-gentle {
+    animation: pulse-gentle 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-gentle {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--cta) / 0.5);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 15px hsl(var(--cta) / 0);
+    }
+  }
+
   /* Smooth scrolling for the whole page */
   html {
     scroll-behavior: smooth;

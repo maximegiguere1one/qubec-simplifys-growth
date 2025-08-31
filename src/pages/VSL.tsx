@@ -151,38 +151,63 @@ const VSL = () => {
             <TrustBadges />
           </div>
 
-          {/* Enhanced Primary CTA with generous whitespace */}
-          <div className="text-center py-8 sm:py-12 px-4 sm:px-8 mb-12">
-            <div className="max-w-2xl mx-auto space-y-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+          {/* Enhanced Primary CTA with generous whitespace - Single clear action */}
+          <div className="text-center py-12 sm:py-16 px-6 sm:px-8 mb-16">
+            <div className="max-w-2xl mx-auto space-y-8">
+              <h3 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
                 🎯 Prêt à récupérer 15+ heures par semaine ?
               </h3>
               
-              <CTAButton
-                location="vsl_primary"
-                variant="main_cta"
-                destination="/book-call"
-                size="cta-large"
-                className="w-full sm:w-auto h-14 sm:h-16 text-base sm:text-lg font-semibold px-8 sm:px-12 shadow-2xl hover:shadow-3xl transition-all duration-300"
-                onClick={handleCTAClick}
-              >
-                📞 Réserver ma consultation gratuite
-              </CTAButton>
+              <p className="text-lg text-muted-foreground max-w-lg mx-auto">
+                Réservez votre consultation gratuite maintenant et découvrez exactement comment automatiser votre entreprise.
+              </p>
               
-              {/* Safety net CTA */}
-              <div className="pt-4">
+              {/* Primary CTA with maximum focus */}
+              <div className="space-y-6">
+                <CTAButton
+                  location="vsl_primary"
+                  variant="main_cta"
+                  destination="/book-call"
+                  size="cta-large"
+                  className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 pulse-animation"
+                  onClick={handleCTAClick}
+                >
+                  📞 Obtenir ma consultation gratuite
+                </CTAButton>
+                
+                {/* Trust indicators directly below CTA */}
+                <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    100% gratuit
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    Expert local québécois
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-success" />
+                    Aucun engagement
+                  </span>
+                </div>
+              </div>
+              
+              {/* Safety net CTA - doesn't compete with main action */}
+              <div className="pt-8 border-t border-border/30">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Pas prêt pour un appel ? Téléchargez d'abord notre guide :
+                </p>
                 <CTAButton
                   location="vsl_secondary"
                   variant="brochure_download"
                   destination="#"
                   size="outline"
-                  className="text-primary border-primary/30 hover:bg-primary/10"
+                  className="text-primary border-primary/30 hover:bg-primary/10 h-12 px-6"
                   onClick={() => {
-                    // Trigger brochure download or info modal
-                    console.log("Download brochure");
+                    trackEvent('vsl_cta_click', { cta_location: 'secondary_download', variant: 'brochure' });
                   }}
                 >
-                  📄 Télécharger la brochure gratuite
+                  📄 Guide gratuit : 10 processus à automatiser en premier
                 </CTAButton>
               </div>
               

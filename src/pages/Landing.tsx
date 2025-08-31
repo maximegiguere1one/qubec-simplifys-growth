@@ -154,19 +154,21 @@ const Landing = () => {
 
   return (
     <div className={`min-h-[100dvh] bg-gradient-background ${mobileContainerClass}`}>
-      {/* Hero Section */}
+      {/* Hero Section - Single focus, no distractions */}
       <section className="relative overflow-hidden">
         <div className="container mx-auto container-mobile section-mobile">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-6 lg:space-y-8">
               <div className="space-y-4">
-                {/* Clear H1 headline above the fold */}
+                {/* Clear H1 headline above the fold - 1 objective, 1 message, 1 action */}
                 <h1 className="heading-responsive font-bold leading-tight text-foreground">
                   {getHeadlineByVariant()}
                 </h1>
-                {/* Concise value proposition */}
+                {/* Concise value proposition with scannable format */}
                 <p className="subheading-responsive text-muted-foreground leading-relaxed max-w-2xl">
-                  Système sur mesure qui automatise votre paperasse. <strong className="text-foreground">15+ heures récupérées par semaine</strong>. Zéro formation requise.
+                  • Système sur mesure qui automatise votre paperasse<br/>
+                  • <strong className="text-foreground">15+ heures récupérées par semaine</strong><br/>
+                  • Zéro formation requise
                 </p>
                 
                 {/* Quebec trust signals immediately visible */}
@@ -187,64 +189,97 @@ const Landing = () => {
               </div>
 
               {/* Primary CTA above the fold with generous whitespace */}
-              <Card className="p-6 sm:p-8 md:p-10 shadow-card border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
+              <Card className="p-8 sm:p-10 md:p-12 shadow-card border-2 border-primary/20 bg-card/80 backdrop-blur-sm">
                 <h2 className="text-responsive-lg font-bold mb-6 text-center text-foreground">
-                  📊 Calculer votre potentiel d'économie de temps
+                  📊 Découvrez exactement combien d'heures vous récupérerez
                 </h2>
-                <p className="text-center text-muted-foreground mb-6 max-w-2xl mx-auto">
-                  <strong className="text-foreground">Analyse gratuite en 2 minutes</strong> • Clients récupèrent 15h/semaine • Résultats personnalisés
+                <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                  • <strong className="text-foreground">Analyse gratuite en 2 minutes</strong><br/>
+                  • Nos clients récupèrent 15h/semaine en moyenne<br/>
+                  • Résultats personnalisés selon votre situation
                 </p>
-                {/* Minimized form fields */}
+                
+                {/* Value reinforcement */}
+                <div className="bg-success/10 border border-success/20 rounded-lg p-4 mb-6 text-center">
+                  <p className="text-sm text-success font-medium">
+                    ✓ 200+ PME québécoises nous font confiance • ✓ Zéro engagement • ✓ Support local
+                  </p>
+                </div>
+                
+                {/* Minimized form fields - Only essential information */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
-                    <Input
-                      type="text"
-                      placeholder="Votre prénom et nom"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="h-12 sm:h-14 text-base sm:text-lg btn-touch border-2 border-primary/30 focus:border-primary"
-                      required
-                      autoComplete="name"
-                      aria-label="Votre nom complet"
-                    />
-                    <Input
-                      type="email"
-                      placeholder="Votre adresse courriel"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-12 sm:h-14 text-base sm:text-lg btn-touch border-2 border-primary/30 focus:border-primary"
-                      required
-                      autoComplete="email"
-                      aria-label="Votre adresse email"
-                    />
+                    <div>
+                      <label className="sr-only" htmlFor="name-input">Votre nom complet</label>
+                      <Input
+                        id="name-input"
+                        type="text"
+                        placeholder="Votre prénom et nom"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="h-14 sm:h-16 text-base sm:text-lg btn-touch border-2 border-primary/30 focus:border-primary transition-colors"
+                        required
+                        autoComplete="name"
+                        aria-label="Votre nom complet"
+                      />
+                    </div>
+                    <div>
+                      <label className="sr-only" htmlFor="email-input">Votre adresse email</label>
+                      <Input
+                        id="email-input"
+                        type="email"
+                        placeholder="Votre adresse courriel"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="h-14 sm:h-16 text-base sm:text-lg btn-touch border-2 border-primary/30 focus:border-primary transition-colors"
+                        required
+                        autoComplete="email"
+                        aria-label="Votre adresse email"
+                      />
+                    </div>
                   </div>
                   
-                  {/* Large, prominent CTA button */}
-                  <div className="pt-4">
+                  {/* Large, prominent CTA button with generous whitespace */}
+                  <div className="pt-6">
                     <Button 
                       type="submit" 
                       variant="cta-large" 
-                      className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
+                      className={`w-full h-16 sm:h-18 ${mobileButtonClass} btn-touch text-lg sm:text-xl font-bold ${animationClass} shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105`}
                       disabled={isLoading}
                     >
                       <span className="truncate">
                         {isLoading ? "🔄 Analyse en cours..." : 
                          ctaVariant === "direct_booking" 
-                           ? "📞 Réserver ma consultation gratuite"
-                           : "🚀 Calculer mes heures récupérables"}
+                           ? "📞 Obtenir ma consultation gratuite"
+                           : "🚀 Calculer mes heures récupérables maintenant"}
                       </span>
                     </Button>
                   </div>
                 </form>
-                {/* Privacy and trust indicators */}
-                <div className="text-center mt-6">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    ✓ Aucun engagement • ✓ 100% gratuit • ✓ Résultats en 2 minutes
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    🔒 Vos données restent confidentielles • Jamais de spam • 
-                    <a href="#" className="text-primary underline ml-1">Politique de confidentialité</a>
-                  </p>
+                {/* Privacy and trust indicators - Legal in clear language */}
+                <div className="text-center mt-8">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-success" />
+                        Aucun engagement
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-success" />
+                        100% gratuit
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <CheckCircle2 className="w-4 h-4 text-success" />
+                        Résultats en 2 minutes
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                      🔒 <strong>Vos données restent confidentielles.</strong> Nous ne vendrons jamais votre email. 
+                      <a href="#" className="text-primary underline ml-1 hover:text-primary-dark transition-colors">
+                        Politique de confidentialité
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </Card>
             </div>

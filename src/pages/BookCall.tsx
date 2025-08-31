@@ -16,6 +16,7 @@ import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 const BookCall = () => {
   const { isMobile } = useMobileOptimized();
+  const { toast } = useToast();
   
   // Track page view
   usePageTracking();
@@ -28,26 +29,49 @@ const BookCall = () => {
   const bookingVariant = getABVariant("booking_flow", ["enhanced", "simple"]);
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
-      <div className="container mx-auto container-mobile max-w-7xl">
-        {bookingVariant === "simple" ? (
-          <OptimizedBookingForm 
-            prefilledData={{
-              name: quizResults?.contactInfo?.name,
-              email: quizResults?.contactInfo?.email,
-              phone: quizResults?.contactInfo?.phone,
-            }}
-            onSuccess={() => {
-              // Navigate to thank you page or show success message
-              window.location.href = '/?success=booking';
-            }}
-          />
-        ) : (
-          <EnhancedBookingFlow 
-            leadId={leadId}
-            quizResults={quizResults}
-          />
-        )}
+    <div className="min-h-[100dvh] bg-gradient-background py-8 sm:py-12 md:py-16">
+      <div className="container mx-auto container-mobile max-w-4xl">
+        {/* Progress indicator */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-success text-success-foreground rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+              <span className="text-muted-foreground">Analyse</span>
+              <div className="w-8 h-1 bg-success rounded"></div>
+              <div className="w-8 h-8 bg-success text-success-foreground rounded-full flex items-center justify-center text-sm font-bold">✓</div>
+              <span className="text-muted-foreground">Vidéo</span>
+              <div className="w-8 h-1 bg-success rounded"></div>
+              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">3</div>
+              <span className="font-medium">Réservation</span>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Dernière étape : réservez votre consultation personnalisée
+          </p>
+        </div>
+
+        <OptimizedBookingForm 
+          prefilledData={{
+            name: quizResults?.contactInfo?.name,
+            email: quizResults?.contactInfo?.email,
+            phone: quizResults?.contactInfo?.phone,
+          }}
+          onSuccess={() => {
+            // Track successful booking
+            trackBooking({
+              name: quizResults?.contactInfo?.name || '',
+              email: quizResults?.contactInfo?.email || '',
+              phone: quizResults?.contactInfo?.phone || '',
+              selectedDate: '',
+              selectedTime: ''
+            });
+            // Show success state instead of redirect
+            toast({
+              title: "✓ Consultation réservée !",
+              description: "Vous recevrez un email de confirmation sous peu.",
+            });
+          }}
+        />
       </div>
     </div>
   );
