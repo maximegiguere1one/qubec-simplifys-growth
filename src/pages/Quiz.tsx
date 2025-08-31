@@ -37,6 +37,7 @@ const Quiz = () => {
     {
       id: 1,
       question: "En ce moment, qu'est-ce qui vous fait perdre le plus de temps dans votre quotidien d'entrepreneur ?",
+      subtitle: "Question 1 sur 5 - Identifions votre plus gros défi",
       options: [
         { value: "inventory", label: "Compter mon inventaire et suivre mes stocks", score: 25, priority: "Gestion d'inventaire" },
         { value: "billing", label: "Faire mes factures et tenir mes livres à jour", score: 20, priority: "Facturation" },
@@ -48,6 +49,7 @@ const Quiz = () => {
     {
       id: 2,
       question: "Quand vous pensez aux heures que vous passez dans la paperasse chaque semaine, que ressentez-vous ?",
+      subtitle: "Question 2 sur 5 - Quantifions le temps perdu",
       options: [
         { value: "low", label: "Moins de 5 heures - c'est gérable", score: 5 },
         { value: "medium", label: "5 à 15 heures - ça commence à peser", score: 15 },
@@ -58,6 +60,7 @@ const Quiz = () => {
     {
       id: 3,
       question: "Avez-vous déjà pensé : 'Si seulement il existait un outil qui faisait exactement ce dont j'ai besoin' ?",
+      subtitle: "Question 3 sur 5 - Évaluons votre besoin de solution personnalisée",
       options: [
         { value: "never", label: "Non, mes outils actuels me conviennent", score: 1 },
         { value: "sometimes", label: "Oui, de temps en temps", score: 2 },
@@ -68,6 +71,7 @@ const Quiz = () => {
     {
       id: 4,
       question: "Si quelqu'un pouvait créer pour vous l'outil parfait adapté à votre entreprise, comment réagiriez-vous ?",
+      subtitle: "Question 4 sur 5 - Mesurons votre intérêt pour une solution personnalisée",
       options: [
         { value: "skeptical", label: "Je serais prudent, ça semble trop beau", score: 1 },
         { value: "interested", label: "Ça m'intéresserait vraiment", score: 2 },
@@ -78,6 +82,7 @@ const Quiz = () => {
     {
       id: 5,
       question: "Quel type de solution transformerait le plus votre façon de travailler ?",
+      subtitle: "Question 5 sur 5 - Définissons votre solution idéale",
       options: [
         { value: "automation", label: "Que tout se fasse automatiquement", score: 2, type: "Système d'automatisation" },
         { value: "integration", label: "Avoir tous mes outils dans un seul endroit", score: 3, type: "Plateforme intégrée" },
@@ -341,9 +346,14 @@ const Quiz = () => {
         ) : (
           <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
             <div className="mb-8">
-              <h2 className="text-responsive-lg font-bold mb-4 sm:mb-6 leading-relaxed">
-                {questions[currentQuestion].question}
-              </h2>
+              <div className="mb-4 sm:mb-6">
+                <p className="text-sm font-medium text-primary mb-2">
+                  {questions[currentQuestion].subtitle}
+                </p>
+                <h2 className="text-responsive-lg font-bold leading-relaxed">
+                  {questions[currentQuestion].question}
+                </h2>
+              </div>
 
               <RadioGroup 
                 value={answers[currentQuestion] || ""} 

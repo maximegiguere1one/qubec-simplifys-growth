@@ -6,6 +6,7 @@ import { trackEvent } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
+import { usePersonalizedMessaging } from "@/hooks/usePersonalizedMessaging";
 import { VSLVideo } from "@/components/VSLVideo";
 import { ProductVisuals } from "@/components/ProductVisuals";
 import { ROICalculator } from "@/components/ROICalculator";
@@ -25,6 +26,7 @@ const VSL = () => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [showStickyButton, setShowStickyButton] = useState(false);
   const navigate = useNavigate();
+  const { getPersonalizedVSL } = usePersonalizedMessaging();
   
   // Track page view
   usePageTracking();

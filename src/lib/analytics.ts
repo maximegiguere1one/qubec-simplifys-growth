@@ -63,7 +63,7 @@ export const createLead = async (email: string, name: string, phone?: string, so
 };
 
 // Define event types to match database enum
-type FunnelEventType = 
+export type FunnelEventType = 
   | 'lp_view'
   | 'lp_submit_optin'
   | 'quiz_start'

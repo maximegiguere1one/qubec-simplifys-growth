@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { ExperimentTracker } from '@/components/ExperimentTracker';
 import { Badge } from '@/components/ui/badge';
 import { 
   BarChart3, 
@@ -97,7 +98,7 @@ const Dashboard = () => {
 
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
             <TabsTrigger value="overview" className="flex items-center">
               <BarChart3 className="h-4 w-4 mr-2" />
               Vue d'ensemble
@@ -105,6 +106,10 @@ const Dashboard = () => {
             <TabsTrigger value="advanced" className="flex items-center">
               <TrendingUp className="h-4 w-4 mr-2" />
               Analytics Avancées
+            </TabsTrigger>
+            <TabsTrigger value="experiments" className="flex items-center">
+              <Target className="h-4 w-4 mr-2" />
+              Tests A/B
             </TabsTrigger>
             <TabsTrigger value="leads" className="flex items-center">
               <Users className="h-4 w-4 mr-2" />
@@ -122,6 +127,10 @@ const Dashboard = () => {
 
           <TabsContent value="advanced">
             <AdvancedAnalytics />
+          </TabsContent>
+
+          <TabsContent value="experiments">
+            <ExperimentTracker />
           </TabsContent>
 
           <TabsContent value="leads">
