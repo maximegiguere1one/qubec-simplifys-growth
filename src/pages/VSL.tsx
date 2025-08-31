@@ -106,8 +106,20 @@ const VSL = () => {
             
             {quizResults?.totalScore >= 12 && (
               <Badge variant="secondary" className="mb-2">
-                🎯 Score élevé détecté : Solution prioritaire recommandée
+                🎯 Vous vous qualifiez pour notre service : solution prioritaire détectée
               </Badge>
+            )}
+            
+            {/* Bloc d'éligibilité exclusif (uniquement pour les qualifiés) */}
+            {quizResults?.totalScore >= 12 && (
+              <div className="mb-6 space-y-3 md:bg-muted/20 md:border md:rounded-lg md:p-4 md:text-center">
+                <p className="text-sm md:text-base text-foreground/90 leading-relaxed">
+                  Votre profil correspond exactement aux entrepreneurs que nous pouvons aider. Cela signifie que vous êtes éligible à un système sur mesure qui libère 15 à 25 heures/mois… et que votre situation est considérée comme prioritaire.
+                </p>
+                <p className="text-sm font-medium text-primary">
+                  🔐 Si vous ne gagnez pas au moins 10h, on vous rembourse + on vous vire 1 000 $.
+                </p>
+              </div>
             )}
             
             {/* CTA au-dessus de la vidéo */}
