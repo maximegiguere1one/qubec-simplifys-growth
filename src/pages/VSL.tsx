@@ -112,22 +112,31 @@ const VSL = () => {
             
             {/* Bloc d'éligibilité exclusif (uniquement pour les qualifiés) */}
             {quizResults?.totalScore >= 12 && (
-              <div className="mb-6 space-y-3 md:bg-muted/20 md:border md:rounded-lg md:p-4 md:text-center">
-                <p className="text-sm md:text-base text-foreground/90 leading-relaxed">
-                  Votre profil correspond exactement aux entrepreneurs que nous pouvons aider. Cela signifie que vous êtes éligible à un système sur mesure qui libère 15 à 25 heures/mois… et que votre situation est considérée comme prioritaire.
+              <div className="mb-6 space-y-4 md:bg-muted/20 md:border md:rounded-lg md:p-4 md:text-center">
+                <p className="text-sm md:text-base text-foreground leading-relaxed">
+                  Votre profil indique que vous perdez actuellement <strong>15 à 25 heures par mois</strong> sur des tâches répétitives.
                 </p>
-                <p className="text-sm font-medium text-primary">
-                  🔐 Si vous ne gagnez pas au moins 10h, on vous rembourse + on vous vire 1 000 $.
+                <p className="text-sm md:text-base text-foreground leading-relaxed">
+                  👉 Vous êtes éligible à un système sur mesure qui vous les rend, et votre situation est considérée comme prioritaire.
+                </p>
+                <p className="text-sm md:text-base font-bold text-green-600">
+                  🔒 Si vous ne gagnez pas au moins 10h dès le premier mois, nous vous remboursons + nous vous versons <span className="text-red-600">1 000 $ cash</span>.
                 </p>
               </div>
             )}
             
             {/* CTA au-dessus de la vidéo */}
-            <div className="mb-6">
+            <div className="mb-4">
               <CTAButton location="vsl_top" variant="primary_cta" destination="/book-call" size="cta" className="px-8 py-3 font-semibold" onClick={handleCTAClick}>
                 📞 Planifier mon appel gratuit
               </CTAButton>
               
+              {/* Urgence douce sous le CTA */}
+              {quizResults?.totalScore >= 12 && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  ⚠️ Nombre de places limité pour les nouveaux clients chaque mois.
+                </p>
+              )}
             </div>
           </div>
           
