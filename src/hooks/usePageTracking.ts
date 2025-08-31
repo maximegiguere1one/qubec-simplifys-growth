@@ -31,10 +31,13 @@ export const useTimeTracking = () => {
 
     return () => {
       const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-      trackEvent('quiz_question_answer', {
+      const pathname = window.location.pathname;
+      const eventType = routeEventMap[pathname] || 'lp_view';
+      
+      trackEvent(eventType as any, {
         event_type: 'page_time',
         time_spent: timeSpent,
-        page: window.location.pathname,
+        page: pathname,
       });
     };
   }, []);

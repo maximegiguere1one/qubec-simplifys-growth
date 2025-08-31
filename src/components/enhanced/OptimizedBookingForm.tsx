@@ -9,6 +9,7 @@ import { Calendar, Clock, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { trackBooking, trackEvent, getABVariant, trackABConversion } from "@/lib/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { MultiStepBookingForm } from "./MultiStepBookingForm";
 
 interface OptimizedBookingFormProps {
   prefilledData?: {
@@ -16,7 +17,7 @@ interface OptimizedBookingFormProps {
     email?: string;
     phone?: string;
   };
-  onSuccess?: () => void;
+  onSuccess?: (bookingId?: string) => void;
 }
 
 export const OptimizedBookingForm = ({ prefilledData, onSuccess }: OptimizedBookingFormProps) => {
@@ -271,6 +272,13 @@ export const OptimizedBookingForm = ({ prefilledData, onSuccess }: OptimizedBook
     </form>
   );
 
+  const canProceedToNext = (): boolean => {
+    if (currentStep === 1) return !!(formData.name && formData.email);
+    if (currentStep === 2) return !!(formData.selectedDate && formData.selectedTime);
+    if (currentStep === 3) return true;
+    return false;
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -302,14 +310,38 @@ export const OptimizedBookingForm = ({ prefilledData, onSuccess }: OptimizedBook
 
       {/* Form Card */}
       <Card className="p-6 sm:p-8 md:p-10 shadow-card border-2 border-primary/20">
-        {renderSingleStepForm()}
+        {formVariant === "multi_step" ? (
+          <MultiStepBookingForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            availableDates={availableDates}
+            timeSlots={timeSlots}
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            handleNext={handleNext}
+            handlePrevious={handlePrevious}
+            canProceedToNext={canProceedToNext()}
+          />
+        ) : (
+          renderSingleStepForm()
+        )}
         
-        {/* Privacy notice */}
-        <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-          <p className="text-sm text-muted-foreground text-center">
-            🔒 <strong>Vos données sont sécurisées</strong> et ne seront jamais vendues. 
-            Consultez notre <a href="#" className="text-primary underline">politique de confidentialité</a>.
-          </p>
+        {/* Contact & Privacy */}
+        <div className="mt-8 space-y-4" role="region" aria-label="Contact et confidentialité">
+          <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/20">
+            <p className="text-sm">
+              <strong>Besoin d'aide immédiate ?</strong><br />
+              📞 <a href="tel:+15145551234" className="text-primary font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">(514) 555-1234</a> (lun-ven 9h-17h)
+            </p>
+          </div>
+          <div className="p-4 bg-muted/50 rounded-lg" aria-live="polite">
+            <p className="text-sm text-muted-foreground text-center">
+              🔒 <strong>Vos données sont sécurisées</strong> et ne seront jamais vendues. 
+              Consultez notre <a href="#" className="text-primary underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded">politique de confidentialité</a>.
+            </p>
+          </div>
         </div>
       </Card>
     </div>

@@ -1,22 +1,18 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Clock, Shield, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { trackBooking, trackEvent, getABVariant } from "@/lib/analytics";
+import { trackEvent, getABVariant, confirmBooking } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
-import { ABTest } from "@/components/ABTest";
+import { ConversionOptimizer } from "@/components/enhanced/ConversionOptimizer";
 import { EnhancedBookingFlow } from "@/components/EnhancedBookingFlow";
-import { EnhancedBookingForm } from "@/components/enhanced/EnhancedBookingForm";
 import { OptimizedBookingForm } from "@/components/enhanced/OptimizedBookingForm";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 const BookCall = () => {
   const { isMobile } = useMobileOptimized();
   const { toast } = useToast();
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   
   // Track page view
   usePageTracking();
@@ -50,28 +46,57 @@ const BookCall = () => {
           </p>
         </div>
 
-        <OptimizedBookingForm 
-          prefilledData={{
-            name: quizResults?.contactInfo?.name,
-            email: quizResults?.contactInfo?.email,
-            phone: quizResults?.contactInfo?.phone,
-          }}
-          onSuccess={() => {
-            // Track successful booking
-            trackBooking({
-              name: quizResults?.contactInfo?.name || '',
-              email: quizResults?.contactInfo?.email || '',
-              phone: quizResults?.contactInfo?.phone || '',
-              selectedDate: '',
-              selectedTime: ''
-            });
-            // Show success state instead of redirect
-            toast({
-              title: "✓ Consultation réservée !",
-              description: "Vous recevrez un email de confirmation sous peu.",
-            });
-          }}
-        />
+        <ConversionOptimizer page="booking">
+          {bookingConfirmed ? (
+            // Thank you state
+            <div className="text-center py-12">
+              <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-6" />
+              <h2 className="text-3xl font-bold mb-4">🎉 Consultation confirmée !</h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Merci ! Vous recevrez un courriel de confirmation sous peu avec tous les détails.
+              </p>
+              <div className="bg-muted/50 rounded-lg p-6 max-w-md mx-auto">
+                <p className="text-sm">
+                  <strong>Prochaines étapes :</strong><br />
+                  1. Vous recevrez un email de confirmation<br />
+                  2. Nous vous enverrons un questionnaire préparatoire<br />
+                  3. Rendez-vous à l'heure convenue !
+                </p>
+              </div>
+            </div>
+          ) : (
+            // Conditional A/B test rendering
+            bookingVariant === "enhanced" ? (
+              <EnhancedBookingFlow
+                leadId={leadId}
+                quizResults={quizResults}
+                prefilledData={{
+                  name: quizResults?.contactInfo?.name,
+                  email: quizResults?.contactInfo?.email,
+                  phone: quizResults?.contactInfo?.phone,
+                }}
+                onSuccess={(id: string) => {
+                  setBookingId(id);
+                  setBookingConfirmed(true);
+                  if (id) confirmBooking(id);
+                }}
+              />
+            ) : (
+              <OptimizedBookingForm 
+                prefilledData={{
+                  name: quizResults?.contactInfo?.name,
+                  email: quizResults?.contactInfo?.email,
+                  phone: quizResults?.contactInfo?.phone,
+                }}
+                onSuccess={(id?: string) => {
+                  setBookingId(id || null);
+                  setBookingConfirmed(true);
+                  if (id) confirmBooking(id);
+                }}
+              />
+            )
+          )}
+        </ConversionOptimizer>
       </div>
     </div>
   );

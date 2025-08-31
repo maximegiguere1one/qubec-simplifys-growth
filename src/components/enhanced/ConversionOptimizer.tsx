@@ -13,6 +13,17 @@ export const ConversionOptimizer = ({ page, children }: ConversionOptimizerProps
   const [exitIntentShown, setExitIntentShown] = useState(false);
   const { isMobile } = useMobileOptimized();
 
+  // Map page to correct event type
+  const getEventType = (page: string) => {
+    const eventMap: Record<string, string> = {
+      'landing': 'lp_view',
+      'quiz': 'quiz_start', 
+      'vsl': 'vsl_view',
+      'booking': 'bookcall_view'
+    };
+    return eventMap[page] || 'lp_view';
+  };
+
   // Track scroll depth
   useEffect(() => {
     const handleScroll = () => {
@@ -20,18 +31,18 @@ export const ConversionOptimizer = ({ page, children }: ConversionOptimizerProps
         (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
       );
       
-      // Track meaningful scroll milestones using existing event types
+      // Track meaningful scroll milestones using correct event types
       if (scrollPercent >= 90 && scrollDepth < 90) {
-        trackEvent('vsl_view', { event_type: 'scroll_depth', depth: 90, page });
+        trackEvent(getEventType(page) as any, { event_type: 'scroll_depth', depth: 90, page });
         setScrollDepth(90);
       } else if (scrollPercent >= 75 && scrollDepth < 75) {
-        trackEvent('vsl_view', { event_type: 'scroll_depth', depth: 75, page });
+        trackEvent(getEventType(page) as any, { event_type: 'scroll_depth', depth: 75, page });
         setScrollDepth(75);
       } else if (scrollPercent >= 50 && scrollDepth < 50) {
-        trackEvent('vsl_view', { event_type: 'scroll_depth', depth: 50, page });
+        trackEvent(getEventType(page) as any, { event_type: 'scroll_depth', depth: 50, page });
         setScrollDepth(50);
       } else if (scrollPercent >= 25 && scrollDepth < 25) {
-        trackEvent('vsl_view', { event_type: 'scroll_depth', depth: 25, page });
+        trackEvent(getEventType(page) as any, { event_type: 'scroll_depth', depth: 25, page });
         setScrollDepth(25);
       }
     };
@@ -47,15 +58,15 @@ export const ConversionOptimizer = ({ page, children }: ConversionOptimizerProps
       const currentTime = Math.floor((Date.now() - startTime) / 1000);
       setTimeOnPage(currentTime);
       
-      // Track time milestones using existing event types
+      // Track time milestones using correct event types
       if (currentTime === 30) {
-        trackEvent('vsl_view', { event_type: 'time_on_page', seconds: 30, page });
+        trackEvent(getEventType(page) as any, { event_type: 'time_on_page', seconds: 30, page });
       } else if (currentTime === 60) {
-        trackEvent('vsl_view', { event_type: 'time_on_page', seconds: 60, page });
+        trackEvent(getEventType(page) as any, { event_type: 'time_on_page', seconds: 60, page });
       } else if (currentTime === 120) {
-        trackEvent('vsl_view', { event_type: 'time_on_page', seconds: 120, page });
+        trackEvent(getEventType(page) as any, { event_type: 'time_on_page', seconds: 120, page });
       } else if (currentTime === 300) {
-        trackEvent('vsl_view', { event_type: 'time_on_page', seconds: 300, page });
+        trackEvent(getEventType(page) as any, { event_type: 'time_on_page', seconds: 300, page });
       }
     }, 1000);
 
@@ -68,7 +79,7 @@ export const ConversionOptimizer = ({ page, children }: ConversionOptimizerProps
 
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0 && !exitIntentShown) {
-        trackEvent('vsl_view', { event_type: 'exit_intent', page, time_on_page: timeOnPage, scroll_depth: scrollDepth });
+        trackEvent(getEventType(page) as any, { event_type: 'exit_intent', page, time_on_page: timeOnPage, scroll_depth: scrollDepth });
         setExitIntentShown(true);
       }
     };
@@ -80,7 +91,7 @@ export const ConversionOptimizer = ({ page, children }: ConversionOptimizerProps
   // Track session end
   useEffect(() => {
     const handleBeforeUnload = () => {
-      trackEvent('vsl_view', { 
+      trackEvent(getEventType(page) as any, { 
         event_type: 'session_end',
         page, 
         time_on_page: timeOnPage, 

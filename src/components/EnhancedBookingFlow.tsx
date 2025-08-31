@@ -16,8 +16,10 @@ interface EnhancedBookingFlowProps {
   prefilledData?: {
     name?: string;
     email?: string;
+    phone?: string;
     company?: string;
   };
+  onSuccess?: (bookingId: string) => void;
 }
 
 export const EnhancedBookingFlow = ({ leadId, quizResults, prefilledData }: EnhancedBookingFlowProps) => {
