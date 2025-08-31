@@ -5,18 +5,21 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent } from "@/lib/analytics";
+import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 
 const Quiz = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [quizStartTime] = useState(Date.now());
   const [showSurvey, setShowSurvey] = useState(false);
+  const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -24,12 +27,15 @@ const Quiz = () => {
   usePageTracking();
   
   useEffect(() => {
-    startQuizSession();
-  }, []);
+    // Only start quiz session after contact capture
+    if (currentStep > 0) {
+      startQuizSession();
+    }
+  }, [currentStep]);
 
   const questions = [
     {
-      id: 0,
+      id: 1,
       question: "Qu'est-ce qui vous fait perdre le plus de temps dans votre business?",
       options: [
         { value: "inventory", label: "Compter mon inventaire / mes stocks", score: 25, priority: "Gestion d'inventaire" },
@@ -40,7 +46,7 @@ const Quiz = () => {
       ]
     },
     {
-      id: 1,
+      id: 2,
       question: "Combien d'heures par semaine vous passez dans la paperasse?",
       options: [
         { value: "low", label: "Moins de 5 heures (pas si pire)", score: 5 },
@@ -50,7 +56,7 @@ const Quiz = () => {
       ]
     },
     {
-      id: 2,
+      id: 3,
       question: "Avez-vous déjà dit 'Si seulement il existait un logiciel qui...' ?",
       options: [
         { value: "never", label: "Non, jamais vraiment", score: 1 },
@@ -60,7 +66,7 @@ const Quiz = () => {
       ]
     },
     {
-      id: 3,
+      id: 4,
       question: "Quelle serait votre réaction si on vous créait LE système parfait pour votre entreprise ?",
       options: [
         { value: "skeptical", label: "Je serais sceptique", score: 1 },
@@ -70,7 +76,7 @@ const Quiz = () => {
       ]
     },
     {
-      id: 4,
+      id: 5,
       question: "Quel type de système révolutionnerait le plus votre entreprise ?",
       options: [
         { value: "automation", label: "Automatisation complète des processus", score: 2, type: "Système d'automatisation" },
@@ -81,7 +87,70 @@ const Quiz = () => {
     }
   ];
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const totalSteps = questions.length + 1; // +1 for contact capture
+  const progress = ((currentStep + 1) / totalSteps) * 100;
+  const currentQuestion = currentStep - 1; // Adjust for contact capture step
+
+  // Format phone number as user types
+  const formatPhoneNumber = (value: string) => {
+    const cleaned = value.replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `(${match[1]}) ${match[2]}-${match[3]}`;
+    }
+    return value;
+  };
+
+  const handleContactSubmit = async () => {
+    if (!contactInfo.name.trim() || !contactInfo.email.trim() || !contactInfo.phone.trim()) {
+      toast({
+        title: "Information requise",
+        description: "Veuillez remplir tous les champs avant de continuer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(contactInfo.email)) {
+      toast({
+        title: "Email invalide",
+        description: "Veuillez entrer une adresse email valide.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmittingContact(true);
+    try {
+      // Create lead in database
+      const lead = await createLead(contactInfo.email, contactInfo.name, contactInfo.phone, 'quiz');
+      
+      // Track the opt-in event
+      await trackEvent('lp_submit_optin', {
+        name: contactInfo.name,
+        email: contactInfo.email,
+        phone: contactInfo.phone,
+        source: 'quiz'
+      });
+
+      toast({
+        title: "Parfait !",
+        description: `Merci ${contactInfo.name.split(' ')[0]} ! Commençons votre analyse...`,
+      });
+
+      setCurrentStep(1); // Move to first quiz question
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
 
   const handleAnswerChange = (value: string) => {
     setAnswers(prev => ({
@@ -95,7 +164,7 @@ const Quiz = () => {
     const option = question.options.find(opt => opt.value === value);
     
     if (option) {
-      trackQuizAnswer(currentQuestion, value, option.score, timeSpent);
+      trackQuizAnswer(currentQuestion + 1, value, option.score, timeSpent); // +1 to adjust for 0-based index
     }
   };
 
@@ -109,8 +178,8 @@ const Quiz = () => {
       return;
     }
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep(currentStep + 1);
       setQuestionStartTime(Date.now());
     } else {
       // Calculate total score and time
@@ -125,14 +194,15 @@ const Quiz = () => {
       // Complete quiz session
       completeQuizSession(totalScore, totalTimeSpent);
 
-      // Generate personalized diagnostic message
+      // Generate personalized diagnostic message including name
       const diagnosticMessage = generateDiagnostic(totalScore, answers);
       
-      // Store quiz results with diagnostic
+      // Store quiz results with diagnostic and contact info
       localStorage.setItem("quizResults", JSON.stringify({ 
         answers, 
         totalScore, 
-        diagnostic: diagnosticMessage 
+        diagnostic: diagnosticMessage,
+        contactInfo 
       }));
       
       toast({
@@ -145,28 +215,27 @@ const Quiz = () => {
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
   const generateDiagnostic = (score: number, answers: Record<number, string>) => {
-    // Get the main priority from first question
+    // Get the main priority from first question (now question id 1)
     const firstAnswer = questions[0].options.find(opt => opt.value === answers[0]);
     const mainPriority = (firstAnswer as any)?.priority || "Système sur mesure adapté";
+    const firstName = contactInfo.name.split(' ')[0];
     
     if (score >= 16) {
-      return `🎯 PARFAIT ! Votre profil indique que vous avez besoin d'un système vraiment sur mesure. Nous pourrions créer pour vous : ${mainPriority}. Avec votre niveau de complexité actuel, un système personnalisé vous libérerait facilement 15-20 heures par semaine tout en éliminant ces frustrations quotidiennes !`;
+      return `🎯 PARFAIT ${firstName} ! Votre profil indique que vous avez besoin d'un système vraiment sur mesure. Nous pourrions créer pour vous : ${mainPriority}. Avec votre niveau de complexité actuel, un système personnalisé vous libérerait facilement 15-20 heures par semaine tout en éliminant ces frustrations quotidiennes !`;
     } else if (score >= 12) {
-      return `✨ EXCELLENT ! Vous êtes un candidat idéal pour du développement sur mesure. Priorité détectée : ${mainPriority}. Un système conçu spécialement pour vos processus vous ferait gagner 10-15 heures par semaine et transformerait votre façon de travailler.`;
+      return `✨ EXCELLENT ${firstName} ! Vous êtes un candidat idéal pour du développement sur mesure. Priorité détectée : ${mainPriority}. Un système conçu spécialement pour vos processus vous ferait gagner 10-15 heures par semaine et transformerait votre façon de travailler.`;
     } else if (score >= 8) {
-      return `💡 INTÉRESSANT ! Vous pourriez grandement bénéficier d'un système personnalisé. Focus suggéré : ${mainPriority}. Même avec une bonne organisation actuelle, un outil créé exactement pour vos besoins vous donnerait 6-10 heures supplémentaires par semaine.`;
+      return `💡 INTÉRESSANT ${firstName} ! Vous pourriez grandement bénéficier d'un système personnalisé. Focus suggéré : ${mainPriority}. Même avec une bonne organisation actuelle, un outil créé exactement pour vos besoins vous donnerait 6-10 heures supplémentaires par semaine.`;
     } else {
-      return `👌 Vous êtes bien organisé ! Mais imaginez un système conçu à 100% pour VOUS. Domaine ciblé : ${mainPriority}. Même les entreprises efficaces gagnent 3-5 heures par semaine avec du sur mesure - et surtout, zéro frustration avec des logiciels qui "ne font pas exactement ce qu'on veut".`;
+      return `👌 Vous êtes bien organisé ${firstName} ! Mais imaginez un système conçu à 100% pour VOUS. Domaine ciblé : ${mainPriority}. Même les entreprises efficaces gagnent 3-5 heures par semaine avec du sur mesure - et surtout, zéro frustration avec des logiciels qui "ne font pas exactement ce qu'on veut".`;
     } 
   };
-
-  const currentQ = questions[currentQuestion];
 
   return (
     <div className="min-h-screen bg-gradient-background py-12">
@@ -174,70 +243,146 @@ const Quiz = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">
-            Combien d'heures par semaine vous pourriez récupérer?
+            {currentStep === 0 ? "Commençons par vous connaître!" : "Combien d'heures par semaine vous pourriez récupérer?"}
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            5 questions simples pour voir où vous perdez votre temps
+            {currentStep === 0 ? "Puis nous analyserons votre situation en 5 questions simples" : "5 questions simples pour voir où vous perdez votre temps"}
           </p>
           
           {/* Progress Bar */}
           <div className="max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-medium">Question {currentQuestion + 1} sur {questions.length}</span>
+              <span className="text-sm font-medium">
+                {currentStep === 0 ? "Informations de contact" : `Question ${currentQuestion + 1} sur ${questions.length}`}
+              </span>
               <span className="text-sm font-medium">{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-3" />
           </div>
         </div>
 
-        {/* Question Card */}
-        <Card className="p-8 shadow-card max-w-3xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-6 leading-relaxed">
-              {currentQ.question}
-            </h2>
-
-            <RadioGroup 
-              value={answers[currentQuestion] || ""} 
-              onValueChange={handleAnswerChange}
-              className="space-y-4"
-            >
-              {currentQ.options.map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
-                  <RadioGroupItem value={option.value} id={option.value} />
-                  <Label 
-                    htmlFor={option.value} 
-                    className="text-lg cursor-pointer flex-1 leading-relaxed"
-                  >
-                    {option.label}
+        {/* Contact Capture or Question Card */}
+        {currentStep === 0 ? (
+          <Card className="p-8 shadow-card max-w-3xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-6 leading-relaxed">
+                Dites-nous qui vous êtes pour personnaliser votre analyse
+              </h2>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="name" className="text-lg font-medium">
+                    Votre prénom et nom <span className="text-destructive">*</span>
                   </Label>
+                  <Input
+                    id="name"
+                    placeholder="Ex: Marie Tremblay"
+                    value={contactInfo.name}
+                    onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
+                    className="mt-2 text-lg"
+                    autoComplete="name"
+                  />
                 </div>
-              ))}
-            </RadioGroup>
-          </div>
+                
+                <div>
+                  <Label htmlFor="email" className="text-lg font-medium">
+                    Votre adresse email <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Ex: marie@monentreprise.com"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
+                    className="mt-2 text-lg"
+                    autoComplete="email"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="phone" className="text-lg font-medium">
+                    Votre numéro de téléphone <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="(514) 555-1234"
+                    value={contactInfo.phone}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      if (formatted.length <= 14) { // Max length for formatted phone
+                        setContactInfo(prev => ({ ...prev, phone: formatted }));
+                      }
+                    }}
+                    className="mt-2 text-lg"
+                    autoComplete="tel"
+                  />
+                </div>
+              </div>
+            </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Précédent
-            </Button>
+            {/* Navigation */}
+            <div className="flex justify-center">
+              <Button
+                variant="cta"
+                onClick={handleContactSubmit}
+                disabled={isSubmittingContact}
+                className="flex items-center gap-2 px-8"
+              >
+                {isSubmittingContact ? "Un instant..." : "Commencer mon analyse"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </Card>
+        ) : (
+          <Card className="p-8 shadow-card max-w-3xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold mb-6 leading-relaxed">
+                {questions[currentQuestion].question}
+              </h2>
 
-            <Button
-              variant="cta"
-              onClick={handleNext}
-              className="flex items-center gap-2 px-8"
-            >
-              {currentQuestion === questions.length - 1 ? "Voir mes résultats" : "Suivant"}
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </Card>
+              <RadioGroup 
+                value={answers[currentQuestion] || ""} 
+                onValueChange={handleAnswerChange}
+                className="space-y-4"
+              >
+                {questions[currentQuestion].options.map((option) => (
+                  <div key={option.value} className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                    <RadioGroupItem value={option.value} id={option.value} />
+                    <Label 
+                      htmlFor={option.value} 
+                      className="text-lg cursor-pointer flex-1 leading-relaxed"
+                    >
+                      {option.label}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Précédent
+              </Button>
+
+              <Button
+                variant="cta"
+                onClick={handleNext}
+                className="flex items-center gap-2 px-8"
+              >
+                {currentStep === totalSteps - 1 ? "Voir mes résultats" : "Suivant"}
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </Card>
+        )}
 
         {/* Trust indicators */}
         <div className="text-center mt-12">
@@ -247,7 +392,7 @@ const Quiz = () => {
         </div>
 
         {/* Micro Survey for quiz abandonment */}
-        {currentQuestion > 1 && !showSurvey && (
+        {currentStep > 2 && !showSurvey && (
           <MicroSurvey
             surveyId="quiz_experience"
             question="Comment trouvez-vous ce quiz jusqu'à présent ?"

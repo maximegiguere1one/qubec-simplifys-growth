@@ -30,7 +30,7 @@ export const getUTMParams = () => {
 };
 
 // Create or update lead
-export const createLead = async (email: string, name: string, source: string = 'landing_page') => {
+export const createLead = async (email: string, name: string, phone?: string, source: string = 'landing_page') => {
   const utmParams = getUTMParams();
   
   try {
@@ -39,6 +39,7 @@ export const createLead = async (email: string, name: string, source: string = '
       .upsert({
         email,
         name,
+        phone,
         source,
         ...utmParams,
       }, {
