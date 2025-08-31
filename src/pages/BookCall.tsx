@@ -123,39 +123,39 @@ const BookCall = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-background py-12">
-      <div className="container mx-auto px-6 max-w-7xl">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6">
+    <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
+      <div className="container mx-auto container-mobile max-w-7xl">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h1 className="heading-responsive font-bold mb-4 sm:mb-6">
             Vous méritez de{" "}
             <span className="bg-gradient-primary bg-clip-text text-transparent">
               retrouver votre temps
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
+          <p className="text-responsive-base text-muted-foreground max-w-4xl mx-auto mb-6 sm:mb-8">
             Profitez d'un diagnostic personnalisé gratuit de votre gestion actuelle. Ensemble, nous identifierons comment automatiser vos opérations pour vous libérer du temps et augmenter vos profits.
           </p>
-          <div className="flex justify-center items-center space-x-8 text-sm">
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-success" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 text-sm max-w-4xl mx-auto">
+            <div className="flex items-center justify-center sm:justify-start space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" />
               <span>30 minutes qui peuvent transformer votre entreprise</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-success" />
+            <div className="flex items-center justify-center sm:justify-start space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" />
               <span>100% gratuit et sans engagement</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-success" />
+            <div className="flex items-center justify-center sm:justify-start space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" />
               <span>Avec un expert local qui comprend votre réalité</span>
             </div>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {/* Booking Form */}
           <div className="lg:col-span-2">
-            <Card className="p-8 shadow-card">
-              <h2 className="text-3xl font-bold mb-8">Choisissez votre créneau</h2>
+            <Card className="p-4 sm:p-6 md:p-8 shadow-card">
+              <h2 className="text-responsive-lg font-bold mb-6 sm:mb-8">Choisissez votre créneau</h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Date Selection */}
@@ -165,7 +165,7 @@ const BookCall = () => {
                     Sélectionnez une date
                   </label>
                   <Select value={selectedDate} onValueChange={setSelectedDate}>
-                    <SelectTrigger className="h-12 text-lg">
+                    <SelectTrigger className="h-12 text-base sm:text-lg btn-touch">
                       <SelectValue placeholder="Choisissez une date disponible" />
                     </SelectTrigger>
                     <SelectContent>
@@ -184,14 +184,14 @@ const BookCall = () => {
                     <Clock className="inline w-5 h-5 mr-2" />
                     Sélectionnez l'heure
                   </label>
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     {availableTimes.map((time) => (
                       <Button
                         key={time}
                         type="button"
                         variant={selectedTime === time ? "cta" : "outline"}
                         onClick={() => setSelectedTime(time)}
-                        className="h-12"
+                        className="h-12 btn-touch"
                       >
                         {time}
                       </Button>
@@ -209,7 +209,8 @@ const BookCall = () => {
                         placeholder="Nom complet *"
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="h-12"
+                        className="h-12 btn-touch"
+                        autoComplete="name"
                         required
                       />
                     </div>
@@ -219,7 +220,9 @@ const BookCall = () => {
                         placeholder="Adresse courriel *"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="h-12"
+                        className="h-12 btn-touch"
+                        autoComplete="email"
+                        inputMode="email"
                         required
                       />
                     </div>
@@ -232,7 +235,9 @@ const BookCall = () => {
                         placeholder="Numéro de téléphone *"
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        className="h-12"
+                        className="h-12 btn-touch"
+                        autoComplete="tel"
+                        inputMode="tel"
                         required
                       />
                     </div>
@@ -241,7 +246,8 @@ const BookCall = () => {
                         placeholder="Nom de votre entreprise"
                         value={formData.company}
                         onChange={(e) => setFormData({...formData, company: e.target.value})}
-                        className="h-12"
+                        className="h-12 btn-touch"
+                        autoComplete="organization"
                       />
                     </div>
                   </div>
@@ -252,6 +258,7 @@ const BookCall = () => {
                       value={formData.challenge}
                       onChange={(e) => setFormData({...formData, challenge: e.target.value})}
                       rows={4}
+                      className="btn-touch"
                     />
                   </div>
                 </div>
@@ -265,7 +272,7 @@ const BookCall = () => {
                 <Button
                   type="submit"
                   variant="cta-large"
-                  className="w-full pulse-animation"
+                  className="w-full pulse-animation btn-touch"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Réservation en cours..." : "Je réserve ma consultation gratuite MAINTENANT"}
@@ -284,10 +291,10 @@ const BookCall = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Benefits */}
-            <Card className="p-6 shadow-card">
-              <h3 className="text-2xl font-bold mb-6">Ce que vous obtenez</h3>
+            <Card className="p-4 sm:p-6 shadow-card">
+              <h3 className="text-responsive-base font-bold mb-4 sm:mb-6">Ce que vous obtenez</h3>
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-start space-x-3">
@@ -302,8 +309,8 @@ const BookCall = () => {
             </Card>
 
             {/* Contact Info */}
-            <Card className="p-6 shadow-card">
-              <h3 className="text-xl font-bold mb-4">Nous contacter</h3>
+            <Card className="p-4 sm:p-6 shadow-card">
+              <h3 className="text-responsive-base font-bold mb-4">Nous contacter</h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary" />
@@ -321,8 +328,8 @@ const BookCall = () => {
             </Card>
 
             {/* Testimonials */}
-            <Card className="p-6 shadow-card">
-              <h3 className="text-xl font-bold mb-4">Témoignages clients</h3>
+            <Card className="p-4 sm:p-6 shadow-card">
+              <h3 className="text-responsive-base font-bold mb-4">Témoignages clients</h3>
               <div className="space-y-6">
                 {testimonials.map((testimonial, index) => (
                   <div key={index} className="border-l-4 border-primary pl-4">

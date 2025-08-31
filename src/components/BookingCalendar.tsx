@@ -40,10 +40,10 @@ export const BookingCalendar = () => {
   };
 
   return (
-    <Card className="p-6 shadow-card max-w-md mx-auto">
-      <div className="text-center mb-6">
+    <Card className="p-4 sm:p-6 shadow-card max-w-md mx-auto">
+      <div className="text-center mb-4 sm:mb-6">
         <Calendar className="w-10 h-10 text-primary mx-auto mb-3" />
-        <h3 className="text-xl font-bold mb-2">Réservez votre créneau</h3>
+        <h3 className="text-responsive-base font-bold mb-2">Réservez votre créneau</h3>
         <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 mb-4">
           <p className="text-sm font-medium text-warning">
             ⚡ Seulement <strong>4 places restantes</strong> cette semaine
@@ -51,7 +51,7 @@ export const BookingCalendar = () => {
         </div>
       </div>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-3 mb-4 sm:mb-6">
         {availableSlots.filter(slot => slot.available).slice(0, 6).map((slot, index) => (
           <SlotButton
             key={index}
@@ -66,8 +66,8 @@ export const BookingCalendar = () => {
       <Button
         onClick={handleBooking}
         disabled={!selectedDate || !selectedTime}
-        className="w-full mb-4"
-        variant={selectedDate && selectedTime ? "default" : "outline"}
+        className="w-full mb-4 btn-touch"
+        variant={selectedDate && selectedTime ? "cta" : "outline"}
       >
         {selectedDate && selectedTime 
           ? `Confirmer ${selectedDate} à ${selectedTime}` 

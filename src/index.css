@@ -227,4 +227,9 @@
   .btn-touch {
     @apply min-h-[44px] min-w-[44px];
   }
+
+  /* Extra small screen utilities */
+  @screen xs {
+    .xs\:inline-block { display: inline-block; }
+  }
 }

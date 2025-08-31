@@ -35,13 +35,13 @@ export const FAQ = () => {
   ];
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-6 max-w-4xl">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+    <section className="section-mobile bg-background">
+      <div className="container mx-auto container-mobile max-w-4xl">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="heading-responsive font-bold mb-4">
             Les questions que vous vous posez sûrement
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-responsive-base text-muted-foreground">
             Nos réponses claires pour vous aider à prendre votre décision en toute confiance
           </p>
         </div>

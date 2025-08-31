@@ -18,14 +18,14 @@ export const ProgressBar = ({
 
   return (
     <div 
-      className={`w-full h-2 bg-white/20 rounded-full cursor-pointer group ${className}`}
+      className={`w-full h-3 sm:h-2 bg-white/20 rounded-full cursor-pointer group ${className}`}
       onClick={handleSeek}
     >
       <div 
         className="h-full bg-primary rounded-full transition-all duration-150 relative group-hover:bg-primary-glow"
         style={{ width: `${progress}%` }}
       >
-        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </div>
   );

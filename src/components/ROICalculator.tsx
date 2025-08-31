@@ -13,14 +13,14 @@ export const ROICalculator = () => {
   const breakEvenHours = Math.ceil(subscriptionCost / (hourlyRate[0] * 4));
 
   return (
-    <Card className="p-8 shadow-card max-w-2xl mx-auto">
-      <div className="text-center mb-6">
-        <Calculator className="w-12 h-12 text-primary mx-auto mb-4" />
-        <h3 className="text-2xl font-bold mb-2">Combien vous pourriez sauver?</h3>
-        <p className="text-muted-foreground">Bougez les curseurs pour voir vos économies</p>
+    <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-2xl mx-auto">
+      <div className="text-center mb-4 sm:mb-6">
+        <Calculator className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+        <h3 className="text-responsive-base font-bold mb-2">Combien vous pourriez sauver?</h3>
+        <p className="text-muted-foreground text-sm sm:text-base">Bougez les curseurs pour voir vos économies</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         <div>
           <label className="block text-sm font-medium mb-3">
             Heures perdues par semaine sur la paperasse : <strong>{hoursPerWeek[0]}h</strong>
@@ -31,7 +31,7 @@ export const ROICalculator = () => {
             max={40}
             min={2}
             step={1}
-            className="w-full"
+            className="w-full btn-touch"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>2h</span>
@@ -49,7 +49,7 @@ export const ROICalculator = () => {
             max={100}
             min={15}
             step={5}
-            className="w-full"
+            className="w-full btn-touch"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-1">
             <span>15$</span>
@@ -57,16 +57,16 @@ export const ROICalculator = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-primary/10 border border-primary/20 rounded-lg p-6 mt-6">
+        <div className="bg-gradient-primary/10 border border-primary/20 rounded-lg p-4 sm:p-6 mt-4 sm:mt-6">
           <div className="text-center space-y-3">
             <div>
               <p className="text-sm text-muted-foreground">Perte mensuelle actuelle</p>
-              <p className="text-2xl font-bold text-destructive">{monthlyLoss.toLocaleString('fr-CA')}$ CAD</p>
+              <p className="text-xl sm:text-2xl font-bold text-destructive">{monthlyLoss.toLocaleString('fr-CA')}$ CAD</p>
             </div>
             
             <div className="border-t pt-3">
               <p className="text-sm text-muted-foreground">Avec One Système (297$/mois)</p>
-              <p className="text-3xl font-bold text-success">
+              <p className="text-2xl sm:text-3xl font-bold text-success">
                 +{monthlySavings > 0 ? monthlySavings.toLocaleString('fr-CA') : 0}$ CAD/mois
               </p>
             </div>

@@ -2,10 +2,10 @@
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-[100dvh] flex items-center justify-center bg-background">
+      <div className="text-center px-4 sm:px-6">
+        <h1 className="text-responsive-xl font-bold mb-4">Welcome to Your Blank App</h1>
+        <p className="text-responsive-base text-muted-foreground">Start building your amazing project here!</p>
       </div>
     </div>
   );

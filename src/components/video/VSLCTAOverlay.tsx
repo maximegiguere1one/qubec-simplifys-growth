@@ -10,12 +10,12 @@ export const VSLCTAOverlay = ({
   if (!isVisible) return null;
 
   return (
-    <div className={`absolute inset-0 bg-black/80 flex items-center justify-center p-6 ${className}`}>
-      <div className="bg-white rounded-lg p-8 max-w-md text-center shadow-elegant">
+    <div className={`absolute inset-0 bg-black/80 flex items-center justify-center p-4 sm:p-6 ${className}`}>
+      <div className="bg-white rounded-lg p-6 sm:p-8 max-w-sm sm:max-w-md text-center shadow-elegant mx-4 sm:mx-0">
         <div className="mb-6">
-          <Calendar className="w-12 h-12 text-primary mx-auto mb-4" />
-          <h3 className="text-2xl font-bold mb-2">Prêt à automatiser votre business ?</h3>
-          <p className="text-muted-foreground">
+          <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-4" />
+          <h3 className="text-xl sm:text-2xl font-bold mb-2">Prêt à automatiser votre business ?</h3>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Réservez votre diagnostic gratuit et découvrez comment économiser 15h par semaine
           </p>
         </div>
@@ -23,7 +23,7 @@ export const VSLCTAOverlay = ({
         <Button 
           onClick={onCTAClick}
           size="lg"
-          className="w-full mb-4"
+          className="w-full mb-4 btn-touch"
           variant="cta"
         >
           Réserver mon diagnostic gratuit

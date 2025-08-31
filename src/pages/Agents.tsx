@@ -66,27 +66,27 @@ export default function Agents() {
     
     return (
       <Card 
-        className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 border-muted/50 bg-card/50 backdrop-blur-sm"
+        className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 border-muted/50 bg-card/50 backdrop-blur-sm btn-touch"
         onClick={() => loadAgentContent(agent)}
       >
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-foreground">{agent.name}</CardTitle>
-            <DeptIcon className="h-5 w-5 text-muted-foreground" />
+            <CardTitle className="text-base sm:text-lg font-semibold text-foreground">{agent.name}</CardTitle>
+            <DeptIcon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
           </div>
           <CardDescription className="text-sm text-muted-foreground line-clamp-2">
             {agent.description}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
             <Badge 
               variant="outline" 
-              className={`text-xs ${departmentColors[agent.department as keyof typeof departmentColors]}`}
+              className={`text-xs ${departmentColors[agent.department as keyof typeof departmentColors]} flex-shrink-0`}
             >
               {agent.department}
             </Badge>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               {agent.tools.slice(0, 3).map((tool, index) => (
                 <span key={index} className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
                   {tool}
@@ -108,29 +108,29 @@ export default function Agents() {
     <div className="min-h-[100dvh] bg-background">
       {/* Header */}
       <div className="border-b border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
+        <div className="container mx-auto container-mobile py-4 sm:py-6">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="heading-responsive font-bold text-foreground mb-2">
               AI Agents Collection
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-responsive-base text-muted-foreground max-w-2xl mx-auto">
               Specialized AI agents designed to accelerate every aspect of rapid development
             </p>
           </div>
           
           {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl mx-auto">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search agents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-background/80 border-muted/50"
+                className="pl-10 bg-background/80 border-muted/50 btn-touch"
               />
             </div>
             <Select value={selectedDepartment} onValueChange={(value) => setSelectedDepartment(value as Department | 'all')}>
-              <SelectTrigger className="w-full sm:w-48 bg-background/80 border-muted/50">
+              <SelectTrigger className="w-full sm:w-48 bg-background/80 border-muted/50 btn-touch">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4" />
                   <SelectValue placeholder="All Departments" />
@@ -148,15 +148,15 @@ export default function Agents() {
       </div>
 
       {/* Agents Grid */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="container mx-auto container-mobile py-6 sm:py-8">
+        <div className="mb-4 sm:mb-6 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             {filteredAgents.length} agent{filteredAgents.length !== 1 ? 's' : ''} found
             {selectedDepartment !== 'all' && ` in ${selectedDepartment}`}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredAgents.map((agent) => (
             <AgentCard key={agent.id} agent={agent} />
           ))}
@@ -173,7 +173,7 @@ export default function Agents() {
 
       {/* Agent Detail Dialog */}
       <Dialog open={!!selectedAgent} onOpenChange={() => setSelectedAgent(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90dvh] overflow-y-auto mx-4 sm:mx-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               {selectedAgent && (
