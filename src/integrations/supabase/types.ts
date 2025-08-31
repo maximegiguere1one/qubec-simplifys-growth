@@ -199,6 +199,7 @@ export type Database = {
           industry: string | null
           location: string | null
           name: string
+          phone: string | null
           score: number | null
           scoring_data: Json | null
           segment: string | null
@@ -216,6 +217,7 @@ export type Database = {
           industry?: string | null
           location?: string | null
           name: string
+          phone?: string | null
           score?: number | null
           scoring_data?: Json | null
           segment?: string | null
@@ -233,6 +235,7 @@ export type Database = {
           industry?: string | null
           location?: string | null
           name?: string
+          phone?: string | null
           score?: number | null
           scoring_data?: Json | null
           segment?: string | null
