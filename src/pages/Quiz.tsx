@@ -1,25 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, getABVariant, trackABConversion, sendQuizConfirmationEmail, getLeadId } from "@/lib/analytics";
+import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, sendQuizConfirmationEmail, getLeadId, getABVariant } from "@/lib/analytics";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
-import { EnhancedQuizProgress } from "@/components/enhanced/EnhancedQuizProgress";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { QuizCompletionDialog } from "@/components/QuizCompletionDialog";
+import { usePrefetch } from "@/hooks/usePrefetch";
+import { useOptimizedTimer } from "@/hooks/useOptimizedTimer";
+import { QUIZ_QUESTIONS, QuestionOption } from "@/components/optimized/QuizQuestions";
+import { OptimizedQuizProgress } from "@/components/optimized/OptimizedQuizProgress";
+import { getCachedABVariant, quizAnalytics } from "@/lib/analytics/optimized";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
   const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
-  const [quizStartTime] = useState(Date.now());
   const [showSurvey, setShowSurvey] = useState(false);
   const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
@@ -31,33 +32,57 @@ const Quiz = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState<string>("");
   const [currentDiagnostic, setCurrentDiagnostic] = useState("");
+  
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isMobile, mobileButtonClass, animationClass } = useMobileOptimized();
+  const { isMobile, mobileButtonClass, animationClass, touchTargetClass } = useMobileOptimized();
+  
+  // Optimized timer for question tracking
+  const { timeSpent, reset: resetTimer } = useOptimizedTimer({ pauseOnHidden: true });
+  
+  // Prefetch VSL page when user starts quiz or hovers CTA
+  const { handleHover, prefetchRoute } = usePrefetch(['/vsl'], { 
+    onIdle: true, 
+    delay: 5000 // Wait 5s before prefetching in background
+  });
+  
+  // Memoized constants to prevent recreations
+  const questions = useMemo(() => QUIZ_QUESTIONS, []);
+  const totalSteps = useMemo(() => questions.length + 1, [questions.length]);
+  const progress = useMemo(() => ((currentStep + 1) / totalSteps) * 100, [currentStep, totalSteps]);
+  const currentQuestion = useMemo(() => currentStep - 1, [currentStep]);
+  
+  // Cached A/B test variant
+  const progressVariant = useMemo(() => 
+    getCachedABVariant("quiz_progress", ["numeric", "visual_steps"]) as "numeric" | "visual_steps", 
+    []
+  );
   
   // Refs to prevent double-triggering
   const advanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isAdvancingRef = useRef(false);
   
   // A/B test for personalization
-  const personalizationVariant = getABVariant("quiz_personalization", ["standard", "dynamic"]);
+  const personalizationVariant = useMemo(() => 
+    getABVariant("quiz_personalization", ["standard", "dynamic"]), 
+    []
+  );
   
-  // Track quiz abandonment
+  // Track start time for timing calculations
+  const [quizStartTime] = useState(Date.now());
+  
+  // Track quiz abandonment (optimized)
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    const handleBeforeUnload = () => {
       if (currentStep > 0 && currentStep < questions.length && !exitIntentShown) {
-        trackEvent('quiz_question_answer', { 
-          event_type: 'quiz_abandonment', 
-          current_step: currentStep,
-          answers_completed: Object.keys(answers).length 
-        });
+        quizAnalytics.flush();
         setExitIntentShown(true);
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [currentStep, answers, exitIntentShown]);
+  }, [currentStep, questions.length, exitIntentShown]);
   
   // Track page view and start quiz session
   usePageTracking();
@@ -67,71 +92,20 @@ const Quiz = () => {
     if (currentStep > 0 && !quizSessionStarted) {
       startQuizSession();
       setQuizSessionStarted(true);
+      resetTimer(); // Reset timer when starting quiz
     }
-  }, [currentStep, quizSessionStarted]);
-
-  const questions = [
-    {
-      id: 1,
-      question: "En ce moment, qu'est-ce qui vous fait perdre le plus de temps dans votre quotidien d'entrepreneur ?",
-      subtitle: "Question 1 sur 5 - Identifions votre plus gros défi",
-      options: [
-        { value: "inventory", label: "Compter mon inventaire et suivre mes stocks", score: 25, priority: "Gestion d'inventaire" },
-        { value: "billing", label: "Faire mes factures et tenir mes livres à jour", score: 20, priority: "Facturation" },
-        { value: "hr", label: "Gérer les horaires et calculer la paie", score: 15, priority: "Gestion des employés" },
-        { value: "projects", label: "Suivre mes projets et respecter mes échéances", score: 20, priority: "Suivi de projets" },
-        { value: "crm", label: "Tenir à jour mes contacts et suivre mes clients", score: 25, priority: "Gestion clients" }
-      ]
-    },
-    {
-      id: 2,
-      question: "Quand vous pensez aux heures que vous passez dans la paperasse chaque semaine, que ressentez-vous ?",
-      subtitle: "Question 2 sur 5 - Quantifions le temps perdu",
-      options: [
-        { value: "low", label: "Moins de 5 heures - c'est gérable", score: 5 },
-        { value: "medium", label: "5 à 15 heures - ça commence à peser", score: 15 },
-        { value: "high", label: "15 à 25 heures - c'est vraiment trop", score: 25 },
-        { value: "very_high", label: "Plus de 25 heures - j'en ai assez !", score: 35 }
-      ]
-    },
-    {
-      id: 3,
-      question: "Avez-vous déjà pensé : 'Si seulement il existait un outil qui faisait exactement ce dont j'ai besoin' ?",
-      subtitle: "Question 3 sur 5 - Évaluons votre besoin de solution personnalisée",
-      options: [
-        { value: "never", label: "Non, mes outils actuels me conviennent", score: 1 },
-        { value: "sometimes", label: "Oui, de temps en temps", score: 2 },
-        { value: "often", label: "Oui, assez souvent même !", score: 3 },
-        { value: "constantly", label: "Tout le temps ! C'est frustrant", score: 4 }
-      ]
-    },
-    {
-      id: 4,
-      question: "Si quelqu'un pouvait créer pour vous l'outil parfait adapté à votre entreprise, comment réagiriez-vous ?",
-      subtitle: "Question 4 sur 5 - Mesurons votre intérêt pour une solution personnalisée",
-      options: [
-        { value: "skeptical", label: "Je serais prudent, ça semble trop beau", score: 1 },
-        { value: "interested", label: "Ça m'intéresserait vraiment", score: 2 },
-        { value: "excited", label: "Je serais très enthousiaste !", score: 3 },
-        { value: "dream", label: "Ce serait un rêve qui se réalise !", score: 4 }
-      ]
-    },
-    {
-      id: 5,
-      question: "Quel type de solution transformerait le plus votre façon de travailler ?",
-      subtitle: "Question 5 sur 5 - Définissons votre solution idéale",
-      options: [
-        { value: "automation", label: "Que tout se fasse automatiquement", score: 2, type: "Système d'automatisation" },
-        { value: "integration", label: "Avoir tous mes outils dans un seul endroit", score: 3, type: "Plateforme intégrée" },
-        { value: "custom", label: "Quelque chose conçu spécifiquement pour moi", score: 4, type: "Solution sur mesure complète" },
-        { value: "mobile", label: "Pouvoir tout gérer depuis mon téléphone", score: 3, type: "Application mobile personnalisée" }
-      ]
+  }, [currentStep, quizSessionStarted, resetTimer]);
+  
+  // Track question views for analytics
+  useEffect(() => {
+    if (currentStep > 0) {
+      quizAnalytics.trackQuestionView(currentQuestion);
     }
-  ];
+  }, [currentStep, currentQuestion]);
 
-  const totalSteps = questions.length + 1; // +1 for contact capture
-  const progress = ((currentStep + 1) / totalSteps) * 100;
-  const currentQuestion = currentStep - 1; // Adjust for contact capture step
+  // Questions moved to separate file for better organization
+
+  // Constants moved to memoized values above
 
   // Format phone number as user types
   const formatPhoneNumber = (value: string) => {
@@ -195,7 +169,7 @@ const Quiz = () => {
     }
   };
 
-  const handleAnswerChange = (value: string) => {
+  const handleAnswerChange = useCallback((value: string) => {
     // Prevent double-triggering
     if (isAdvancingRef.current) return;
     
@@ -207,13 +181,14 @@ const Quiz = () => {
     setSelectedAnswer(value);
     setShowFeedback(true);
     
-    // Track time spent on question
-    const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+    // Use optimized timer value and track with analytics manager
     const question = questions[currentQuestion];
     const option = question.options.find(opt => opt.value === value);
     
     if (option) {
-      trackQuizAnswer(currentQuestion + 1, value, option.score, timeSpent); // +1 to adjust for 0-based index
+      // Track with optimized analytics
+      quizAnalytics.trackAnswer(currentQuestion, value, timeSpent);
+      trackQuizAnswer(currentQuestion + 1, value, option.score, timeSpent);
     }
 
     // Clear any existing timeout
@@ -229,7 +204,7 @@ const Quiz = () => {
       handleNext();
       isAdvancingRef.current = false;
     }, 600);
-  };
+  }, [currentQuestion, questions, timeSpent]);
 
   const handleNext = async () => {
     // Only validate if this is a manual click (not auto-advance)
@@ -250,7 +225,7 @@ const Quiz = () => {
 
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
-      setQuestionStartTime(Date.now());
+      resetTimer(); // Reset timer for next question
     } else {
       // Calculate total score and time
       const totalScore = Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
@@ -261,8 +236,11 @@ const Quiz = () => {
       
       const totalTimeSpent = Math.floor((Date.now() - quizStartTime) / 1000);
 
-      // Complete quiz session
+      // Complete quiz session and prefetch VSL
       completeQuizSession(totalScore, totalTimeSpent);
+      
+      // Prefetch VSL page since user will likely go there next
+      prefetchRoute('/vsl');
 
       // Generate personalized diagnostic message including name
       const diagnosticMessage = generateDiagnostic(totalScore, answers);
@@ -341,11 +319,12 @@ const Quiz = () => {
             </div>
           )}
           
-          {/* Enhanced Progress Bar with A/B test */}
-          <EnhancedQuizProgress 
+          {/* Optimized Progress Bar with A/B test */}
+          <OptimizedQuizProgress 
             currentStep={currentStep}
             totalSteps={totalSteps}
-            questions={questions}
+            variant={progressVariant}
+            timeSpent={timeSpent}
           />
         </div>
 
@@ -422,37 +401,20 @@ const Quiz = () => {
                 </h2>
               </div>
 
-              <RadioGroup 
-                value={answers[currentQuestion] || ""} 
-                onValueChange={handleAnswerChange}
-                className="space-y-4"
-              >
-                {questions[currentQuestion].options.map((option) => {
-                  const isSelected = answers[currentQuestion] === option.value;
-                  const isCurrentSelection = selectedAnswer === option.value;
-                  
-                  return (
-                    <div 
-                      key={option.value} 
-                      className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border transition-all duration-300 cursor-pointer btn-touch
-                        ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-accent/50'}
-                        ${isCurrentSelection && showFeedback ? 'bg-green-50 border-green-400 scale-[1.02]' : ''}
-                        ${animationClass}`}
-                    >
-                      <RadioGroupItem value={option.value} id={option.value} />
-                      <Label 
-                        htmlFor={option.value} 
-                        className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
-                      >
-                        {option.label}
-                      </Label>
-                      {isCurrentSelection && showFeedback && (
-                        <CheckCircle className="w-5 h-5 text-green-600 animate-scale-in" />
-                      )}
-                    </div>
-                  );
-                })}
-              </RadioGroup>
+              <div className="space-y-4">
+                {questions[currentQuestion].options.map((option) => (
+                  <QuestionOption
+                    key={option.value}
+                    option={option}
+                    isSelected={answers[currentQuestion] === option.value}
+                    isCurrentSelection={selectedAnswer === option.value}
+                    showFeedback={showFeedback}
+                    touchTargetClass={touchTargetClass}
+                    animationClass={animationClass}
+                    onSelect={handleAnswerChange}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Navigation */}

@@ -8,13 +8,13 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useNavigationSetup } from "@/lib/navigation";
 import { useWebVitals } from "@/hooks/useWebVitals";
 import { CalEmbedProvider } from "@/lib/cal";
-import VSL from "./pages/VSL";
+import { ConversionTracker } from "@/components/enhanced/ConversionTracker";
 
-// Route-level code splitting for better performance
+// Route-level code splitting for better performance - ALL pages lazy loaded now
 const Index = lazy(() => import("./pages/Index"));
 const Landing = lazy(() => import("./pages/Landing"));
 const Quiz = lazy(() => import("./pages/Quiz"));
-// VSL statically imported above to avoid dynamic import issues
+const VSL = lazy(() => import("./pages/VSL")); // Now properly lazy-loaded
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Agents = lazy(() => import("./pages/Agents"));
 const EmailSettings = lazy(() => import("./pages/EmailSettings"));
@@ -46,6 +46,7 @@ const AppContent = () => {
     <>
       <Toaster />
       <Sonner />
+      <ConversionTracker /> {/* Global conversion tracking */}
       <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route path="/" element={<Landing />} />

@@ -15,9 +15,15 @@ export const usePrefetch = (
       switch (route) {
         case '/quiz':
           await import('@/pages/Quiz');
+          console.log('Quiz page prefetched');
           break;
         case '/vsl':
           await import('@/pages/VSL');
+          console.log('VSL page prefetched');
+          break;
+        case '/landing':
+          await import('@/pages/Landing');
+          console.log('Landing page prefetched');
           break;
         default:
           break;
