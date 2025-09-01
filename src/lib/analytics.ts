@@ -1,11 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { analyticsQueue } from "@/lib/analyticsQueue";
 
-// Send event to Facebook Conversions API via Edge Function
+// Send event to Facebook Conversions API via Edge Function with enhanced deduplication
 const sendToConversionsAPI = async (
   eventType: string,
   eventData: Record<string, any>,
-  leadId?: string | null
+  leadId?: string | null,
+  eventId?: string
 ) => {
   try {
     // Get lead data for enhanced tracking
@@ -19,13 +20,18 @@ const sendToConversionsAPI = async (
       leadData = data;
     }
 
+    // Get Facebook attribution cookies
+    const fbParams = getFacebookParams();
+
     // Call our Edge Function to send to Facebook Conversions API
     const response = await supabase.functions.invoke('facebook-conversions-api', {
       body: {
         eventType,
         eventData: {
           ...eventData,
-          client_ip: eventData.client_ip, // Will be populated by Edge Function from request
+          event_id: eventId, // For deduplication with Pixel
+          fbc: fbParams.fbc,
+          fbp: fbParams.fbp,
         },
         leadData,
       }
@@ -34,7 +40,12 @@ const sendToConversionsAPI = async (
     if (response.error) {
       console.warn('Facebook Conversions API warning:', response.error);
     } else {
-      console.log('Facebook Conversions API success:', response.data);
+      console.log('Facebook Conversions API success:', { 
+        eventType, 
+        eventId, 
+        success: true,
+        response: response.data 
+      });
     }
   } catch (error) {
     console.warn('Failed to send to Facebook Conversions API:', error);
@@ -42,27 +53,37 @@ const sendToConversionsAPI = async (
   }
 };
 
-// Meta Pixel helper function with proper case sensitivity
-const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>) => {
+// Meta Pixel helper function with proper case sensitivity and event ID for deduplication
+const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>, eventId?: string) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
-    if (parameters) {
-      (window as any).fbq('track', eventName, parameters);
+    const eventData = parameters || {};
+    
+    // Add event ID for deduplication if provided
+    const trackParameters = eventId ? { eventID: eventId, ...eventData } : eventData;
+    
+    if (Object.keys(trackParameters).length > 0) {
+      (window as any).fbq('track', eventName, trackParameters);
     } else {
       (window as any).fbq('track', eventName);
     }
-    console.log(`Meta Pixel: ${eventName}`, parameters || {});
+    console.log(`Meta Pixel: ${eventName}`, { eventID: eventId, ...eventData });
   }
 };
 
-// Track Meta Pixel custom events for funnel optimization
-const trackMetaPixelCustomEvent = (eventName: string, parameters?: Record<string, any>) => {
+// Track Meta Pixel custom events for funnel optimization with event ID
+const trackMetaPixelCustomEvent = (eventName: string, parameters?: Record<string, any>, eventId?: string) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
-    if (parameters) {
-      (window as any).fbq('trackCustom', eventName, parameters);
+    const eventData = parameters || {};
+    
+    // Add event ID for deduplication if provided
+    const trackParameters = eventId ? { eventID: eventId, ...eventData } : eventData;
+    
+    if (Object.keys(trackParameters).length > 0) {
+      (window as any).fbq('trackCustom', eventName, trackParameters);
     } else {
       (window as any).fbq('trackCustom', eventName);
     }
-    console.log(`Meta Pixel Custom: ${eventName}`, parameters || {});
+    console.log(`Meta Pixel Custom: ${eventName}`, { eventID: eventId, ...eventData });
   }
 };
 
@@ -74,6 +95,39 @@ export const getSessionId = (): string => {
     localStorage.setItem('session_id', sessionId);
   }
   return sessionId;
+};
+
+// Generate unique event ID for deduplication between Pixel and CAPI
+export const generateEventId = (): string => {
+  return `evt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Get Facebook cookies for better attribution
+export const getFacebookParams = () => {
+  const getFbCookie = (name: string): string | null => {
+    if (typeof document === 'undefined') return null;
+    
+    // Try localStorage first
+    const stored = localStorage.getItem(name);
+    if (stored) return stored;
+    
+    // Fall back to document cookies
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      const cookieValue = parts.pop()?.split(';').shift() || null;
+      if (cookieValue) {
+        localStorage.setItem(name, cookieValue);
+        return cookieValue;
+      }
+    }
+    return null;
+  };
+
+  return {
+    fbc: getFbCookie('_fbc'),
+    fbp: getFbCookie('_fbp'),
+  };
 };
 
 // Get or create lead ID for email-based tracking
@@ -151,7 +205,7 @@ export type FunnelEventType =
   | 'guarantee_view'
   | 'guarantee_cta_click';
 
-// Track funnel events with Meta Pixel and Conversions API integration
+// Track funnel events with Meta Pixel and Conversions API integration with deduplication
 export const trackEvent = (
   eventType: FunnelEventType, 
   eventData: Record<string, any> = {},
@@ -160,6 +214,8 @@ export const trackEvent = (
   try {
     const sessionId = getSessionId();
     const currentLeadId = leadId || getLeadId();
+    const eventId = generateEventId(); // Generate unique ID for deduplication
+    const fbParams = getFacebookParams();
     
     // Enhanced event data
     const enhancedEventData = {
@@ -170,73 +226,74 @@ export const trackEvent = (
       referrer: document.referrer,
       url: window.location.href,
       timestamp: Date.now(),
+      event_id: eventId,
       // Add Facebook Click ID and Browser ID for better attribution
-      fbc: localStorage.getItem('_fbc'),
-      fbp: localStorage.getItem('_fbp'),
+      fbc: fbParams.fbc,
+      fbp: fbParams.fbp,
     };
 
     // Track in our analytics queue
     analyticsQueue.add(eventType, enhancedEventData, currentLeadId);
 
     // Send to Facebook Conversions API via Edge Function for server-to-server tracking
-    sendToConversionsAPI(eventType, enhancedEventData, currentLeadId);
+    sendToConversionsAPI(eventType, enhancedEventData, currentLeadId, eventId);
 
-    // Map internal events to Meta Pixel standard events
+    // Map internal events to Meta Pixel standard events with event ID for deduplication
     switch(eventType) {
       case 'lp_view':
         trackMetaPixelEvent('ViewContent', { 
           content_name: 'Landing Page',
           content_category: 'landing_page' 
-        });
+        }, eventId);
         break;
       case 'lp_submit_optin':
-        trackMetaPixelEvent('Lead');
+        trackMetaPixelEvent('Lead', {}, eventId);
         break;
       case 'quiz_start':
         trackMetaPixelEvent('ViewContent', { 
           content_name: 'Quiz Start',
           content_category: 'quiz' 
-        });
-        trackMetaPixelCustomEvent('QuizStart');
+        }, eventId);
+        trackMetaPixelCustomEvent('QuizStart', {}, eventId);
         break;
       case 'quiz_question_answer':
         trackMetaPixelCustomEvent('QuizProgress', {
           question_number: eventData.question_id,
           score: eventData.answer_score
-        });
+        }, eventId);
         break;
       case 'quiz_complete':
-        trackMetaPixelEvent('CompleteRegistration');
+        trackMetaPixelEvent('CompleteRegistration', {}, eventId);
         trackMetaPixelCustomEvent('QuizComplete', {
           total_score: eventData.total_score,
           time_spent: eventData.time_spent
-        });
+        }, eventId);
         break;
       case 'vsl_view':
         trackMetaPixelEvent('ViewContent', { 
           content_name: 'VSL Page',
           content_category: 'video_sales_letter' 
-        });
+        }, eventId);
         break;
       case 'vsl_play':
         if (eventData.event_type === 'play') {
-          trackMetaPixelCustomEvent('VideoPlay');
+          trackMetaPixelCustomEvent('VideoPlay', {}, eventId);
         } else if (eventData.event_type === 'complete') {
-          trackMetaPixelCustomEvent('VideoComplete');
+          trackMetaPixelCustomEvent('VideoComplete', {}, eventId);
         }
         break;
       case 'vsl_cta_click':
-        trackMetaPixelEvent('InitiateCheckout');
+        trackMetaPixelEvent('InitiateCheckout', {}, eventId);
         break;
       case 'bookcall_view':
         trackMetaPixelEvent('ViewContent', { 
           content_name: 'Booking Page',
           content_category: 'booking' 
-        });
+        }, eventId);
         break;
       case 'bookcall_submit':
-        trackMetaPixelEvent('Schedule');
-        trackMetaPixelEvent('Lead');
+        trackMetaPixelEvent('Schedule', {}, eventId);
+        trackMetaPixelEvent('Lead', {}, `${eventId}_lead`);
         break;
       case 'bookcall_confirm':
         trackMetaPixelEvent('Purchase', {
@@ -244,7 +301,7 @@ export const trackEvent = (
           currency: 'CAD',
           content_name: 'Discovery Call Booking',
           content_category: 'consultation'
-        });
+        }, eventId);
         break;
     }
   } catch (error) {

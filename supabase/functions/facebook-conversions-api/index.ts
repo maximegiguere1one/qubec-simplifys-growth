@@ -15,6 +15,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 interface ConversionEvent {
+  event_id?: string;
   event_name: string;
   event_time: number;
   event_source_url: string;
@@ -23,20 +24,20 @@ interface ConversionEvent {
     em?: string[];
     ph?: string[];
     fn?: string[];
+    ln?: string[];
     client_ip_address?: string;
     client_user_agent?: string;
     fbc?: string;
     fbp?: string;
   };
   custom_data?: {
-    value?: number;
-    currency?: string;
     content_name?: string;
     content_category?: string;
+    value?: number;
+    currency?: string;
     custom_score?: number;
     time_spent?: number;
   };
-  event_id?: string;
 }
 
 const hashString = async (str: string): Promise<string> => {
@@ -54,6 +55,7 @@ const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionE
   const clampedEventTime = Math.min(eventTime, now);
 
   const baseEvent: ConversionEvent = {
+    event_id: eventData.event_id,
     event_name: 'Custom',
     event_time: clampedEventTime,
     event_source_url: eventData.url || 'https://onesysteme.com',
@@ -61,8 +63,9 @@ const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionE
     user_data: {
       client_ip_address: eventData.client_ip,
       client_user_agent: eventData.user_agent,
+      fbc: eventData.fbc,
+      fbp: eventData.fbp,
     },
-    event_id: eventData.event_id || `${eventData.session_id}_${eventType}_${Date.now()}`,
   };
 
   // Map internal events to Facebook standard events
@@ -204,7 +207,7 @@ serve(async (req) => {
     const logBody = { ...requestBody, access_token: '[HIDDEN]' };
     console.log('Facebook API Request Body:', JSON.stringify(logBody, null, 2));
 
-    const facebookResponse = await fetch(`https://graph.facebook.com/v18.0/${FACEBOOK_PIXEL_ID}/events`, {
+    const facebookResponse = await fetch(`https://graph.facebook.com/v23.0/${FACEBOOK_PIXEL_ID}/events`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -219,7 +222,16 @@ serve(async (req) => {
       throw new Error(`Facebook API error: ${JSON.stringify(facebookResult)}`);
     }
 
-    console.log('Facebook Conversions API response:', facebookResult);
+    // Enhanced logging for monitoring and debugging
+    console.log('Facebook API Response:', JSON.stringify(facebookResult, null, 2));
+    console.log('Event processed:', {
+      eventType,
+      eventId: conversionEvent.event_id,
+      hasLeadData: !!leadData,
+      hasFBC: !!conversionEvent.user_data.fbc,
+      hasFBP: !!conversionEvent.user_data.fbp,
+      timestamp: new Date().toISOString()
+    });
 
     // Store the event in our database for tracking
     const { error: dbError } = await supabase
