@@ -43,21 +43,28 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
 
   useImperativeHandle(ref, () => ({
     play: async () => {
-      if (videoRef.current) {
-        try {
-          await videoRef.current.play();
-        } catch (error) {
-          console.error('Erreur lors de la lecture de la vidéo:', error);
-          setHasError(true);
-          onError?.();
-          throw error;
+      // If it's an MP4, control the HTML5 video
+      if (videoSource?.type === 'mp4') {
+        if (videoRef.current) {
+          try {
+            await videoRef.current.play();
+          } catch (error) {
+            console.error('Erreur lors de la lecture de la vidéo:', error);
+            setHasError(true);
+            onError?.();
+            throw error;
+          }
+        } else {
+          throw new Error('Vidéo non disponible');
         }
       } else {
-        throw new Error('Vidéo non disponible');
+        // For YouTube/Vimeo iframes, we can't programmatically play without their SDK.
+        // We rely on autoplay=1 & mute=1 in the embed URL and the user's gesture.
+        return Promise.resolve();
       }
     },
     pause: () => {
-      if (videoRef.current) {
+      if (videoSource?.type === 'mp4' && videoRef.current) {
         videoRef.current.pause();
       }
     },
@@ -68,9 +75,11 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
       return videoRef.current?.duration || 0;
     },
     get paused() {
+      if (videoSource?.type !== 'mp4') return false;
       return videoRef.current?.paused ?? true;
     },
     get muted() {
+      if (videoSource?.type !== 'mp4') return true;
       return videoRef.current?.muted ?? true;
     }
   }));

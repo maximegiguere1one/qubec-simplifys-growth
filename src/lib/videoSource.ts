@@ -17,7 +17,7 @@ export function parseVideoSource(url: string): VideoSource {
     return {
       type: 'youtube',
       src: url,
-      embedUrl: `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&rel=0`
+      embedUrl: `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&rel=0&autoplay=1&mute=1&playsinline=1`
     };
   }
 
