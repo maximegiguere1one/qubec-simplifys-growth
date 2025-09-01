@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Play, Pause, Volume2, VolumeX, RotateCcw } from "lucide-react";
 import { trackVSLEvent, getABVariant, trackABConversion } from "@/lib/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { openCal } from "@/lib/cal";
 
 interface EnhancedVSLControlsProps {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -168,7 +169,7 @@ export const EnhancedVSLControls = ({
                 });
                 trackABConversion("vsl_cta_timing", ctaVariant, "cta_click");
                 // Navigate to booking
-                window.location.href = '/book-call';
+                openCal('vsl_controls');
               }}
             >
               📞 Réserver ma consultation gratuite

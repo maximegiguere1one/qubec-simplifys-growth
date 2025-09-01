@@ -21,7 +21,7 @@ interface GuaranteeBlockProps {
 export const GuaranteeBlock = ({ 
   location, 
   variant = "primary", 
-  destination = "/book-call",
+  destination = "cal_booking",
   onCTAClick,
   className,
   ctaText = "Réserver mon appel",

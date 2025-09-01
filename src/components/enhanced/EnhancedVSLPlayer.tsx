@@ -116,7 +116,7 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
   }, [hasStartedPlaying, progress, showCTA, videoVariant, ctaVariant]);
 
   const handleCTAClick = () => {
-    trackCTAClick('vsl_overlay', ctaVariant, '/book-call');
+    trackCTAClick('vsl_overlay', ctaVariant, 'cal_booking');
     trackABConversion("vsl_cta", ctaVariant, "click");
     onCTAClick();
   };

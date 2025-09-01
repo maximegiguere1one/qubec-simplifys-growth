@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import { NavigationService } from "@/lib/navigation";
+import { openCal, getCalDataAttributes } from "@/lib/cal";
 
 interface UrgencySectionProps {
   onCTAClick?: () => void;
@@ -12,7 +12,7 @@ export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
     if (onCTAClick) {
       onCTAClick();
     } else {
-      NavigationService.goToBookCall();
+      openCal('urgency_section');
     }
   };
 
@@ -34,6 +34,7 @@ export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
           size="xl"
           onClick={handleCTAClick}
           className="w-full max-w-[560px] mx-auto whitespace-normal break-words text-base sm:text-lg px-4 sm:px-8 py-4 hover:scale-100 sm:hover:scale-105 transition-all duration-300"
+          {...getCalDataAttributes()}
         >
           Je réserve ma consultation MAINTENANT
         </Button>

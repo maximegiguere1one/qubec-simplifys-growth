@@ -58,7 +58,7 @@ Nos créneaux cette semaine :`,
         },
         cta: {
           text: 'Réserver ma consultation gratuite →',
-          url: '/book-call?source=qualified_email_1',
+          url: 'https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite?utm_source=qualified_email_1',
           tracking: 'qualified_cta_1'
         }
       }
@@ -135,7 +135,7 @@ Prêt(e) à démarrer votre transformation ?`,
         },
         cta: {
           text: 'Démarrer ma transformation →',
-          url: '/book-call?source=hot_email_2&priority=express',
+          url: 'https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite?utm_source=hot_email_2&priority=express',
           tracking: 'hot_cta_2'
         }
       }

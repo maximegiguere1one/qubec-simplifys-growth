@@ -11,6 +11,7 @@ import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { ABTest } from "@/components/ABTest";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { openCal } from "@/lib/cal";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -109,8 +110,11 @@ const Landing = () => {
     });
     
     // Navigate based on A/B test
-    const destination = ctaVariant === "direct_booking" ? "/book-call" : "/quiz";
-    navigate(destination);
+    if (ctaVariant === "direct_booking") {
+      openCal('landing_direct');
+    } else {
+      navigate("/quiz");
+    }
     setIsLoading(false);
   };
 

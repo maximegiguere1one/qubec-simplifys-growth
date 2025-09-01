@@ -8,8 +8,7 @@ const trackMetaViewContent = (pathname: string) => {
     const contentMapping: Record<string, {name: string, category: string}> = {
       '/': { name: 'Landing Page', category: 'landing_page' },
       '/quiz': { name: 'Business Efficiency Quiz', category: 'assessment' },
-      '/vsl': { name: 'Video Sales Letter', category: 'video_content' },
-      '/book-call': { name: 'Booking Page', category: 'consultation' }
+      '/vsl': { name: 'Video Sales Letter', category: 'video_content' }
     };
     
     const content = contentMapping[pathname] || { name: pathname.replace('/', '') || 'home', category: 'page' };
@@ -26,7 +25,6 @@ const routeEventMap: Record<string, string> = {
   '/': 'lp_view',
   '/quiz': 'quiz_view',
   '/vsl': 'vsl_view',
-  '/book-call': 'bookcall_view',
 };
 
 export const usePageTracking = () => {

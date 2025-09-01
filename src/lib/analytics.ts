@@ -417,7 +417,7 @@ export const trackCTAClick = async (location: string, variant?: string, destinat
   });
 
   // Additional Meta Pixel tracking for high-intent actions
-  if (destination === '/book-call' || location.includes('vsl')) {
+  if (destination === 'cal_booking' || location.includes('vsl')) {
     trackMetaPixelEvent('InitiateCheckout');
     trackMetaPixelCustomEvent('CTAClick', {
       cta_location: location,

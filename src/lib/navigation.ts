@@ -1,4 +1,5 @@
 import { NavigateFunction } from 'react-router-dom';
+import { openCal } from '@/lib/cal';
 
 // Navigation utilities to replace window.location usage
 export class NavigationService {
@@ -18,7 +19,8 @@ export class NavigationService {
   }
 
   static goToBookCall() {
-    this.goTo('/book-call');
+    // Open Cal.com booking instead of navigating to book-call page
+    openCal('navigation_service');
   }
 
   static goToQuiz() {

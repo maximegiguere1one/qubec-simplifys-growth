@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useNavigationSetup } from "@/lib/navigation";
 import { useWebVitals } from "@/hooks/useWebVitals";
+import { CalEmbedProvider } from "@/lib/cal";
 import VSL from "./pages/VSL";
 
 // Route-level code splitting for better performance
@@ -13,7 +14,6 @@ const Index = lazy(() => import("./pages/Index"));
 const Landing = lazy(() => import("./pages/Landing"));
 const Quiz = lazy(() => import("./pages/Quiz"));
 // VSL statically imported above to avoid dynamic import issues
-const BookCall = lazy(() => import("./pages/BookCall"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Agents = lazy(() => import("./pages/Agents"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -48,7 +48,6 @@ const AppContent = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/vsl" element={<VSL />} />
-          <Route path="/book-call" element={<BookCall />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/agents" element={<Agents />} />
           <Route path="/index" element={<Index />} />
@@ -64,7 +63,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <BrowserRouter>
-        <AppContent />
+        <CalEmbedProvider>
+          <AppContent />
+        </CalEmbedProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

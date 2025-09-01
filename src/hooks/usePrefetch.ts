@@ -19,9 +19,6 @@ export const usePrefetch = (
         case '/vsl':
           await import('@/pages/VSL');
           break;
-        case '/book-call':
-          await import('@/pages/BookCall');
-          break;
         default:
           break;
       }

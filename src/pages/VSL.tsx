@@ -22,6 +22,7 @@ import { SolutionSection } from "@/components/vsl/SolutionSection";
 import { ObjectionsSection } from "@/components/vsl/ObjectionsSection";
 import { SocialProofSection } from "@/components/vsl/SocialProofSection";
 import { UrgencySection } from "@/components/vsl/UrgencySection";
+import { openCal, getCalDataAttributes } from "@/lib/cal";
 const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
   const [showSurvey, setShowSurvey] = useState(false);
@@ -72,7 +73,7 @@ const VSL = () => {
       quiz_score: quizResults?.totalScore || 0,
       layout_variant: layoutVariant
     });
-    navigate("/book-call");
+    openCal('vsl_main');
   };
   const getPersonalizedMessage = () => {
     if (!quizResults) return "Fatigué de courir après le temps ?";
@@ -150,7 +151,12 @@ const VSL = () => {
             
             {/* CTA principal APRÈS qualification */}
             <div className="mb-4">
-              <Button variant="cta" className="px-8 py-3 font-semibold whitespace-normal break-words text-center leading-snug" onClick={handleCTAClick}>
+              <Button 
+                variant="cta" 
+                className="px-8 py-3 font-semibold whitespace-normal break-words text-center leading-snug" 
+                onClick={handleCTAClick}
+                {...getCalDataAttributes()}
+              >
                 📞 Planifier mon appel gratuit
               </Button>
               
@@ -211,7 +217,12 @@ const VSL = () => {
               
               {/* Primary CTA with maximum focus */}
               <div className="space-y-6">
-                <Button variant="cta-large" className="w-full sm:w-auto text-lg sm:text-xl font-bold px-12 sm:px-16 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 whitespace-normal break-words text-center leading-snug" onClick={handleCTAClick}>
+                <Button 
+                  variant="cta-large" 
+                  className="w-full sm:w-auto text-lg sm:text-xl font-bold px-12 sm:px-16 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 whitespace-normal break-words text-center leading-snug" 
+                  onClick={handleCTAClick}
+                  {...getCalDataAttributes()}
+                >
                   📞 Obtenir ma consultation gratuite
                 </Button>
                 
