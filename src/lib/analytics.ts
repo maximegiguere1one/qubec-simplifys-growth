@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { analyticsQueue } from "@/lib/analyticsQueue";
 
-// Meta Pixel helper function
+// Meta Pixel helper function with proper case sensitivity
 const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
     if (parameters) {
@@ -9,6 +9,19 @@ const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>
     } else {
       (window as any).fbq('track', eventName);
     }
+    console.log(`Meta Pixel: ${eventName}`, parameters || {});
+  }
+};
+
+// Track Meta Pixel custom events for funnel optimization
+const trackMetaPixelCustomEvent = (eventName: string, parameters?: Record<string, any>) => {
+  if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (parameters) {
+      (window as any).fbq('trackCustom', eventName, parameters);
+    } else {
+      (window as any).fbq('trackCustom', eventName);
+    }
+    console.log(`Meta Pixel Custom: ${eventName}`, parameters || {});
   }
 };
 
@@ -65,8 +78,13 @@ export const createLead = async (email: string, name: string, phone?: string, so
     
     if (data) {
       setLeadId(data.id);
-      // Track Meta Pixel Lead event
-      trackMetaPixelEvent('Lead');
+      // Track Meta Pixel Lead event for successful lead creation
+      trackMetaPixelEvent('Lead', {
+        content_name: 'Lead Capture',
+        content_category: source,
+        value: 0.00,
+        currency: 'CAD'
+      });
     }
     
     return data;
@@ -92,7 +110,7 @@ export type FunnelEventType =
   | 'guarantee_view'
   | 'guarantee_cta_click';
 
-// Track funnel events
+// Track funnel events with Meta Pixel integration
 export const trackEvent = (
   eventType: FunnelEventType, 
   eventData: Record<string, any> = {},
@@ -102,17 +120,88 @@ export const trackEvent = (
     const sessionId = getSessionId();
     const currentLeadId = leadId || getLeadId();
     
-    // Use analytics queue for batching instead of immediate DB write
-    analyticsQueue.add(eventType, {
+    // Enhanced event data
+    const enhancedEventData = {
       ...eventData,
       session_id: sessionId,
-      timestamp: new Date().toISOString(),
+      lead_id: currentLeadId,
       user_agent: navigator.userAgent,
       referrer: document.referrer,
       url: window.location.href,
-    }, currentLeadId);
+      timestamp: Date.now(),
+    };
+
+    // Track in our analytics queue
+    analyticsQueue.add(eventType, enhancedEventData, currentLeadId);
+
+    // Map internal events to Meta Pixel standard events
+    switch(eventType) {
+      case 'lp_view':
+        trackMetaPixelEvent('ViewContent', { 
+          content_name: 'Landing Page',
+          content_category: 'landing_page' 
+        });
+        break;
+      case 'lp_submit_optin':
+        trackMetaPixelEvent('Lead');
+        break;
+      case 'quiz_start':
+        trackMetaPixelEvent('ViewContent', { 
+          content_name: 'Quiz Start',
+          content_category: 'quiz' 
+        });
+        trackMetaPixelCustomEvent('QuizStart');
+        break;
+      case 'quiz_question_answer':
+        trackMetaPixelCustomEvent('QuizProgress', {
+          question_number: eventData.question_id,
+          score: eventData.answer_score
+        });
+        break;
+      case 'quiz_complete':
+        trackMetaPixelEvent('CompleteRegistration');
+        trackMetaPixelCustomEvent('QuizComplete', {
+          total_score: eventData.total_score,
+          time_spent: eventData.time_spent
+        });
+        break;
+      case 'vsl_view':
+        trackMetaPixelEvent('ViewContent', { 
+          content_name: 'VSL Page',
+          content_category: 'video_sales_letter' 
+        });
+        break;
+      case 'vsl_play':
+        if (eventData.event_type === 'play') {
+          trackMetaPixelCustomEvent('VideoPlay');
+        } else if (eventData.event_type === 'complete') {
+          trackMetaPixelCustomEvent('VideoComplete');
+        }
+        break;
+      case 'vsl_cta_click':
+        trackMetaPixelEvent('InitiateCheckout');
+        break;
+      case 'bookcall_view':
+        trackMetaPixelEvent('ViewContent', { 
+          content_name: 'Booking Page',
+          content_category: 'booking' 
+        });
+        break;
+      case 'bookcall_submit':
+        trackMetaPixelEvent('Schedule');
+        trackMetaPixelEvent('Lead');
+        break;
+      case 'bookcall_confirm':
+        trackMetaPixelEvent('Purchase', {
+          value: 0.00,
+          currency: 'CAD',
+          content_name: 'Discovery Call Booking',
+          content_category: 'consultation'
+        });
+        break;
+    }
   } catch (error) {
-    console.error('Analytics tracking error:', error);
+    console.error('Error tracking event:', error);
   }
 };
 
@@ -223,9 +312,14 @@ export const trackCTAClick = async (location: string, variant?: string, destinat
     timestamp: Date.now()
   });
 
-  // Track Meta Pixel Lead event for VSL CTA clicks
+  // Additional Meta Pixel tracking for high-intent actions
   if (destination === '/book-call' || location.includes('vsl')) {
-    trackMetaPixelEvent('Lead');
+    trackMetaPixelEvent('InitiateCheckout');
+    trackMetaPixelCustomEvent('CTAClick', {
+      cta_location: location,
+      variant: variant || 'default',
+      destination: destination || 'unknown'
+    });
   }
 };
 
@@ -310,8 +404,13 @@ export const completeQuizSession = async (totalScore: number, timeSpent: number)
       time_spent: timeSpent,
     });
 
-    // Track Meta Pixel CompleteRegistration event
-    trackMetaPixelEvent('CompleteRegistration');
+    // Track Meta Pixel CompleteRegistration with enhanced data
+    trackMetaPixelEvent('CompleteRegistration', {
+      content_name: 'Business Efficiency Quiz',
+      content_category: 'assessment',
+      custom_score: totalScore,
+      time_spent: timeSpent
+    });
   } catch (error) {
     console.error('Error completing quiz session:', error);
   }
@@ -350,8 +449,13 @@ export const trackBooking = async (bookingData: {
       ...bookingData,
     });
 
-    // Track Meta Pixel Schedule event
-    trackMetaPixelEvent('Schedule');
+    // Track Meta Pixel Schedule with value
+    trackMetaPixelEvent('Schedule', {
+      content_name: 'Discovery Call Booking',
+      content_category: 'consultation',
+      value: 500.00, // Estimated value of a consultation
+      currency: 'CAD'
+    });
 
     return data;
   } catch (error) {

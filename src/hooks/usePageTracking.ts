@@ -2,12 +2,21 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackEvent } from '@/lib/analytics';
 
-// Meta Pixel ViewContent tracking
+// Meta Pixel ViewContent tracking with proper parameters
 const trackMetaViewContent = (pathname: string) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
+    const contentMapping: Record<string, {name: string, category: string}> = {
+      '/': { name: 'Landing Page', category: 'landing_page' },
+      '/quiz': { name: 'Business Efficiency Quiz', category: 'assessment' },
+      '/vsl': { name: 'Video Sales Letter', category: 'video_content' },
+      '/book-call': { name: 'Booking Page', category: 'consultation' }
+    };
+    
+    const content = contentMapping[pathname] || { name: pathname.replace('/', '') || 'home', category: 'page' };
+    
     (window as any).fbq('track', 'ViewContent', {
-      content_name: pathname.replace('/', '') || 'home',
-      content_category: 'page_view'
+      content_name: content.name,
+      content_category: content.category
     });
   }
 };
