@@ -183,14 +183,7 @@ export const VSLHero = ({
             </div>
           </div>
 
-          {hasError && <div className="text-center mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <p className="text-sm text-destructive mb-2">
-                <strong>Vidéo introuvable</strong>
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Remplacez <code className="bg-muted px-1 rounded">videoSrc</code> par votre URL (YouTube, Vimeo, MP4) ou ajoutez votre fichier à <code className="bg-muted px-1 rounded">public/video/vsl-demo.mp4</code>
-              </p>
-            </div>}
+          {hasError}
 
           {/* Trust Indicators & Qualification */}
           <div className="text-center mb-8 animate-fade-in">
