@@ -287,39 +287,57 @@ export type Database = {
       }
       email_settings: {
         Row: {
+          bounce_handling_enabled: boolean | null
+          click_tracking_enabled: boolean | null
           created_at: string
           daily_send_limit: number | null
           default_sequence: string | null
           from_email: string
           from_name: string
           id: string
+          open_tracking_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
           reply_to: string | null
           sending_paused: boolean
           test_recipient: string | null
+          timezone: string | null
           updated_at: string
         }
         Insert: {
+          bounce_handling_enabled?: boolean | null
+          click_tracking_enabled?: boolean | null
           created_at?: string
           daily_send_limit?: number | null
           default_sequence?: string | null
           from_email: string
           from_name?: string
           id?: string
+          open_tracking_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
           reply_to?: string | null
           sending_paused?: boolean
           test_recipient?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
+          bounce_handling_enabled?: boolean | null
+          click_tracking_enabled?: boolean | null
           created_at?: string
           daily_send_limit?: number | null
           default_sequence?: string | null
           from_email?: string
           from_name?: string
           id?: string
+          open_tracking_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
           reply_to?: string | null
           sending_paused?: boolean
           test_recipient?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: []

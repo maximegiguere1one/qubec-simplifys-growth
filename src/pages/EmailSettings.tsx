@@ -19,6 +19,12 @@ interface EmailSettings {
   sending_paused: boolean;
   daily_send_limit: number | null;
   test_recipient: string;
+  quiet_hours_start: string;
+  quiet_hours_end: string;
+  timezone: string;
+  bounce_handling_enabled: boolean;
+  open_tracking_enabled: boolean;
+  click_tracking_enabled: boolean;
 }
 
 interface DomainStatus {
@@ -36,7 +42,13 @@ const EmailSettings = () => {
     default_sequence: 'welcome',
     sending_paused: false,
     daily_send_limit: null,
-    test_recipient: ''
+    test_recipient: '',
+    quiet_hours_start: '22:00',
+    quiet_hours_end: '08:00',
+    timezone: 'America/Toronto',
+    bounce_handling_enabled: true,
+    open_tracking_enabled: true,
+    click_tracking_enabled: true
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -76,7 +88,13 @@ const EmailSettings = () => {
           default_sequence: data.default_sequence || 'welcome',
           sending_paused: data.sending_paused || false,
           daily_send_limit: data.daily_send_limit,
-          test_recipient: data.test_recipient || ''
+          test_recipient: data.test_recipient || '',
+          quiet_hours_start: data.quiet_hours_start || '22:00',
+          quiet_hours_end: data.quiet_hours_end || '08:00',
+          timezone: data.timezone || 'America/Toronto',
+          bounce_handling_enabled: data.bounce_handling_enabled !== false,
+          open_tracking_enabled: data.open_tracking_enabled !== false,
+          click_tracking_enabled: data.click_tracking_enabled !== false
         });
       }
     } catch (error) {
@@ -345,6 +363,88 @@ const EmailSettings = () => {
                 <p className="text-xs text-muted-foreground">
                   Nombre maximum d'emails envoyés par jour
                 </p>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="quiet_hours">Heures de pause</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label htmlFor="quiet_start" className="text-sm text-muted-foreground">De</Label>
+                    <Input
+                      id="quiet_start"
+                      type="time"
+                      value={settings.quiet_hours_start}
+                      onChange={(e) => setSettings(prev => ({ ...prev, quiet_hours_start: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="quiet_end" className="text-sm text-muted-foreground">À</Label>
+                    <Input
+                      id="quiet_end"
+                      type="time"
+                      value={settings.quiet_hours_end}
+                      onChange={(e) => setSettings(prev => ({ ...prev, quiet_hours_end: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Aucun email ne sera envoyé pendant ces heures
+                </p>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="timezone">Fuseau horaire</Label>
+                <Select 
+                  value={settings.timezone} 
+                  onValueChange={(value) => setSettings(prev => ({ ...prev, timezone: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="America/Toronto">Toronto (EST/EDT)</SelectItem>
+                    <SelectItem value="America/Montreal">Montréal (EST/EDT)</SelectItem>
+                    <SelectItem value="America/Vancouver">Vancouver (PST/PDT)</SelectItem>
+                    <SelectItem value="America/Edmonton">Edmonton (MST/MDT)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Suivi et tracking</Label>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Tracking des ouvertures</Label>
+                    <p className="text-xs text-muted-foreground">Suivre quand les emails sont ouverts</p>
+                  </div>
+                  <Switch
+                    checked={settings.open_tracking_enabled}
+                    onCheckedChange={(checked) => setSettings(prev => ({ ...prev, open_tracking_enabled: checked }))}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Tracking des clics</Label>
+                    <p className="text-xs text-muted-foreground">Suivre les clics sur les liens</p>
+                  </div>
+                  <Switch
+                    checked={settings.click_tracking_enabled}
+                    onCheckedChange={(checked) => setSettings(prev => ({ ...prev, click_tracking_enabled: checked }))}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm">Gestion des rebonds</Label>
+                    <p className="text-xs text-muted-foreground">Gérer automatiquement les emails qui rebondissent</p>
+                  </div>
+                  <Switch
+                    checked={settings.bounce_handling_enabled}
+                    onCheckedChange={(checked) => setSettings(prev => ({ ...prev, bounce_handling_enabled: checked }))}
+                  />
+                </div>
               </div>
 
               <div className="grid gap-2">
