@@ -189,9 +189,10 @@ export const LeadsManagement = () => {
   }, [filters]);
 
   const handleFilterChange = (key: string, value: string) => {
+    const actualValue = value === 'all' ? '' : value;
     setFilters(prev => ({
       ...prev,
-      [key]: value,
+      [key]: actualValue,
       page: 1, // Reset to first page when filtering
     }));
   };
@@ -238,12 +239,12 @@ export const LeadsManagement = () => {
             />
           </div>
           
-          <Select value={filters.segment} onValueChange={(value) => handleFilterChange('segment', value)}>
+          <Select value={filters.segment || 'all'} onValueChange={(value) => handleFilterChange('segment', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Tous les segments" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les segments</SelectItem>
+              <SelectItem value="all">Tous les segments</SelectItem>
               <SelectItem value="qualified">Qualifiés</SelectItem>
               <SelectItem value="hot">Chauds</SelectItem>
               <SelectItem value="warm">Tièdes</SelectItem>
@@ -251,12 +252,12 @@ export const LeadsManagement = () => {
             </SelectContent>
           </Select>
 
-          <Select value={filters.source} onValueChange={(value) => handleFilterChange('source', value)}>
+          <Select value={filters.source || 'all'} onValueChange={(value) => handleFilterChange('source', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Toutes les sources" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les sources</SelectItem>
+              <SelectItem value="all">Toutes les sources</SelectItem>
               <SelectItem value="landing_page">Landing Page</SelectItem>
               <SelectItem value="quiz">Quiz</SelectItem>
               <SelectItem value="vsl">VSL</SelectItem>
