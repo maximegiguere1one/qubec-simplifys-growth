@@ -2,6 +2,16 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { trackEvent } from '@/lib/analytics';
 
+// Meta Pixel ViewContent tracking
+const trackMetaViewContent = (pathname: string) => {
+  if (typeof window !== 'undefined' && (window as any).fbq) {
+    (window as any).fbq('track', 'ViewContent', {
+      content_name: pathname.replace('/', '') || 'home',
+      content_category: 'page_view'
+    });
+  }
+};
+
 // Map routes to event types
 const routeEventMap: Record<string, string> = {
   '/': 'lp_view',
@@ -20,6 +30,9 @@ export const usePageTracking = () => {
         path: location.pathname,
         search: location.search,
       });
+      
+      // Track Meta Pixel ViewContent for all pages
+      trackMetaViewContent(location.pathname);
     }
   }, [location]);
 };

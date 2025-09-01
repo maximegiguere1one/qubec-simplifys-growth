@@ -1,6 +1,17 @@
 import { supabase } from "@/integrations/supabase/client";
 import { analyticsQueue } from "@/lib/analyticsQueue";
 
+// Meta Pixel helper function
+const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>) => {
+  if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (parameters) {
+      (window as any).fbq('track', eventName, parameters);
+    } else {
+      (window as any).fbq('track', eventName);
+    }
+  }
+};
+
 // Generate session ID for anonymous tracking
 export const getSessionId = (): string => {
   let sessionId = localStorage.getItem('session_id');
@@ -54,6 +65,8 @@ export const createLead = async (email: string, name: string, phone?: string, so
     
     if (data) {
       setLeadId(data.id);
+      // Track Meta Pixel Lead event
+      trackMetaPixelEvent('Lead');
     }
     
     return data;
@@ -209,6 +222,11 @@ export const trackCTAClick = async (location: string, variant?: string, destinat
     destination,
     timestamp: Date.now()
   });
+
+  // Track Meta Pixel Lead event for VSL CTA clicks
+  if (destination === '/book-call' || location.includes('vsl')) {
+    trackMetaPixelEvent('Lead');
+  }
 };
 
 // Quiz-specific tracking
@@ -291,6 +309,9 @@ export const completeQuizSession = async (totalScore: number, timeSpent: number)
       total_score: totalScore,
       time_spent: timeSpent,
     });
+
+    // Track Meta Pixel CompleteRegistration event
+    trackMetaPixelEvent('CompleteRegistration');
   } catch (error) {
     console.error('Error completing quiz session:', error);
   }
@@ -328,6 +349,9 @@ export const trackBooking = async (bookingData: {
       booking_id: data.id,
       ...bookingData,
     });
+
+    // Track Meta Pixel Schedule event
+    trackMetaPixelEvent('Schedule');
 
     return data;
   } catch (error) {
