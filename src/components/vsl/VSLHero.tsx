@@ -88,6 +88,7 @@ export const VSLHero = ({
     if (!videoRef.current) return;
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
+    videoRef.current.setMuted(newMutedState);
     // Use a custom event for volume toggle since it's not in standard funnel events
     console.log('Volume toggled:', {
       muted: newMutedState

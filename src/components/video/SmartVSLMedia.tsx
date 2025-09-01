@@ -18,6 +18,7 @@ interface SmartVSLMediaProps {
 export interface SmartVSLMediaRef {
   play: () => Promise<void>;
   pause: () => void;
+  setMuted: (muted: boolean) => void;
   currentTime: number;
   duration: number;
   paused: boolean;
@@ -146,6 +147,17 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
           setIframePlaying(false);
           onPause?.();
         }
+      }
+    },
+    setMuted: (muted: boolean) => {
+      if (videoSource?.type === 'mp4' && videoRef.current) {
+        videoRef.current.muted = muted;
+      } else if (videoSource?.type === 'youtube') {
+        sendIframeCommand(muted ? 'mute' : 'unMute');
+        setIframeMuted(muted);
+      } else if (videoSource?.type === 'vimeo') {
+        sendIframeCommand('setVolume', muted ? 0 : 1);
+        setIframeMuted(muted);
       }
     },
     get currentTime() {
