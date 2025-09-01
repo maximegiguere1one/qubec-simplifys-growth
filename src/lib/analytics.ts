@@ -1,6 +1,47 @@
 import { supabase } from "@/integrations/supabase/client";
 import { analyticsQueue } from "@/lib/analyticsQueue";
 
+// Send event to Facebook Conversions API via Edge Function
+const sendToConversionsAPI = async (
+  eventType: string,
+  eventData: Record<string, any>,
+  leadId?: string | null
+) => {
+  try {
+    // Get lead data for enhanced tracking
+    let leadData = null;
+    if (leadId) {
+      const { data } = await supabase
+        .from('leads')
+        .select('email, name, phone')
+        .eq('id', leadId)
+        .single();
+      leadData = data;
+    }
+
+    // Call our Edge Function to send to Facebook Conversions API
+    const response = await supabase.functions.invoke('facebook-conversions-api', {
+      body: {
+        eventType,
+        eventData: {
+          ...eventData,
+          client_ip: eventData.client_ip, // Will be populated by Edge Function from request
+        },
+        leadData,
+      }
+    });
+
+    if (response.error) {
+      console.warn('Facebook Conversions API warning:', response.error);
+    } else {
+      console.log('Facebook Conversions API success:', response.data);
+    }
+  } catch (error) {
+    console.warn('Failed to send to Facebook Conversions API:', error);
+    // Don't throw - we don't want to break the main tracking flow
+  }
+};
+
 // Meta Pixel helper function with proper case sensitivity
 const trackMetaPixelEvent = (eventName: string, parameters?: Record<string, any>) => {
   if (typeof window !== 'undefined' && (window as any).fbq) {
@@ -110,7 +151,7 @@ export type FunnelEventType =
   | 'guarantee_view'
   | 'guarantee_cta_click';
 
-// Track funnel events with Meta Pixel integration
+// Track funnel events with Meta Pixel and Conversions API integration
 export const trackEvent = (
   eventType: FunnelEventType, 
   eventData: Record<string, any> = {},
@@ -129,10 +170,16 @@ export const trackEvent = (
       referrer: document.referrer,
       url: window.location.href,
       timestamp: Date.now(),
+      // Add Facebook Click ID and Browser ID for better attribution
+      fbc: localStorage.getItem('_fbc'),
+      fbp: localStorage.getItem('_fbp'),
     };
 
     // Track in our analytics queue
     analyticsQueue.add(eventType, enhancedEventData, currentLeadId);
+
+    // Send to Facebook Conversions API via Edge Function for server-to-server tracking
+    sendToConversionsAPI(eventType, enhancedEventData, currentLeadId);
 
     // Map internal events to Meta Pixel standard events
     switch(eventType) {
