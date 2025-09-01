@@ -33,7 +33,7 @@ export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
           variant="cta-large"
           size="xl"
           onClick={handleCTAClick}
-          className="transform hover:scale-105 transition-all duration-300 pulse-animation"
+          className="w-full max-w-[560px] mx-auto whitespace-normal break-words text-base sm:text-lg px-4 sm:px-8 py-4 hover:scale-100 sm:hover:scale-105 transition-all duration-300 pulse-animation"
         >
           Je réserve ma consultation MAINTENANT
         </Button>
