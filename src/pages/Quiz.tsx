@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, sendQuizConfirmationEmail, getLeadId, getABVariant } from "@/lib/analytics";
+import { NavigationService } from "@/lib/navigation";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
-import { QuizCompletionDialog } from "@/components/QuizCompletionDialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePrefetch } from "@/hooks/usePrefetch";
 import { useOptimizedTimer } from "@/hooks/useOptimizedTimer";
 import { QUIZ_QUESTIONS, QuestionOption } from "@/components/optimized/QuizQuestions";
@@ -28,9 +29,7 @@ const Quiz = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSessionStarted, setQuizSessionStarted] = useState(false);
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState<string>("");
+  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [currentDiagnostic, setCurrentDiagnostic] = useState("");
   
   const navigate = useNavigate();
@@ -83,6 +82,17 @@ const Quiz = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, questions.length, exitIntentShown]);
+
+  // Auto-redirect to VSL after completion message
+  useEffect(() => {
+    if (showCompletionMessage) {
+      const timer = setTimeout(() => {
+        NavigationService.goToVSL();
+      }, 3000); // 3 seconds delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [showCompletionMessage]);
   
   // Track page view and start quiz session
   usePageTracking();
@@ -254,10 +264,10 @@ const Quiz = () => {
         contactInfo 
       }));
 
-      // Show completion dialog immediately
-      setShowCompletionDialog(true);
+      // Show completion message
+      setShowCompletionMessage(true);
 
-      // Send confirmation email asynchronously
+      // Send confirmation email asynchronously (keep analytics)
       const leadId = getLeadId();
       if (leadId) {
         try {
@@ -269,13 +279,10 @@ const Quiz = () => {
             diagnosticMessage,
             contactInfo
           );
-          setEmailSent(true);
+          console.log("Quiz confirmation email sent successfully");
         } catch (error) {
-          setEmailError(error instanceof Error ? error.message : "Erreur inconnue");
           console.error("Failed to send confirmation email:", error);
         }
-      } else {
-        setEmailError("Impossible de récupérer l'ID du lead");
       }
     }
   };
@@ -466,20 +473,34 @@ const Quiz = () => {
           />
         )}
 
-        {/* Quiz Completion Dialog */}
-        <QuizCompletionDialog
-          isOpen={showCompletionDialog}
-          onClose={() => setShowCompletionDialog(false)}
-          diagnostic={currentDiagnostic}
-          contactName={contactInfo.name}
-          totalScore={Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
-            const question = questions[parseInt(questionId)];
-            const option = question.options.find(opt => opt.value === answerValue);
-            return sum + (option?.score || 0);
-          }, 0)}
-          emailSent={emailSent}
-          emailError={emailError}
-        />
+        {/* Quiz Completion Message */}
+        {showCompletionMessage && (
+          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <Alert className="max-w-md mx-auto bg-card border-primary/20 shadow-lg">
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-center space-y-4">
+                <div>
+                  <p className="font-semibold text-lg mb-2">Merci {contactInfo.name.split(' ')[0]} !</p>
+                  <p className="text-muted-foreground">
+                    Vos résultats personnalisés ont été envoyés à votre adresse email.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <Button 
+                    variant="cta" 
+                    onClick={() => NavigationService.goToVSL()}
+                    className="w-full"
+                  >
+                    Voir votre analyse détaillée
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Redirection automatique dans quelques secondes...
+                  </p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
       </div>
     </div>
   );
