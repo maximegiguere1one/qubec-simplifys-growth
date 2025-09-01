@@ -5,6 +5,7 @@ import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import { trackEvent, getABVariant, trackVSLEvent } from '@/lib/analytics';
 import { getCalDataAttributes } from '@/lib/cal';
 import { SmartVSLMedia, SmartVSLMediaRef } from '@/components/video/SmartVSLMedia';
+import { ProgressBar } from '@/components/video/ProgressBar';
 interface VSLHeroProps {
   videoSrc: string;
   posterSrc: string;
@@ -37,6 +38,13 @@ export const VSLHero = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
   const [showPlayHint, setShowPlayHint] = useState(true);
+
+  // Time formatting utility
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
   // A/B test for CTA copy
   const ctaCopyVariant = getABVariant("vsl_hero_cta", ["standard", "urgent", "benefit"]);
@@ -135,6 +143,17 @@ export const VSLHero = ({
       quiz_score: quizResults?.totalScore || 0
     });
     onCTAClick(section);
+  };
+
+  const handleSeek = (time: number) => {
+    if (!videoRef.current) return;
+    videoRef.current.seekTo(time);
+    trackVSLEvent('progress', {
+      action: 'seek',
+      from: currentTime,
+      to: time,
+      progress
+    });
   };
   return <div className="relative">
       {/* Hero Section */}
@@ -241,6 +260,26 @@ export const VSLHero = ({
                 {isMuted && <div className="absolute top-4 left-4 right-4">
                     
                   </div>}
+              </div>
+
+              {/* Timeline - Progress bar with time display */}
+              <div className="mt-4 max-w-4xl mx-auto">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="min-w-[3rem] text-right">
+                    {formatTime(currentTime)}
+                  </span>
+                  <div className="flex-1">
+                    <ProgressBar 
+                      currentTime={currentTime}
+                      duration={duration}
+                      onSeek={handleSeek}
+                      className="h-2 sm:h-3"
+                    />
+                  </div>
+                  <span className="min-w-[3rem]">
+                    {formatTime(duration)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

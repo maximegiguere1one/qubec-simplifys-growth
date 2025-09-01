@@ -19,6 +19,7 @@ export interface SmartVSLMediaRef {
   play: () => Promise<void>;
   pause: () => void;
   setMuted: (muted: boolean) => void;
+  seekTo: (time: number) => void;
   currentTime: number;
   duration: number;
   paused: boolean;
@@ -45,6 +46,8 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
   const [iframePlaying, setIframePlaying] = useState(false);
   const [iframeMuted, setIframeMuted] = useState(true);
   const [youtubeReady, setYoutubeReady] = useState(false);
+  const [iframeCurrentTime, setIframeCurrentTime] = useState(0);
+  const [iframeDuration, setIframeDuration] = useState(0);
 
   // Helper function to send commands to iframe players
   const sendIframeCommand = (command: string, args?: any) => {
@@ -75,14 +78,23 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
           const data = JSON.parse(event.data);
           if (data.event === 'onReady') {
             setYoutubeReady(true);
-            // Request state updates
+            // Request state updates and video info
             sendIframeCommand('addEventListener', ['onStateChange']);
+            sendIframeCommand('getDuration');
           } else if (data.event === 'onStateChange') {
             // YouTube player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
             const state = data.info;
             setIframePlaying(state === 1);
             if (state === 1) onPlay?.();
             if (state === 2) onPause?.();
+          } else if (data.event === 'infoDelivery' && data.info) {
+            if (data.info.duration) {
+              setIframeDuration(data.info.duration);
+            }
+            if (data.info.currentTime !== undefined) {
+              setIframeCurrentTime(data.info.currentTime);
+              onTimeUpdate?.();
+            }
           }
         } catch (e) {
           // Ignore invalid JSON
@@ -104,6 +116,17 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
       };
     }
   }, [videoSource, onPlay, onPause]);
+
+  // Polling for YouTube currentTime updates
+  useEffect(() => {
+    if (videoSource?.type === 'youtube' && youtubeReady && iframePlaying) {
+      const interval = setInterval(() => {
+        sendIframeCommand('getCurrentTime');
+      }, 250); // Poll every 250ms for smooth progress
+
+      return () => clearInterval(interval);
+    }
+  }, [videoSource, youtubeReady, iframePlaying]);
 
   useImperativeHandle(ref, () => ({
     play: async () => {
@@ -160,19 +183,26 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
         setIframeMuted(muted);
       }
     },
+    seekTo: (time: number) => {
+      if (videoSource?.type === 'mp4' && videoRef.current) {
+        videoRef.current.currentTime = time;
+      } else if (videoSource?.type === 'youtube') {
+        sendIframeCommand('seekTo', [time, true]);
+      } else if (videoSource?.type === 'vimeo') {
+        sendIframeCommand('setCurrentTime', time);
+      }
+    },
     get currentTime() {
       if (videoSource?.type === 'mp4') {
         return videoRef.current?.currentTime || 0;
       }
-      // For iframes, we can't get real-time data without full API integration
-      return 0;
+      return iframeCurrentTime;
     },
     get duration() {
       if (videoSource?.type === 'mp4') {
         return videoRef.current?.duration || 0;
       }
-      // For iframes, we can't get duration without full API integration
-      return 100; // Fake duration for progress bar
+      return iframeDuration || 0;
     },
     get paused() {
       if (videoSource?.type === 'mp4') {

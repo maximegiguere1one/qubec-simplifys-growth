@@ -131,7 +131,7 @@ const VSL = () => {
 
       {/* ROI Calculator - Lazy loaded */}
       <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
-        
+        <ROICalculator />
       </LazySection>
 
       {/* Problem Amplification Section - Lazy loaded */}
