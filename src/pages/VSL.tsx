@@ -9,7 +9,6 @@ import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { usePersonalizedMessaging } from "@/hooks/usePersonalizedMessaging";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
-
 import { VSLVideo } from "@/components/VSLVideo";
 import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
 import { LazySection } from "@/components/LazySection";
@@ -121,15 +120,12 @@ const VSL = () => {
 
           {/* Badge et bloc qualification APRÈS la vidéo */}
           <div className="text-center mb-6">
-            {quizResults?.totalScore >= 12 && (
-              <Badge variant="secondary" className="mb-4">
+            {quizResults?.totalScore >= 12 && <Badge variant="secondary" className="mb-4">
                 🎯 Vous vous qualifiez pour notre service : solution prioritaire détectée
-              </Badge>
-            )}
+              </Badge>}
             
             {/* Bloc d'éligibilité exclusif (uniquement pour les qualifiés) */}
-            {quizResults?.totalScore >= 12 && (
-              <div className="mb-6 space-y-4 md:bg-muted/20 md:border md:rounded-lg md:p-4 md:text-center">
+            {quizResults?.totalScore >= 12 && <div className="mb-6 space-y-4 md:bg-muted/20 md:border md:rounded-lg md:p-4 md:text-center">
                 <p className="text-sm md:text-base text-foreground leading-relaxed">
                   Votre profil indique que vous perdez actuellement <strong>15 à 25 heures par mois</strong> sur des tâches répétitives.
                 </p>
@@ -150,8 +146,7 @@ const VSL = () => {
                     <span className="text-sm font-bold text-red-600">💰 + On vous vire 1 000 $ cash</span>
                   </div>
                 </div>
-              </div>
-            )}
+              </div>}
             
             {/* CTA principal APRÈS qualification */}
             <div className="mb-4">
@@ -160,11 +155,9 @@ const VSL = () => {
               </Button>
               
               {/* Urgence douce sous le CTA */}
-              {quizResults?.totalScore >= 12 && (
-                <p className="text-xs text-muted-foreground mt-2">
+              {quizResults?.totalScore >= 12 && <p className="text-xs text-muted-foreground mt-2">
                   ⚠️ Nombre de places limité pour les nouveaux clients ce mois-ci.
-                </p>
-              )}
+                </p>}
             </div>
           </div>
 
@@ -194,23 +187,13 @@ const VSL = () => {
             
             {/* 2e CTA sous la vidéo */}
             <div className="my-8">
-              <Button variant="cta-large" className="text-lg font-bold px-12 py-4" onClick={handleCTAClick}>
-                📞 Oui, je veux un appel pour voir comment ça s'applique à mon entreprise
-              </Button>
+              
             </div>
             
-            <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
-              Vous en avez assez de perdre vos soirées dans la paperasse? De chercher des documents partout? De refaire les mêmes calculs encore et encore? Je vous montre comment tout automatiser, <span className="font-semibold text-primary">sans que vous ayez à apprendre quoi que ce soit de compliqué.</span>
-            </p>
+            
             
             {/* Personalized Alert */}
-            {quizResults && (
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-2xl mx-auto mb-6">
-                <p className="text-sm font-medium">
-                  🎯 Basé sur vos réponses (score: {quizResults.totalScore}/20), voici votre profil prioritaire.
-                </p>
-              </div>
-            )}
+            {quizResults}
 
             {/* Trust Badges */}
             <TrustBadges />
