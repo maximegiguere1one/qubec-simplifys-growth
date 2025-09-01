@@ -157,7 +157,7 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
 
         <div style="text-align: center; margin: 40px 0;">
           <p style="font-size: 16px; margin-bottom: 20px;">Prêt à reprendre le contrôle de votre temps ?</p>
-          <a href="https://lbwjesrgernvjiorktia.lovableproject.com/book-call" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">📞 Réserver ma consultation gratuite</a>
+          <a href="https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">📞 Réserver ma consultation gratuite</a>
         </div>
 
         <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 14px;">
@@ -168,6 +168,32 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
       </html>
     `
   };
+};
+
+// Fonction pour logger dans la nouvelle table
+const logEmailDelivery = async (
+  supabase: any,
+  leadId: string,
+  emailType: string,
+  recipientEmail: string,
+  subject: string,
+  status: string,
+  providerResponse?: any,
+  errorMessage?: string
+) => {
+  try {
+    await supabase.from('email_delivery_logs').insert({
+      lead_id: leadId,
+      email_type: emailType,
+      recipient_email: recipientEmail,
+      subject: subject,
+      status: status,
+      provider_response: providerResponse,
+      error_message: errorMessage
+    });
+  } catch (error) {
+    console.error('Failed to log email delivery:', error);
+  }
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -183,44 +209,141 @@ const handler = async (req: Request): Promise<Response> => {
     });
   }
 
+  // Créer le client Supabase AVANT le try-catch principal
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  let data: QuizResultsRequest;
+  
   try {
-    const data: QuizResultsRequest = await req.json();
+    data = await req.json();
+  } catch (error) {
+    console.error('❌ Failed to parse JSON request:', error);
+    return new Response(JSON.stringify({ 
+      error: 'Invalid JSON request',
+      success: false
+    }), {
+      status: 400,
+      headers: { 
+        "Content-Type": "application/json", 
+        ...corsHeaders 
+      },
+    });
+  }
+
+  // Validation des champs requis avec logging détaillé
+  const requiredFields = ['leadId', 'contactInfo'];
+  const missingFields = requiredFields.filter(field => !data[field as keyof QuizResultsRequest]);
+  
+  if (missingFields.length > 0 || !data.contactInfo?.email || !data.contactInfo?.name) {
+    const errorMsg = `Missing required fields: ${missingFields.join(', ')}${!data.contactInfo?.email ? ', email' : ''}${!data.contactInfo?.name ? ', name' : ''}`;
+    console.error('❌ Validation failed:', errorMsg);
     
-    // Validate required fields
-    if (!data.leadId || !data.contactInfo?.email || !data.contactInfo?.name) {
-      throw new Error("Missing required fields: leadId, email, or name");
+    // Log l'erreur même sans leadId
+    if (data.leadId) {
+      await logEmailDelivery(
+        supabase,
+        data.leadId,
+        'quiz_confirmation',
+        data.contactInfo?.email || 'unknown',
+        'Validation Error',
+        'failed',
+        null,
+        errorMsg
+      );
     }
+    
+    return new Response(JSON.stringify({ 
+      error: errorMsg,
+      success: false
+    }), {
+      status: 400,
+      headers: { 
+        "Content-Type": "application/json", 
+        ...corsHeaders 
+      },
+    });
+  }
 
-    console.log("Processing quiz confirmation email for:", data.contactInfo.email);
+  console.log('🚀 Processing quiz confirmation email for:', {
+    email: data.contactInfo.email,
+    name: data.contactInfo.name,
+    leadId: data.leadId,
+    score: data.totalScore,
+    timeSpent: data.timeSpent
+  });
 
-    // Generate personalized email content
+  // Vérifier que Resend API key est configurée
+  if (!Deno.env.get("RESEND_API_KEY")) {
+    const errorMsg = "RESEND_API_KEY not configured";
+    console.error('❌ Configuration error:', errorMsg);
+    
+    await logEmailDelivery(
+      supabase,
+      data.leadId,
+      'quiz_confirmation',
+      data.contactInfo.email,
+      'Configuration Error',
+      'failed',
+      null,
+      errorMsg
+    );
+    
+    return new Response(JSON.stringify({ 
+      error: errorMsg,
+      success: false
+    }), {
+      status: 500,
+      headers: { 
+        "Content-Type": "application/json", 
+        ...corsHeaders 
+      },
+    });
+  }
+
+  try {
+    // Générer le contenu de l'email
+    console.log('📧 Generating personalized email content...');
     const emailContent = generatePersonalizedEmail(data);
 
-    // Send email via Resend
+    // Envoyer l'email via Resend
+    console.log('📤 Sending email via Resend...');
     const emailResponse = await resend.emails.send({
       from: "One Système <onboarding@resend.dev>",
-      reply_to: "info@agence1.com",
+      reply_to: "info@onesysteme.com",
       to: [data.contactInfo.email],
       subject: emailContent.subject,
       html: emailContent.html,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log('✅ Email sent successfully:', {
+      emailId: emailResponse.id,
+      recipient: data.contactInfo.email,
+      subject: emailContent.subject
+    });
 
-    // Create Supabase client for logging
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Logger le succès dans la nouvelle table
+    await logEmailDelivery(
+      supabase,
+      data.leadId,
+      'quiz_confirmation',
+      data.contactInfo.email,
+      emailContent.subject,
+      'sent',
+      emailResponse
+    );
 
-    // Log email event
+    // Logger dans l'ancienne table pour compatibilité
     await supabase.from('email_events').insert({
       lead_id: data.leadId,
-      email_id: emailResponse.id,
+      email_id: emailResponse.id || 'unknown',
       action: 'sent'
     });
 
-    // Update leads table with quiz results
-    await supabase.from('leads').update({
+    // Mettre à jour la table leads avec les résultats du quiz
+    console.log('📊 Updating lead with quiz results...');
+    const { error: updateError } = await supabase.from('leads').update({
       score: data.totalScore,
       scoring_data: {
         answers: data.answers,
@@ -231,10 +354,18 @@ const handler = async (req: Request): Promise<Response> => {
       segment: data.totalScore >= 16 ? 'hot' : data.totalScore >= 12 ? 'warm' : 'cold'
     }).eq('id', data.leadId);
 
+    if (updateError) {
+      console.warn('⚠️ Failed to update lead:', updateError);
+    } else {
+      console.log('✅ Lead updated successfully');
+    }
+
     return new Response(JSON.stringify({ 
       success: true, 
       emailId: emailResponse.id,
-      message: "Quiz confirmation email sent successfully"
+      message: "Quiz confirmation email sent successfully",
+      recipient: data.contactInfo.email,
+      subject: emailContent.subject
     }), {
       status: 200,
       headers: {
@@ -244,11 +375,30 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
   } catch (error: any) {
-    console.error("Error in send-quiz-confirmation function:", error);
+    console.error("❌ Error in send-quiz-confirmation function:", {
+      message: error.message,
+      stack: error.stack,
+      leadId: data.leadId,
+      email: data.contactInfo.email
+    });
+    
+    // Logger l'erreur dans la nouvelle table
+    await logEmailDelivery(
+      supabase,
+      data.leadId,
+      'quiz_confirmation',
+      data.contactInfo.email,
+      'Email Send Error',
+      'failed',
+      null,
+      error.message
+    );
     
     return new Response(JSON.stringify({ 
-      error: error.message,
-      success: false
+      error: error.message || 'Unknown error occurred',
+      success: false,
+      leadId: data.leadId,
+      email: data.contactInfo.email
     }), {
       status: 500,
       headers: { 

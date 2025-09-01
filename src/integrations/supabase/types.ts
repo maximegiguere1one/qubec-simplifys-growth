@@ -421,6 +421,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_email_delivery_stats: {
+        Args: { days_back?: number }
+        Returns: {
+          last_successful_send: string
+          success_rate: number
+          total_failed: number
+          total_sent: number
+        }[]
+      }
     }
     Enums: {
       booking_status:

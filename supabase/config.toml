@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.facebook-conversions-api]
 verify_jwt = false
+
+[functions.test-email]
+verify_jwt = false
