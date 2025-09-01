@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { EmailSystemDemo } from '@/components/EmailSystemDemo';
+import QuickEmailTest from '@/components/QuickEmailTest';
 import { Save, Mail, Settings, TestTube, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -471,6 +473,16 @@ const EmailSettings = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Quick Email Test */}
+        <div className="mt-6">
+          <QuickEmailTest />
+        </div>
+
+        {/* Email System Demo */}
+        <div className="mt-6">
+          <EmailSystemDemo />
         </div>
 
         {/* Actions */}
