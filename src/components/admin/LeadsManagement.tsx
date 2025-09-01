@@ -601,14 +601,14 @@ export const LeadsManagement = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Segment</label>
                 <Select
-                  value={filters.segment}
-                  onValueChange={(value) => handleFilterChange('segment', value)}
+                  value={filters.segment || undefined}
+                  onValueChange={(value) => handleFilterChange('segment', value === 'all' ? '' : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les segments" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les segments</SelectItem>
+                    <SelectItem value="all">Tous les segments</SelectItem>
                     <SelectItem value="qualified">Qualifié</SelectItem>
                     <SelectItem value="hot">Chaud</SelectItem>
                     <SelectItem value="warm">Tiède</SelectItem>
@@ -620,14 +620,14 @@ export const LeadsManagement = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Étape du cycle</label>
                 <Select
-                  value={filters.lifecycle_stage}
-                  onValueChange={(value) => handleFilterChange('lifecycle_stage', value)}
+                  value={filters.lifecycle_stage || undefined}
+                  onValueChange={(value) => handleFilterChange('lifecycle_stage', value === 'all' ? '' : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les étapes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les étapes</SelectItem>
+                    <SelectItem value="all">Toutes les étapes</SelectItem>
                     {Object.entries(lifecycleStageLabels).map(([key, label]) => (
                       <SelectItem key={key} value={key}>{label}</SelectItem>
                     ))}
@@ -638,14 +638,14 @@ export const LeadsManagement = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Priorité</label>
                 <Select
-                  value={filters.priority}
-                  onValueChange={(value) => handleFilterChange('priority', value)}
+                  value={filters.priority || undefined}
+                  onValueChange={(value) => handleFilterChange('priority', value === 'all' ? '' : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les priorités" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les priorités</SelectItem>
+                    <SelectItem value="all">Toutes les priorités</SelectItem>
                     <SelectItem value="urgent">Urgent</SelectItem>
                     <SelectItem value="high">Élevée</SelectItem>
                     <SelectItem value="medium">Moyenne</SelectItem>
@@ -657,14 +657,14 @@ export const LeadsManagement = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Propriétaire</label>
                 <Select
-                  value={filters.owner_user_id}
-                  onValueChange={(value) => handleFilterChange('owner_user_id', value)}
+                  value={filters.owner_user_id || undefined}
+                  onValueChange={(value) => handleFilterChange('owner_user_id', value === 'all' ? '' : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les propriétaires" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les propriétaires</SelectItem>
+                    <SelectItem value="all">Tous les propriétaires</SelectItem>
                     {availableUsers.map((user) => (
                       <SelectItem key={user.user_id} value={user.user_id}>
                         {user.first_name} {user.last_name}
@@ -677,14 +677,14 @@ export const LeadsManagement = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Source</label>
                 <Select
-                  value={filters.source}
-                  onValueChange={(value) => handleFilterChange('source', value)}
+                  value={filters.source || undefined}
+                  onValueChange={(value) => handleFilterChange('source', value === 'all' ? '' : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les sources" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les sources</SelectItem>
+                    <SelectItem value="all">Toutes les sources</SelectItem>
                     <SelectItem value="landing_page">Page d'atterrissage</SelectItem>
                     <SelectItem value="quiz">Quiz</SelectItem>
                     <SelectItem value="vsl">VSL</SelectItem>
