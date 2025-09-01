@@ -183,7 +183,7 @@ export const createLead = async (email: string, name: string, phone?: string, so
         name,
         phone,
         source,
-        session_id: sessionId,
+        sessionId, // Use camelCase sessionId
         ...utmParams,
         honeypot: '' // Empty honeypot for legitimate submissions
       }
@@ -191,9 +191,12 @@ export const createLead = async (email: string, name: string, phone?: string, so
 
     if (error) throw error;
     
-    if (data?.success && data?.lead) {
-      setLeadId(data.lead.id);
-      console.log('Lead created successfully:', data.lead.id);
+    // Handle both response formats: { leadId } or { lead: { id } }
+    const leadId = data?.leadId || data?.lead?.id;
+    
+    if (data?.success && leadId) {
+      setLeadId(leadId);
+      console.log('Lead created successfully:', leadId);
       
       // Track Meta Pixel Lead event for successful lead creation
       trackMetaPixelEvent('Lead', {
@@ -203,8 +206,34 @@ export const createLead = async (email: string, name: string, phone?: string, so
         currency: 'CAD'
       });
       
-      return data.lead;
+      return { id: leadId };
     } else {
+      // If session ID error, try regenerating session and retry once
+      if (data?.error?.includes('Invalid session ID')) {
+        localStorage.removeItem('analytics_session_id');
+        const newSessionId = getSessionId();
+        
+        const retryResponse = await supabase.functions.invoke('validate-lead', {
+          body: {
+            email,
+            name,
+            phone,
+            source,
+            sessionId: newSessionId,
+            ...utmParams,
+            honeypot: ''
+          }
+        });
+        
+        if (retryResponse.data?.success) {
+          const retryLeadId = retryResponse.data?.leadId || retryResponse.data?.lead?.id;
+          if (retryLeadId) {
+            setLeadId(retryLeadId);
+            return { id: retryLeadId };
+          }
+        }
+      }
+      
       throw new Error(data?.error || 'Failed to create lead');
     }
   } catch (error) {

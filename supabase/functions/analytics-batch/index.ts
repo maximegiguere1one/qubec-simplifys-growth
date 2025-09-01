@@ -49,7 +49,27 @@ serve(async (req) => {
           event_data: event.event_data,
           lead_id: event.lead_id,
           session_id: event.session_id,
-          ip_address: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip'),
+          ip_address: (() => {
+            const forwardedFor = req.headers.get('x-forwarded-for');
+            const realIp = req.headers.get('x-real-ip');
+            
+            if (forwardedFor) {
+              // Extract first IP from comma-separated list and validate
+              const firstIp = forwardedFor.split(',')[0].trim();
+              // Basic IPv4/IPv6 validation
+              if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(firstIp) || 
+                  /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/.test(firstIp)) {
+                return firstIp;
+              }
+            }
+            
+            if (realIp && (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(realIp) || 
+                          /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/.test(realIp))) {
+              return realIp;
+            }
+            
+            return null; // Return null if no valid IP found
+          })(),
           user_agent: req.headers.get('user-agent'),
           referrer: event.event_data.referrer,
           page_url: event.event_data.page_url,

@@ -14,7 +14,8 @@ interface LeadRequest {
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
-  sessionId: string;
+  sessionId?: string; // Accept camelCase
+  session_id?: string; // Accept snake_case for backward compatibility
   honeypot?: string;
 }
 
@@ -33,6 +34,9 @@ const handler = async (req: Request): Promise<Response> => {
     const clientIP = req.headers.get('x-forwarded-for') || 
                      req.headers.get('x-real-ip') || 
                      'unknown';
+
+    // Normalize sessionId (accept both camelCase and snake_case)
+    const sessionId = body.sessionId || body.session_id;
 
     // 1. Honeypot detection
     if (body.honeypot && body.honeypot.trim().length > 0) {
@@ -76,7 +80,7 @@ const handler = async (req: Request): Promise<Response> => {
       errors.push('Phone number must be at least 10 digits');
     }
 
-    if (!body.sessionId || !/^sess_\d+_[a-zA-Z0-9]{9}$/.test(body.sessionId)) {
+    if (!sessionId || !/^sess_\d+_[a-zA-Z0-9]{9}$/.test(sessionId)) {
       errors.push('Invalid session ID');
     }
 
@@ -104,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
       scoring_data: {
         ip_address: clientIP,
         user_agent: req.headers.get('user-agent'),
-        session_id: body.sessionId,
+        session_id: sessionId,
         created_via: 'validated_edge_function',
         timestamp: new Date().toISOString(),
       }
@@ -129,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // 6. Log successful lead creation event
     await supabase.from('funnel_events').insert({
-      session_id: body.sessionId,
+      session_id: sessionId,
       event_type: 'lp_submit_optin',
       event_data: {
         lead_id: lead.id,
