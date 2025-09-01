@@ -492,6 +492,19 @@ export const completeQuizSession = async (totalScore: number, timeSpent: number)
     const quizSessionId = localStorage.getItem('quiz_session_id');
     if (!quizSessionId) return;
 
+    const leadId = getLeadId();
+    if (!leadId) {
+      console.error('No lead ID found for quiz completion');
+      return;
+    }
+
+    // Get lead data for email sequence
+    const { data: leadData } = await supabase
+      .from('leads')
+      .select('name, email, segment')
+      .eq('id', leadId)
+      .single();
+
     await supabase
       .from('quiz_sessions')
       .update({
@@ -502,10 +515,24 @@ export const completeQuizSession = async (totalScore: number, timeSpent: number)
       })
       .eq('id', quizSessionId);
 
+    // Calculate segment based on score
+    const segment = calculateLeadSegment(totalScore);
+    
+    // Update lead with score and segment
+    await supabase
+      .from('leads')
+      .update({
+        score: totalScore,
+        segment: segment,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', leadId);
+
     await trackEvent('quiz_complete', {
       quiz_session_id: quizSessionId,
       total_score: totalScore,
       time_spent: timeSpent,
+      segment: segment,
     });
 
     // Track Meta Pixel CompleteRegistration with enhanced data
@@ -515,8 +542,54 @@ export const completeQuizSession = async (totalScore: number, timeSpent: number)
       custom_score: totalScore,
       time_spent: timeSpent
     });
+
+    // Trigger email sequence
+    if (leadData) {
+      await triggerEmailSequence(leadId, segment, totalScore, leadData.name, leadData.email);
+    }
   } catch (error) {
     console.error('Error completing quiz session:', error);
+  }
+};
+
+// Helper function to calculate lead segment
+const calculateLeadSegment = (score: number): string => {
+  if (score >= 80) return 'qualified';
+  if (score >= 60) return 'hot';
+  if (score >= 40) return 'warm';
+  return 'cold';
+};
+
+// Helper function to trigger email sequence
+const triggerEmailSequence = async (
+  leadId: string, 
+  segment: string, 
+  score: number,
+  leadName: string,
+  leadEmail: string
+): Promise<void> => {
+  try {
+    console.log(`Triggering email sequence for lead ${leadId}, segment: ${segment}`);
+    
+    const { data, error } = await supabase.functions.invoke('enqueue-email-sequence', {
+      body: {
+        leadId,
+        quizScore: score,
+        segment,
+        leadName,
+        leadEmail
+      }
+    });
+
+    if (error) {
+      console.error('Error triggering email sequence:', error);
+      throw error;
+    }
+
+    console.log('Email sequence triggered successfully:', data);
+  } catch (error) {
+    console.error('Failed to trigger email sequence:', error);
+    // Don't throw here as we don't want to break the quiz completion flow
   }
 };
 
