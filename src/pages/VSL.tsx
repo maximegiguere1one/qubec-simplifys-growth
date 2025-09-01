@@ -48,7 +48,6 @@ const VSL = () => {
 
   // A/B test for primary CTA copy
   const ctaCopyVariant = getABVariant("vsl_primary_cta", ["standard", "urgent", "benefit"]);
-
   const getPrimaryCTAText = () => {
     switch (ctaCopyVariant) {
       case "urgent":
@@ -123,16 +122,7 @@ const VSL = () => {
       </div>
 
       {/* Hero Section with VSL */}
-      <VSLHero 
-        videoSrc="https://www.youtube.com/embed/e7Q68Z-0gao?si=vjJdB3q-rzWNhX_b"
-        posterSrc="/images/vsl-poster.jpg"
-        headline={getPersonalizedMessage()}
-        ctaText={getPrimaryCTAText()}
-        ctaVariant={ctaCopyVariant}
-        onCTAClick={handleCTAClick}
-        quizResults={quizResults}
-        isMobile={isMobile}
-      />
+      <VSLHero videoSrc="https://www.youtube.com/embed/e7Q68Z-0gao?si=vjJdB3q-rzWNhX_b" posterSrc="/images/vsl-poster.jpg" headline={getPersonalizedMessage()} ctaText={getPrimaryCTAText()} ctaVariant={ctaCopyVariant} onCTAClick={handleCTAClick} quizResults={quizResults} isMobile={isMobile} />
 
       {/* Product Visuals - Lazy loaded */}
       <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
@@ -141,19 +131,7 @@ const VSL = () => {
 
       {/* ROI Calculator - Lazy loaded */}
       <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
-        <section className="section-mobile bg-background">
-          <div className="container mx-auto container-mobile">
-            <div className="text-center mb-12">
-              <h2 className="heading-responsive font-bold mb-4">
-                Calculez la rentabilité de votre système sur mesure
-              </h2>
-              <p className="text-responsive-base text-muted-foreground">
-                Découvrez en 30 secondes pourquoi investir dans du sur mesure est toujours rentable
-              </p>
-            </div>
-            <ROICalculator />
-          </div>
-        </section>
+        
       </LazySection>
 
       {/* Problem Amplification Section - Lazy loaded */}
@@ -189,12 +167,7 @@ const VSL = () => {
 
       {/* Sticky CTA Button - Mobile Safe Area */}
       {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full safe-area-inset-bottom">
-          <Button 
-            variant="cta-large" 
-            className="w-full shadow-2xl" 
-            onClick={() => handleCTAClick('sticky_cta')}
-            aria-label="Réserver consultation - CTA flottant"
-          >
+          <Button variant="cta-large" className="w-full shadow-2xl" onClick={() => handleCTAClick('sticky_cta')} aria-label="Réserver consultation - CTA flottant">
             📞 Réserver maintenant (gratuit)
           </Button>
         </div>}
