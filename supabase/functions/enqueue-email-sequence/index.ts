@@ -14,64 +14,87 @@ interface EnqueueRequest {
   leadEmail: string
 }
 
+// Templates d'emails français mis à jour avec contenu axé sur la valeur
 const emailSequences = {
   qualified: [
     {
       id: 'qualified-1',
-      subject: 'Vos résultats de diagnostic - {{name}} (Score: {{score}}/100)',
+      subject: '🎯 Analyse complétée - {{score}}% de potentiel d\'optimisation détecté',
       delay: 0,
       content: `
-        <h1>Félicitations {{name}} !</h1>
-        <p>Votre score de <strong>{{score}}/100</strong> indique que votre entreprise a un excellent potentiel d'automatisation.</p>
-        <p>Basé sur vos réponses, voici ce que nous avons identifié :</p>
-        <ul>
-          <li>✅ Processus mûrs pour l'automatisation</li>
-          <li>✅ ROI potentiel élevé (15-30% d'économies)</li>
-          <li>✅ Équipe prête pour la transformation</li>
-        </ul>
-        <p><strong>Prochaine étape recommandée :</strong> Réservez votre consultation gratuite de 30 minutes pour découvrir exactement quels processus automatiser en premier.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="{{booking_url}}" style="background: #3B82F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Réserver ma consultation gratuite</a>
-        </div>
-      `
-    },
-    {
-      id: 'qualified-2',
-      subject: 'Cas concret : 40% de temps économisé chez {{name}}',
-      delay: 24,
-      content: `
-        <h1>Bonjour {{name}},</h1>
-        <p>J'aimerais partager avec vous le cas d'une entreprise similaire à la vôtre...</p>
-        <p><strong>Résultats obtenus en 3 mois :</strong></p>
-        <ul>
-          <li>📊 40% de réduction du temps administratif</li>
-          <li>💰 25 000$ économisés annuellement</li>
-          <li>⚡ Processus 5x plus rapides</li>
-        </ul>
-        <p>Votre diagnostic montre le même potentiel. Parlons-en ?</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="{{booking_url}}" style="background: #3B82F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Oui, je veux mes résultats</a>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: hsl(220, 70%, 50%); padding: 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 18px;">One Système</h1>
+            <p style="color: hsl(220, 70%, 85%); margin: 8px 0 0 0; font-size: 14px;">Simplifiez. Automatisez. Prospérez.</p>
+          </div>
+          
+          <div style="padding: 32px 24px;">
+            <h2 style="font-size: 24px; margin: 0 0 16px 0; color: hsl(220, 70%, 20%);">Excellentes nouvelles, {{name}} !</h2>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Votre évaluation révèle un potentiel d'optimisation de {{score}}%. Les entreprises similaires qui automatisent leurs processus économisent en moyenne 15h par semaine et réduisent leurs erreurs de 70%.
+            </p>
+            
+            <div style="background: hsl(220, 70%, 98%); border: 1px solid hsl(220, 70%, 90%); border-radius: 8px; padding: 20px; margin: 24px 0;">
+              <h3 style="font-size: 18px; margin: 0 0 12px 0; color: hsl(220, 70%, 30%);">📊 VOTRE PROFIL D'OPTIMISATION :</h3>
+              <ul style="margin: 0; color: hsl(220, 10%, 40%);">
+                <li>Temps récupérable : 15-20 heures/semaine</li>
+                <li>Réduction d'erreurs possible : 85%</li>
+                <li>ROI estimé : 340% sur 12 mois</li>
+                <li>Votre consultation stratégique personnalisée (valeur 500$) est prête</li>
+              </ul>
+            </div>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="{{booking_url}}" style="background: hsl(220, 70%, 50%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+                Réserver ma consultation stratégique →
+              </a>
+            </div>
+            
+            <div style="background: hsl(220, 10%, 95%); padding: 16px; border-radius: 8px; margin: 24px 0;">
+              <p style="margin: 0; font-size: 14px; color: hsl(220, 10%, 50%); text-align: center;">
+                Durant ces 30 minutes : Audit express • Plan d'automatisation prioritaire • Roadmap personnalisée
+              </p>
+            </div>
+          </div>
         </div>
       `
     }
   ],
   hot: [
     {
-      id: 'hot-1',
-      subject: 'Vos résultats de diagnostic - {{name}} (Score: {{score}}/100)',
+      id: 'hot-1', 
+      subject: 'Résultats de votre évaluation - Solutions adaptées pour {{name}}',
       delay: 0,
       content: `
-        <h1>Excellents résultats {{name}} !</h1>
-        <p>Votre score de <strong>{{score}}/100</strong> place votre entreprise dans le top 20% en termes de potentiel d'automatisation.</p>
-        <p>Voici les opportunités identifiées :</p>
-        <ul>
-          <li>🎯 ROI rapide sur plusieurs processus</li>
-          <li>📈 Potentiel de croissance significatif</li>
-          <li>⚡ Implementation possible sous 60 jours</li>
-        </ul>
-        <p>Ne laissez pas passer cette opportunité. Réservez votre consultation gratuite maintenant.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="{{booking_url}}" style="background: #DC2626; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Je réserve maintenant</a>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: hsl(220, 70%, 50%); padding: 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 18px;">One Système</h1>
+            <p style="color: hsl(220, 70%, 85%); margin: 8px 0 0 0; font-size: 14px;">Simplifiez. Automatisez. Prospérez.</p>
+          </div>
+          
+          <div style="padding: 32px 24px;">
+            <h2 style="font-size: 24px; margin: 0 0 16px 0; color: hsl(220, 70%, 20%);">Voici vos opportunités d'amélioration, {{name}}</h2>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Votre évaluation montre des opportunités concrètes d'optimisation (score: {{score}}%). Découvrez comment des entreprises similaires ont transformé leurs opérations en quelques semaines.
+            </p>
+            
+            <div style="background: hsl(220, 70%, 98%); border: 1px solid hsl(220, 70%, 90%); border-radius: 8px; padding: 20px; margin: 24px 0;">
+              <h3 style="font-size: 18px; margin: 0 0 12px 0; color: hsl(220, 70%, 30%);">📊 CAS CLIENT SIMILAIRE :</h3>
+              <ul style="margin: 0; color: hsl(220, 10%, 40%);">
+                <li>Avant : 25h/semaine perdues dans la gestion manuelle</li>
+                <li>Après : 10h/semaine, processus automatisés</li>
+                <li>Résultat : +60% de productivité, équipe plus motivée</li>
+              </ul>
+            </div>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="{{vsl_url}}" style="background: hsl(220, 70%, 50%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+                Voir ma démonstration personnalisée →
+              </a>
+            </div>
+          </div>
         </div>
       `
     }
@@ -79,20 +102,43 @@ const emailSequences = {
   warm: [
     {
       id: 'warm-1',
-      subject: 'Vos résultats de diagnostic - {{name}} (Score: {{score}}/100)',
+      subject: 'Les 3 signes que vos systèmes vous coûtent cher',
       delay: 0,
       content: `
-        <h1>Merci {{name}} pour votre diagnostic !</h1>
-        <p>Votre score de <strong>{{score}}/100</strong> révèle des opportunités intéressantes d'automatisation.</p>
-        <p>Points d'amélioration identifiés :</p>
-        <ul>
-          <li>📊 Optimisation des processus actuels</li>
-          <li>🔄 Automatisation de tâches répétitives</li>
-          <li>📈 Amélioration de l'efficacité</li>
-        </ul>
-        <p>Découvrons ensemble comment transformer ces opportunités en résultats concrets.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="{{booking_url}}" style="background: #3B82F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Consultation gratuite</a>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: hsl(220, 70%, 50%); padding: 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 18px;">One Système</h1>
+            <p style="color: hsl(220, 70%, 85%); margin: 8px 0 0 0; font-size: 14px;">Simplifiez. Automatisez. Prospérez.</p>
+          </div>
+          
+          <div style="padding: 32px 24px;">
+            <h2 style="font-size: 24px; margin: 0 0 16px 0; color: hsl(220, 70%, 20%);">Bonjour {{name}},</h2>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              Merci d'avoir pris le temps d'évaluer vos processus actuels. Saviez-vous que 73% des PME québécoises perdent en moyenne 12h/semaine à cause de systèmes désorganisés ?
+            </p>
+            
+            <div style="background: hsl(220, 70%, 98%); border: 1px solid hsl(220, 70%, 90%); border-radius: 8px; padding: 20px; margin: 24px 0;">
+              <h3 style="font-size: 18px; margin: 0 0 12px 0; color: hsl(220, 70%, 30%);">🔍 LES 3 SIGNES RÉVÉLATEURS :</h3>
+              <div style="margin: 12px 0;">
+                <p style="margin: 8px 0; color: hsl(220, 10%, 40%);"><strong>1️⃣ Vos employés posent les mêmes questions répétitives</strong><br>→ Information dispersée dans plusieurs outils</p>
+                <p style="margin: 8px 0; color: hsl(220, 10%, 40%);"><strong>2️⃣ Vous découvrez des erreurs après coup</strong><br>→ Pas de contrôles automatiques</p>
+                <p style="margin: 8px 0; color: hsl(220, 10%, 40%);"><strong>3️⃣ Les rapports prennent des heures à préparer</strong><br>→ Données non-centralisées</p>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="{{resources_url}}" style="background: hsl(220, 70%, 50%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+                Télécharger le guide gratuit →
+              </a>
+            </div>
+            
+            <div style="background: hsl(220, 10%, 95%); padding: 16px; border-radius: 8px; margin: 24px 0;">
+              <p style="margin: 0; font-size: 14px; color: hsl(220, 10%, 50%); text-align: center;">
+                📖 "Le Guide du Chef d'Entreprise : 10 Automatisations Rapides" - Spécialement conçu pour les entreprises québécoises
+              </p>
+            </div>
+          </div>
         </div>
       `
     }
@@ -100,20 +146,38 @@ const emailSequences = {
   cold: [
     {
       id: 'cold-1',
-      subject: 'Vos résultats de diagnostic - {{name}} (Score: {{score}}/100)',
+      subject: 'Pourquoi les entreprises québécoises choisissent l\'automatisation',
       delay: 0,
       content: `
-        <h1>Merci {{name}} !</h1>
-        <p>Votre diagnostic révèle un score de <strong>{{score}}/100</strong>. C'est un excellent point de départ !</p>
-        <p>Même si votre entreprise n'est pas encore prête pour une automatisation complète, il y a des gains rapides possibles :</p>
-        <ul>
-          <li>📝 Simplification des processus manuels</li>
-          <li>🔧 Petites optimisations à fort impact</li>
-          <li>📚 Formation et sensibilisation de l'équipe</li>
-        </ul>
-        <p>Commençons par identifier les premiers pas ensemble.</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="{{booking_url}}" style="background: #059669; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">Premiers pas gratuits</a>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+          <div style="background: hsl(220, 70%, 50%); padding: 24px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 18px;">One Système</h1>
+            <p style="color: hsl(220, 70%, 85%); margin: 8px 0 0 0; font-size: 14px;">Simplifiez. Automatisez. Prospérez.</p>
+          </div>
+          
+          <div style="padding: 32px 24px;">
+            <h2 style="font-size: 24px; margin: 0 0 16px 0; color: hsl(220, 70%, 20%);">Bonjour {{name}},</h2>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+              L'automatisation n'est plus un luxe - c'est devenu essentiel pour rester compétitif. Au Québec, les entreprises qui automatisent leurs processus croissent 2.3x plus vite que leurs concurrents.
+            </p>
+            
+            <div style="background: hsl(220, 70%, 98%); border: 1px solid hsl(220, 70%, 90%); border-radius: 8px; padding: 20px; margin: 24px 0;">
+              <h3 style="font-size: 18px; margin: 0 0 12px 0; color: hsl(220, 70%, 30%);">🎯 TENDANCES 2024 AU QUÉBEC :</h3>
+              <ul style="margin: 0; color: hsl(220, 10%, 40%);">
+                <li>✅ 67% des PME prévoient d'automatiser cette année</li>
+                <li>✅ ROI moyen : 340% sur 18 mois</li>
+                <li>✅ Temps de récupération : 4-6 mois</li>
+                <li>✅ Employés 40% plus engagés</li>
+              </ul>
+            </div>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a href="{{quiz_url}}" style="background: hsl(220, 70%, 50%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">
+                Découvrir les tendances 2024 →
+              </a>
+            </div>
+          </div>
         </div>
       `
     }
@@ -141,7 +205,10 @@ serve(async (req) => {
 
     // Get the appropriate email sequence
     const sequence = emailSequences[segment] || emailSequences.cold
-    const bookingUrl = 'https://lbwjesrgernvjiorktia.supabase.co/book-call'
+    const bookingUrl = 'https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite'
+    const vslUrl = 'https://lbwjesrgernvjiorktia.supabase.co/vsl'
+    const resourcesUrl = 'https://lbwjesrgernvjiorktia.supabase.co/agents'
+    const quizUrl = 'https://lbwjesrgernvjiorktia.supabase.co/quiz'
 
     // Send immediate email (delay = 0) via Resend, queue others
     const resend = new (await import("npm:resend@4.0.0")).Resend(Deno.env.get('RESEND_API_KEY'))
@@ -159,12 +226,15 @@ serve(async (req) => {
         .replace(/{{name}}/g, leadName)
         .replace(/{{score}}/g, quizScore.toString())
         .replace(/{{booking_url}}/g, bookingUrl)
+        .replace(/{{vsl_url}}/g, vslUrl)
+        .replace(/{{resources_url}}/g, resourcesUrl)
+        .replace(/{{quiz_url}}/g, quizUrl)
 
       // Send immediate emails (delay = 0) directly via Resend
       if (email.delay === 0) {
         try {
           const { data: emailData, error: emailError } = await resend.emails.send({
-            from: 'One Système <hello@onesysteme.ca>',
+            from: 'One Système <noreply@resend.dev>',
             to: [leadEmail],
             subject: personalizedSubject,
             html: personalizedContent,
