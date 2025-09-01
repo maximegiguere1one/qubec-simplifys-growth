@@ -192,8 +192,7 @@ const VSL = () => {
             
             
             
-            {/* Personalized Alert */}
-            {quizResults}
+            {/* Personalized Alert - Removed object rendering */}
 
             {/* Trust Badges */}
             <TrustBadges />
