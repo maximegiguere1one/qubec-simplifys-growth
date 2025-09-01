@@ -36,6 +36,7 @@ export const VSLHero = ({
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
+  const [showPlayHint, setShowPlayHint] = useState(true);
 
   // A/B test for CTA copy
   const ctaCopyVariant = getABVariant("vsl_hero_cta", ["standard", "urgent", "benefit"]);
@@ -66,6 +67,7 @@ export const VSLHero = ({
         setIsPlaying(true);
         setHasStartedPlaying(true);
         setShowOverlay(false); // Hide overlay after first play for better UX
+        setShowPlayHint(false); // Hide play hint after first interaction
         trackVSLEvent('play', {
           currentTime,
           progress
@@ -151,13 +153,70 @@ export const VSLHero = ({
           {/* VSL Video Container */}
           <div className="relative mb-8 animate-scale-in">
             <div className="relative w-full max-w-4xl mx-auto">
-              <div className="relative aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
-                <SmartVSLMedia ref={videoRef} src={videoSrc} poster={posterSrc} className="w-full h-full object-cover" muted={isMuted} autoPlay={!isMobile} onClick={handlePlay} onError={() => setHasError(true)} onTimeUpdate={handleTimeUpdate} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
+              <div 
+                className="relative aspect-video bg-black rounded-lg overflow-hidden shadow-2xl cursor-pointer"
+                onClick={handlePlay}
+                onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? handlePlay() : null}
+                tabIndex={0}
+                role="button"
+                aria-label={isPlaying ? "Mettre en pause la vidéo" : "Lire la vidéo"}
+              >
+                <SmartVSLMedia 
+                  ref={videoRef} 
+                  src={videoSrc} 
+                  poster={posterSrc} 
+                  className="w-full h-full object-cover" 
+                  muted={isMuted} 
+                  autoPlay={!isMobile} 
+                  onError={() => setHasError(true)} 
+                  onTimeUpdate={handleTimeUpdate} 
+                  onPlay={() => setIsPlaying(true)} 
+                  onPause={() => setIsPlaying(false)} 
+                />
 
-                {/* Video Controls Overlay */}
-                <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
-                  <button onClick={handlePlay} className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}>
-                    {isPlaying ? <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" /> : <Play className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" />}
+                {/* Play Hint (before first play) */}
+                {showPlayHint && !hasStartedPlaying && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 transition-opacity duration-300">
+                    <div className="text-center mb-4">
+                      <p className="text-white text-lg sm:text-xl font-medium mb-2">
+                        {isMobile ? "Touchez pour lire" : "Cliquez pour lire"}
+                      </p>
+                      <p className="text-white/80 text-sm">
+                        👆 Vidéo de 4 minutes
+                      </p>
+                    </div>
+                    <button 
+                      onClick={handlePlay} 
+                      className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-white/95 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 animate-pulse" 
+                      aria-label="Lire la vidéo"
+                    >
+                      <Play className="w-10 h-10 sm:w-12 sm:h-12 text-gray-800 ml-1" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Center Play/Pause Button (after first play) */}
+                {!showPlayHint && (
+                  <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
+                    <button 
+                      onClick={handlePlay} 
+                      className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" 
+                      aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
+                    >
+                      {isPlaying ? <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" /> : <Play className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" />}
+                    </button>
+                  </div>
+                )}
+
+                {/* Floating Play/Pause Button (bottom-right) */}
+                <div className="absolute bottom-20 right-4 sm:bottom-16 sm:right-6">
+                  <button 
+                    onClick={handlePlay} 
+                    className="flex items-center justify-center w-12 h-12 bg-black/70 hover:bg-black/90 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" 
+                    aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
+                    title={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
+                  >
+                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                   </button>
                 </div>
 
