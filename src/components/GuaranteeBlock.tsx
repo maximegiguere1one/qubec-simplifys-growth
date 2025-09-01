@@ -5,7 +5,7 @@ import { DollarSign, Shield, TrendingUp, Users, CheckCircle2 } from "lucide-reac
 import { trackEvent } from "@/lib/analytics";
 import { ANALYTICS_EVENTS } from "@/lib/constants/analytics";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
-import { CTAButton } from "@/components/CTAButton";
+
 import { cn } from "@/lib/utils";
 
 interface GuaranteeBlockProps {
@@ -143,12 +143,9 @@ export const GuaranteeBlock = ({
           {/* CTA Button */}
           {showCTA && (
             <div className="text-center">
-              <CTAButton
-                location={`guarantee_${location}`}
-                variant={variant}
-                destination={destination}
+              <Button
+                variant="cta-large"
                 onClick={handleCTAClick}
-                size="cta-large"
                 className={cn(
                   "px-8 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300",
                   mobileButtonClass,
@@ -156,7 +153,7 @@ export const GuaranteeBlock = ({
                 )}
               >
                 {ctaText}
-              </CTAButton>
+              </Button>
             </div>
           )}
         </div>

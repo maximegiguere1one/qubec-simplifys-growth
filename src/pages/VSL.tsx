@@ -9,7 +9,7 @@ import { ABTest } from "@/components/ABTest";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { usePersonalizedMessaging } from "@/hooks/usePersonalizedMessaging";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
-import { CTAButton } from "@/components/CTAButton";
+
 import { VSLVideo } from "@/components/VSLVideo";
 import { EnhancedVSLPlayer } from "@/components/enhanced/EnhancedVSLPlayer";
 import { LazySection } from "@/components/LazySection";
@@ -155,9 +155,9 @@ const VSL = () => {
             
             {/* CTA principal APRÈS qualification */}
             <div className="mb-4">
-              <CTAButton location="vsl_top" variant="primary_cta" destination="/book-call" size="cta" className="px-8 py-3 font-semibold" onClick={handleCTAClick}>
+              <Button variant="cta" className="px-8 py-3 font-semibold" onClick={handleCTAClick}>
                 📞 Planifier mon appel gratuit
-              </CTAButton>
+              </Button>
               
               {/* Urgence douce sous le CTA */}
               {quizResults?.totalScore >= 12 && (
@@ -194,9 +194,9 @@ const VSL = () => {
             
             {/* 2e CTA sous la vidéo */}
             <div className="my-8">
-              <CTAButton location="vsl_post_video" variant="primary_cta" destination="/book-call" size="cta-large" className="text-lg font-bold px-12 py-4" onClick={handleCTAClick}>
+              <Button variant="cta-large" className="text-lg font-bold px-12 py-4" onClick={handleCTAClick}>
                 📞 Oui, je veux un appel pour voir comment ça s'applique à mon entreprise
-              </CTAButton>
+              </Button>
             </div>
             
             <p className="text-responsive-base text-muted-foreground mb-6 sm:mb-8 max-w-4xl mx-auto">
@@ -229,9 +229,9 @@ const VSL = () => {
               
               {/* Primary CTA with maximum focus */}
               <div className="space-y-6">
-                <CTAButton location="vsl_primary" variant="main_cta" destination="/book-call" size="cta-large" className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105" onClick={handleCTAClick}>
+                <Button variant="cta-large" className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105" onClick={handleCTAClick}>
                   📞 Obtenir ma consultation gratuite
-                </CTAButton>
+                </Button>
                 
                 {/* Trust indicators directly below CTA */}
                 <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
@@ -255,14 +255,14 @@ const VSL = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Pas prêt pour un appel ? Téléchargez d'abord notre guide :
                 </p>
-                <CTAButton location="vsl_secondary" variant="brochure_download" destination="#" size="outline" className="text-primary border-primary/30 hover:bg-primary/10 h-12 px-6" onClick={() => {
+                <Button variant="outline" className="text-primary border-primary/30 hover:bg-primary/10 h-12 px-6" onClick={() => {
                 trackEvent('vsl_cta_click', {
                   cta_location: 'secondary_download',
                   variant: 'brochure'
                 });
               }}>
                   📄 Guide gratuit : 10 processus à automatiser en premier
-                </CTAButton>
+                </Button>
               </div>
               
               <div className="space-y-2 text-sm text-muted-foreground">
@@ -339,9 +339,9 @@ const VSL = () => {
 
       {/* Sticky CTA Button */}
       {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full">
-          <CTAButton location="vsl_sticky" variant="sticky_cta" destination="/book-call" size="cta-large" className="w-full shadow-2xl" onClick={handleCTAClick}>
+          <Button variant="cta-large" className="w-full shadow-2xl" onClick={handleCTAClick}>
             📞 Réserver maintenant (gratuit)
-          </CTAButton>
+          </Button>
         </div>}
 
       {/* Micro Survey */}
