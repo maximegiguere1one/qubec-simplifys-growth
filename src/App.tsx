@@ -6,12 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useNavigationSetup } from "@/lib/navigation";
 import { useWebVitals } from "@/hooks/useWebVitals";
+import VSL from "./pages/VSL";
 
 // Route-level code splitting for better performance
 const Index = lazy(() => import("./pages/Index"));
 const Landing = lazy(() => import("./pages/Landing"));
 const Quiz = lazy(() => import("./pages/Quiz"));
-const VSL = lazy(() => import("./pages/VSL"));
+// VSL statically imported above to avoid dynamic import issues
 const BookCall = lazy(() => import("./pages/BookCall"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Agents = lazy(() => import("./pages/Agents"));
