@@ -43,16 +43,19 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
   const [videoSource, setVideoSource] = useState<ReturnType<typeof parseVideoSource> | null>(null);
   const [iframePlaying, setIframePlaying] = useState(false);
   const [iframeMuted, setIframeMuted] = useState(true);
+  const [youtubeReady, setYoutubeReady] = useState(false);
 
   // Helper function to send commands to iframe players
   const sendIframeCommand = (command: string, args?: any) => {
     if (!iframeRef.current) return;
     
     if (videoSource?.type === 'youtube') {
-      iframeRef.current.contentWindow?.postMessage(
-        JSON.stringify({ event: 'command', func: command, args: args || [] }),
-        'https://www.youtube.com'
-      );
+      if (youtubeReady) {
+        iframeRef.current.contentWindow?.postMessage(
+          JSON.stringify({ event: 'command', func: command, args: args || [] }),
+          'https://www.youtube.com'
+        );
+      }
     } else if (videoSource?.type === 'vimeo') {
       iframeRef.current.contentWindow?.postMessage(
         JSON.stringify({ method: command }),
@@ -60,6 +63,46 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
       );
     }
   };
+
+  // YouTube API setup
+  useEffect(() => {
+    if (videoSource?.type === 'youtube') {
+      const handleMessage = (event: MessageEvent) => {
+        if (event.origin !== 'https://www.youtube.com') return;
+        
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === 'onReady') {
+            setYoutubeReady(true);
+            // Request state updates
+            sendIframeCommand('addEventListener', ['onStateChange']);
+          } else if (data.event === 'onStateChange') {
+            // YouTube player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (cued)
+            const state = data.info;
+            setIframePlaying(state === 1);
+            if (state === 1) onPlay?.();
+            if (state === 2) onPause?.();
+          }
+        } catch (e) {
+          // Ignore invalid JSON
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      
+      // Send listening event to initialize YouTube API
+      if (iframeRef.current) {
+        iframeRef.current.contentWindow?.postMessage(
+          JSON.stringify({ event: 'listening' }),
+          'https://www.youtube.com'
+        );
+      }
+
+      return () => {
+        window.removeEventListener('message', handleMessage);
+      };
+    }
+  }, [videoSource, onPlay, onPause]);
 
   useImperativeHandle(ref, () => ({
     play: async () => {
@@ -81,12 +124,12 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
         // For YouTube/Vimeo iframes, send play command
         if (videoSource?.type === 'youtube') {
           sendIframeCommand('playVideo');
-          setIframePlaying(true);
+          // Don't manually set state, let the API event handler do it
         } else if (videoSource?.type === 'vimeo') {
           sendIframeCommand('play');
           setIframePlaying(true);
+          onPlay?.();
         }
-        onPlay?.();
         return Promise.resolve();
       }
     },
@@ -97,12 +140,12 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
         // For YouTube/Vimeo iframes, send pause command
         if (videoSource?.type === 'youtube') {
           sendIframeCommand('pauseVideo');
-          setIframePlaying(false);
+          // Don't manually set state, let the API event handler do it
         } else if (videoSource?.type === 'vimeo') {
           sendIframeCommand('pause');
           setIframePlaying(false);
+          onPause?.();
         }
-        onPause?.();
       }
     },
     get currentTime() {
@@ -174,7 +217,7 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
           src={videoSource.embedUrl}
           className="w-full h-full"
           frameBorder="0"
-          allow="autoplay; fullscreen; picture-in-picture"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           title="VSL Video"
         />

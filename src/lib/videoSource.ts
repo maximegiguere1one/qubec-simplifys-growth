@@ -9,7 +9,7 @@ export function parseVideoSource(url: string): VideoSource {
     throw new Error('URL vidéo requise');
   }
 
-  // YouTube detection
+  // YouTube detection - handle both regular and embed URLs
   const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
   const youtubeMatch = url.match(youtubeRegex);
   if (youtubeMatch) {
