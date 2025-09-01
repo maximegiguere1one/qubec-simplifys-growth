@@ -48,9 +48,25 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: testConnection } = await supabase.from('leads').select('count').limit(1);
     console.log('✅ Supabase connection working');
 
-    // Test 3: Envoyer un email de test
+    // Test 2.5: Récupérer les paramètres email
+    const { data: emailSettings } = await supabase
+      .from('email_settings')
+      .select('*')
+      .limit(1)
+      .maybeSingle();
+
+    const fromName = emailSettings?.from_name || 'One Système Test';
+    const fromEmail = emailSettings?.from_email || 'onboarding@resend.dev';
+    const isDomainVerified = fromEmail !== 'onboarding@resend.dev' && !fromEmail.includes('@resend.dev');
+
+    // Test 3: Vérification du domaine
+    if (!isDomainVerified && testEmail !== 'maxime@agence1.com') {
+      throw new Error('Domain not verified. Please verify your sending domain in Resend or use maxime@agence1.com for testing.');
+    }
+
+    // Test 4: Envoyer un email de test
     const emailResponse = await resend.emails.send({
-      from: "One Système Test <onboarding@resend.dev>",
+      from: `${fromName} <${fromEmail}>`,
       to: [testEmail],
       subject: "🧪 Test d'envoi d'email - One Système",
       html: `
@@ -70,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('✅ Test email sent successfully:', emailResponse);
 
-    // Test 4: Logger dans la base de données
+    // Test 5: Logger dans la base de données
     await supabase.from('email_delivery_logs').insert({
       lead_id: null,
       email_type: 'test_email',
@@ -82,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('✅ Email logged in database');
 
-    // Test 5: Vérifier les statistiques d'email
+    // Test 6: Vérifier les statistiques d'email
     const { data: stats } = await supabase.rpc('get_email_delivery_stats', { days_back: 1 });
     console.log('✅ Email stats retrieved:', stats);
 
@@ -92,6 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
       tests: {
         resend_configured: true,
         supabase_connected: true,
+        domain_verified: isDomainVerified,
         email_sent: true,
         database_logged: true,
         stats_working: true

@@ -303,15 +303,52 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Récupérer les paramètres email depuis la base de données
+    console.log('⚙️ Fetching email settings...');
+    const { data: emailSettings, error: settingsError } = await supabase
+      .from('email_settings')
+      .select('*')
+      .limit(1)
+      .maybeSingle();
+
+    if (settingsError) {
+      console.error('❌ Failed to fetch email settings:', settingsError);
+      throw new Error('Failed to load email configuration');
+    }
+
+    // Valeurs par défaut si pas de paramètres configurés
+    const fromName = emailSettings?.from_name || 'One Système';
+    const fromEmail = emailSettings?.from_email || 'onboarding@resend.dev';
+    const replyTo = emailSettings?.reply_to || 'info@onesysteme.com';
+
+    // Vérification du domaine pour éviter l'erreur 403
+    const isDomainVerified = fromEmail !== 'onboarding@resend.dev' && !fromEmail.includes('@resend.dev');
+    
+    if (!isDomainVerified && data.contactInfo.email !== 'maxime@agence1.com') {
+      console.warn('⚠️ Using sandbox mode - only sending to verified addresses');
+      await logEmailDelivery(
+        supabase,
+        data.leadId,
+        'quiz_confirmation',
+        data.contactInfo.email,
+        'Domain Not Verified',
+        'failed',
+        null,
+        'Domain not verified in Resend. Please verify your sending domain or use maxime@agence1.com for testing.'
+      );
+      
+      throw new Error('Domain not verified. Please verify your sending domain in Resend or use maxime@agence1.com for testing.');
+    }
+
     // Générer le contenu de l'email
     console.log('📧 Generating personalized email content...');
     const emailContent = generatePersonalizedEmail(data);
 
     // Envoyer l'email via Resend
-    console.log('📤 Sending email via Resend...');
+    console.log('📤 Sending email via Resend...', { from: `${fromName} <${fromEmail}>`, to: data.contactInfo.email });
     const emailResponse = await resend.emails.send({
-      from: "One Système <onboarding@resend.dev>",
-      reply_to: "info@onesysteme.com",
+      from: `${fromName} <${fromEmail}>`,
+      reply_to: replyTo,
       to: [data.contactInfo.email],
       subject: emailContent.subject,
       html: emailContent.html,

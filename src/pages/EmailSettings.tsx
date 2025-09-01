@@ -21,6 +21,12 @@ interface EmailSettings {
   test_recipient: string;
 }
 
+interface DomainStatus {
+  isVerified: boolean;
+  isResendDomain: boolean;
+  needsVerification: boolean;
+}
+
 const EmailSettings = () => {
   const { toast } = useToast();
   const [settings, setSettings] = useState<EmailSettings>({
@@ -35,6 +41,16 @@ const EmailSettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+
+  const getDomainStatus = (email: string): DomainStatus => {
+    if (!email) return { isVerified: false, isResendDomain: false, needsVerification: true };
+    
+    const isResendDomain = email.includes('@resend.dev');
+    const isVerified = isResendDomain || false; // En production, ceci devrait vérifier via l'API Resend
+    const needsVerification = !isVerified;
+    
+    return { isVerified, isResendDomain, needsVerification };
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -119,8 +135,7 @@ const EmailSettings = () => {
     try {
       const { data, error } = await supabase.functions.invoke('test-email', {
         body: {
-          to_email: settings.test_recipient,
-          test_message: 'Test de configuration email - One Système'
+          email: settings.test_recipient
         }
       });
 
@@ -128,15 +143,19 @@ const EmailSettings = () => {
         throw error;
       }
 
-      toast({
-        title: "Test envoyé",
-        description: `Email de test envoyé à ${settings.test_recipient}`
-      });
+      if (data?.success) {
+        toast({
+          title: "Test réussi",
+          description: `Email de test envoyé à ${settings.test_recipient}`,
+        });
+      } else {
+        throw new Error(data?.error || 'Test failed');
+      }
 
     } catch (error) {
       console.error('Erreur test email:', error);
       toast({
-        title: "Erreur",
+        title: "Erreur de test",
         description: error instanceof Error ? error.message : "Erreur lors du test email",
         variant: "destructive"
       });
@@ -216,14 +235,46 @@ const EmailSettings = () => {
 
               <div className="grid gap-2">
                 <Label htmlFor="from_email">Email expéditeur *</Label>
-                <Input
-                  id="from_email"
-                  type="email"
-                  value={settings.from_email}
-                  onChange={(e) => setSettings(prev => ({ ...prev, from_email: e.target.value }))}
-                  placeholder="noreply@onesysteme.ca"
-                  required
-                />
+                <div className="space-y-2">
+                  <Input
+                    id="from_email"
+                    type="email"
+                    value={settings.from_email}
+                    onChange={(e) => setSettings(prev => ({ ...prev, from_email: e.target.value }))}
+                    placeholder="noreply@onesysteme.ca"
+                    required
+                  />
+                  {settings.from_email && (() => {
+                    const status = getDomainStatus(settings.from_email);
+                    if (status.isResendDomain) {
+                      return (
+                        <div className="flex items-center gap-2 text-sm text-amber-600">
+                          <Badge variant="outline" className="text-amber-600">Mode Sandbox</Badge>
+                          <span>Seuls les emails vérifiés peuvent recevoir vos envois</span>
+                        </div>
+                      );
+                    } else if (status.needsVerification) {
+                      return (
+                        <div className="flex items-center gap-2 text-sm text-red-600">
+                          <Badge variant="destructive">Domaine non vérifié</Badge>
+                          <span>
+                            Vérifiez votre domaine sur{' '}
+                            <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="underline">
+                              resend.com/domains
+                            </a>
+                          </span>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="flex items-center gap-2 text-sm text-green-600">
+                          <Badge variant="outline" className="text-green-600">Domaine vérifié</Badge>
+                          <span>Prêt pour l'envoi</span>
+                        </div>
+                      );
+                    }
+                  })()}
+                </div>
               </div>
 
               <div className="grid gap-2">
