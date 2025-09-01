@@ -229,7 +229,7 @@ const VSL = () => {
               
               {/* Primary CTA with maximum focus */}
               <div className="space-y-6">
-                <CTAButton location="vsl_primary" variant="main_cta" destination="/book-call" size="cta-large" className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 pulse-animation" onClick={handleCTAClick}>
+                <CTAButton location="vsl_primary" variant="main_cta" destination="/book-call" size="cta-large" className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105" onClick={handleCTAClick}>
                   📞 Obtenir ma consultation gratuite
                 </CTAButton>
                 
@@ -339,7 +339,7 @@ const VSL = () => {
 
       {/* Sticky CTA Button */}
       {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full">
-          <CTAButton location="vsl_sticky" variant="sticky_cta" destination="/book-call" size="cta-large" className="w-full shadow-2xl animate-pulse-gentle" onClick={handleCTAClick}>
+          <CTAButton location="vsl_sticky" variant="sticky_cta" destination="/book-call" size="cta-large" className="w-full shadow-2xl" onClick={handleCTAClick}>
             📞 Réserver maintenant (gratuit)
           </CTAButton>
         </div>}

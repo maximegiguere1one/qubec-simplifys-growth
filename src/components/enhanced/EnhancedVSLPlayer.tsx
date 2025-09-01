@@ -210,7 +210,7 @@ export const EnhancedVSLPlayer = ({ onCTAClick, quizScore = 0 }: EnhancedVSLPlay
               <Button
                 variant={ctaVariant === "urgent" ? "destructive" : "cta-large"}
                 onClick={handleCTAClick}
-                className={`${mobileButtonClass} animate-pulse-gentle shadow-xl`}
+                className={`${mobileButtonClass} shadow-xl`}
                 size="lg"
               >
                 {getCTAText()}

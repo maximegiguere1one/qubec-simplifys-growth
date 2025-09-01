@@ -50,7 +50,7 @@ export const VSLCTAOverlay = ({
               <Button 
                 onClick={onCTAClick}
                 size="lg"
-                className="w-full mb-3 sm:mb-4 btn-touch text-sm sm:text-base px-3 sm:px-4 max-w-full animate-pulse"
+                className="w-full mb-3 sm:mb-4 btn-touch text-sm sm:text-base px-3 sm:px-4 max-w-full"
                 variant="cta"
               >
                 <span className="truncate">🔥 Consultation immédiate disponible</span>
