@@ -49,7 +49,7 @@ const hashString = async (str: string): Promise<string> => {
 const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionEvent => {
   const baseEvent: ConversionEvent = {
     event_name: 'Custom',
-    event_time: Math.floor(eventData.timestamp || Date.now() / 1000),
+    event_time: Math.floor((eventData.timestamp || Date.now()) / 1000), // Convert to seconds
     event_source_url: eventData.url || 'https://onesysteme.com',
     user_data: {
       client_ip_address: eventData.client_ip,
@@ -73,6 +73,7 @@ const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionE
       break;
     
     case 'quiz_start':
+    case 'quiz_view':
       baseEvent.event_name = 'ViewContent';
       baseEvent.custom_data = {
         content_name: 'Business Efficiency Quiz',
@@ -181,16 +182,20 @@ serve(async (req) => {
     }
 
     // Send to Facebook Conversions API
+    const requestBody = {
+      data: [conversionEvent],
+      access_token: FACEBOOK_ACCESS_TOKEN,
+      test_event_code: 'TEST12758', // Code de test pour l'Explorateur de l'API Graph
+    };
+
+    console.log('Facebook API Request Body:', JSON.stringify(requestBody, null, 2));
+
     const facebookResponse = await fetch(`https://graph.facebook.com/v18.0/${FACEBOOK_PIXEL_ID}/events`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        data: [conversionEvent],
-        access_token: FACEBOOK_ACCESS_TOKEN,
-        test_event_code: Deno.env.get('FACEBOOK_TEST_EVENT_CODE') || undefined,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     const facebookResult = await facebookResponse.json();

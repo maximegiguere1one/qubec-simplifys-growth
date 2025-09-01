@@ -391,6 +391,7 @@ export type Database = {
         | "bookcall_view"
         | "bookcall_submit"
         | "bookcall_confirm"
+        | "quiz_view"
       quiz_session_status: "started" | "completed" | "abandoned"
     }
     CompositeTypes: {
@@ -538,6 +539,7 @@ export const Constants = {
         "bookcall_view",
         "bookcall_submit",
         "bookcall_confirm",
+        "quiz_view",
       ],
       quiz_session_status: ["started", "completed", "abandoned"],
     },

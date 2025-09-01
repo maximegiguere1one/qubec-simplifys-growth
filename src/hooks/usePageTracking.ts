@@ -24,7 +24,7 @@ const trackMetaViewContent = (pathname: string) => {
 // Map routes to event types
 const routeEventMap: Record<string, string> = {
   '/': 'lp_view',
-  '/quiz': 'quiz_view', // Changed from quiz_start to avoid duplication
+  '/quiz': 'quiz_view',
   '/vsl': 'vsl_view',
   '/book-call': 'bookcall_view',
 };
