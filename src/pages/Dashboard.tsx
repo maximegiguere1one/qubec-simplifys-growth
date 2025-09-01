@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 import { ExperimentTracker } from '@/components/ExperimentTracker';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 import { 
   BarChart3, 
   Users, 
@@ -15,7 +17,8 @@ import {
   Calendar,
   Settings,
   Download,
-  Filter
+  Filter,
+  Cog
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -37,63 +40,24 @@ const Dashboard = () => {
               <Badge variant="outline" className="text-success border-success">
                 🟢 Live
               </Badge>
+              <Link to="/email-settings">
+                <Button variant="outline" size="sm">
+                  <Cog className="h-4 w-4 mr-2" />
+                  Config Email
+                </Button>
+              </Link>
+              <Link to="/email-diagnostic">
+                <Button variant="outline" size="sm">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Diagnostic
+                </Button>
+              </Link>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Exporter
               </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Paramètres
-              </Button>
             </div>
           </div>
-        </div>
-
-        {/* Quick Stats Cards */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Leads Aujourd'hui</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">24</div>
-              <p className="text-xs text-success">+15% vs hier</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Taux Conversion</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">18.5%</div>
-              <p className="text-xs text-success">+2.1% ce mois</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Consultations</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">7</div>
-              <p className="text-xs text-muted-foreground">Réservées cette semaine</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">ROI Marketing</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">340%</div>
-              <p className="text-xs text-success">Excellent performance</p>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Main Dashboard Tabs */}
@@ -158,27 +122,54 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="campaigns">
-            <Card>
-              <CardHeader>
-                <CardTitle>Campagnes Email</CardTitle>
-                <CardDescription>
-                  Gérez vos séquences email automatisées
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Campagnes Email</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Interface de gestion des campagnes en cours de développement
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Campagnes Email</h2>
+                  <p className="text-muted-foreground">
+                    Gérez vos séquences email automatisées
                   </p>
-                  <Button variant="outline">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Configurer campagnes
-                  </Button>
                 </div>
-              </CardContent>
-            </Card>
+                <Link to="/email-settings">
+                  <Button>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configuration
+                  </Button>
+                </Link>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Séquences Email Automatisées</CardTitle>
+                  <CardDescription>
+                    Suivi et performance de vos campagnes email
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-12">
+                    <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Campagnes Email</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Système de campagnes email prêt à être configuré
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                      <Link to="/email-settings">
+                        <Button>
+                          <Settings className="h-4 w-4 mr-2" />
+                          Configurer
+                        </Button>
+                      </Link>
+                      <Link to="/email-diagnostic">
+                        <Button variant="outline">
+                          <Mail className="h-4 w-4 mr-2" />
+                          Tester
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
 

@@ -226,6 +226,45 @@ export type Database = {
           },
         ]
       }
+      email_settings: {
+        Row: {
+          created_at: string
+          daily_send_limit: number | null
+          default_sequence: string | null
+          from_email: string
+          from_name: string
+          id: string
+          reply_to: string | null
+          sending_paused: boolean
+          test_recipient: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          daily_send_limit?: number | null
+          default_sequence?: string | null
+          from_email: string
+          from_name?: string
+          id?: string
+          reply_to?: string | null
+          sending_paused?: boolean
+          test_recipient?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          daily_send_limit?: number | null
+          default_sequence?: string | null
+          from_email?: string
+          from_name?: string
+          id?: string
+          reply_to?: string | null
+          sending_paused?: boolean
+          test_recipient?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       funnel_events: {
         Row: {
           created_at: string
@@ -421,6 +460,32 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_advanced_metrics: {
+        Args: { days_back?: number }
+        Returns: {
+          average_lead_score: number
+          cold_leads_count: number
+          consultation_booking_rate: number
+          hot_leads_count: number
+          lead_capture_rate: number
+          qualified_leads_count: number
+          quiz_completion_rate: number
+          quiz_start_rate: number
+          total_visitors: number
+          warm_leads_count: number
+        }[]
+      }
+      get_dashboard_metrics: {
+        Args: { days_back?: number }
+        Returns: {
+          avg_quiz_score: number
+          bookings: number
+          conversion_rate: number
+          quiz_completions: number
+          total_leads: number
+          vsl_views: number
+        }[]
+      }
       get_email_delivery_stats: {
         Args: { days_back?: number }
         Returns: {
@@ -428,6 +493,16 @@ export type Database = {
           success_rate: number
           total_failed: number
           total_sent: number
+        }[]
+      }
+      get_experiment_results: {
+        Args: { days_back?: number }
+        Returns: {
+          conversion_rate: number
+          conversions: number
+          test_name: string
+          total_views: number
+          variant: string
         }[]
       }
     }

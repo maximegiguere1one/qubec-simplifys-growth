@@ -1,3 +1,4 @@
+
 import React, { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,6 +17,8 @@ const Quiz = lazy(() => import("./pages/Quiz"));
 // VSL statically imported above to avoid dynamic import issues
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Agents = lazy(() => import("./pages/Agents"));
+const EmailSettings = lazy(() => import("./pages/EmailSettings"));
+const EmailDiagnostic = lazy(() => import("./pages/EmailDiagnostic"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -50,6 +53,8 @@ const AppContent = () => {
           <Route path="/vsl" element={<VSL />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/agents" element={<Agents />} />
+          <Route path="/email-settings" element={<EmailSettings />} />
+          <Route path="/email-diagnostic" element={<EmailDiagnostic />} />
           <Route path="/index" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

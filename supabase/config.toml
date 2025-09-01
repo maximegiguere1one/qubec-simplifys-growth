@@ -1,3 +1,4 @@
+
 project_id = "lbwjesrgernvjiorktia"
 
 [functions.send-quiz-confirmation]
@@ -7,4 +8,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.test-email]
+verify_jwt = false
+
+[functions.update-email-settings]
 verify_jwt = false
