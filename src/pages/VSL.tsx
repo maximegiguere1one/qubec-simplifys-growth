@@ -216,51 +216,13 @@ const VSL = () => {
                 </Button>
                 
                 {/* Trust indicators directly below CTA */}
-                <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    100% gratuit
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    Expert local québécois
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    Aucun engagement
-                  </span>
-                </div>
+                
               </div>
               
               {/* Safety net CTA - doesn't compete with main action */}
-              <div className="pt-8 border-t border-border/30">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Pas prêt pour un appel ? Téléchargez d'abord notre guide :
-                </p>
-                <Button variant="outline" className="text-primary border-primary/30 hover:bg-primary/10 h-12 px-6" onClick={() => {
-                trackEvent('vsl_cta_click', {
-                  cta_location: 'secondary_download',
-                  variant: 'brochure'
-                });
-              }}>
-                  📄 Guide gratuit : 10 processus à automatiser en premier
-                </Button>
-              </div>
               
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  <span>100% gratuit et sans engagement</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  <span>Expert local qui comprend votre réalité</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-success" />
-                  <span>Résultats garantis ou remboursé</span>
-                </div>
-              </div>
+              
+              
             </div>
           </div>
         </div>
