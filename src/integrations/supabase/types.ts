@@ -76,6 +76,42 @@ export type Database = {
           },
         ]
       }
+      conversion_events: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          facebook_event_name: string
+          facebook_response: Json | null
+          id: string
+          lead_id: string | null
+          sent_at: string
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          facebook_event_name: string
+          facebook_response?: Json | null
+          id?: string
+          lead_id?: string | null
+          sent_at?: string
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          facebook_event_name?: string
+          facebook_response?: Json | null
+          id?: string
+          lead_id?: string | null
+          sent_at?: string
+          session_id?: string | null
+        }
+        Relationships: []
+      }
       email_events: {
         Row: {
           action: string
