@@ -150,7 +150,7 @@ const VSL = () => {
             
             {/* CTA principal APRÈS qualification */}
             <div className="mb-4">
-              <Button variant="cta" className="px-8 py-3 font-semibold" onClick={handleCTAClick}>
+              <Button variant="cta" className="px-8 py-3 font-semibold whitespace-normal break-words text-center leading-snug" onClick={handleCTAClick}>
                 📞 Planifier mon appel gratuit
               </Button>
               
@@ -211,7 +211,7 @@ const VSL = () => {
               
               {/* Primary CTA with maximum focus */}
               <div className="space-y-6">
-                <Button variant="cta-large" className="w-full sm:w-auto h-16 sm:h-18 text-lg sm:text-xl font-bold px-12 sm:px-16 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105" onClick={handleCTAClick}>
+                <Button variant="cta-large" className="w-full sm:w-auto text-lg sm:text-xl font-bold px-12 sm:px-16 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 whitespace-normal break-words text-center leading-snug" onClick={handleCTAClick}>
                   📞 Obtenir ma consultation gratuite
                 </Button>
                 
