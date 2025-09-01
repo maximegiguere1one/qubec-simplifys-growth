@@ -14,10 +14,11 @@ export function parseVideoSource(url: string): VideoSource {
   const youtubeMatch = url.match(youtubeRegex);
   if (youtubeMatch) {
     const videoId = youtubeMatch[1];
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://localhost:3000';
     return {
       type: 'youtube',
       src: url,
-      embedUrl: `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&rel=0&autoplay=1&mute=1&playsinline=1`
+      embedUrl: `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&rel=0&autoplay=1&mute=1&playsinline=1&origin=${encodeURIComponent(origin)}`
     };
   }
 
@@ -29,7 +30,7 @@ export function parseVideoSource(url: string): VideoSource {
     return {
       type: 'vimeo',
       src: url,
-      embedUrl: `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&muted=1&controls=0`
+      embedUrl: `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&muted=1&controls=0&api=1`
     };
   }
 

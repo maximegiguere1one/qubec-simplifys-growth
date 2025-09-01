@@ -38,8 +38,28 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
   onClick
 }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [hasError, setHasError] = useState(false);
   const [videoSource, setVideoSource] = useState<ReturnType<typeof parseVideoSource> | null>(null);
+  const [iframePlaying, setIframePlaying] = useState(false);
+  const [iframeMuted, setIframeMuted] = useState(true);
+
+  // Helper function to send commands to iframe players
+  const sendIframeCommand = (command: string, args?: any) => {
+    if (!iframeRef.current) return;
+    
+    if (videoSource?.type === 'youtube') {
+      iframeRef.current.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: command, args: args || [] }),
+        'https://www.youtube.com'
+      );
+    } else if (videoSource?.type === 'vimeo') {
+      iframeRef.current.contentWindow?.postMessage(
+        JSON.stringify({ method: command }),
+        'https://player.vimeo.com'
+      );
+    }
+  };
 
   useImperativeHandle(ref, () => ({
     play: async () => {
@@ -58,29 +78,58 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
           throw new Error('Vidéo non disponible');
         }
       } else {
-        // For YouTube/Vimeo iframes, we can't programmatically play without their SDK.
-        // We rely on autoplay=1 & mute=1 in the embed URL and the user's gesture.
+        // For YouTube/Vimeo iframes, send play command
+        if (videoSource?.type === 'youtube') {
+          sendIframeCommand('playVideo');
+          setIframePlaying(true);
+        } else if (videoSource?.type === 'vimeo') {
+          sendIframeCommand('play');
+          setIframePlaying(true);
+        }
+        onPlay?.();
         return Promise.resolve();
       }
     },
     pause: () => {
       if (videoSource?.type === 'mp4' && videoRef.current) {
         videoRef.current.pause();
+      } else {
+        // For YouTube/Vimeo iframes, send pause command
+        if (videoSource?.type === 'youtube') {
+          sendIframeCommand('pauseVideo');
+          setIframePlaying(false);
+        } else if (videoSource?.type === 'vimeo') {
+          sendIframeCommand('pause');
+          setIframePlaying(false);
+        }
+        onPause?.();
       }
     },
     get currentTime() {
-      return videoRef.current?.currentTime || 0;
+      if (videoSource?.type === 'mp4') {
+        return videoRef.current?.currentTime || 0;
+      }
+      // For iframes, we can't get real-time data without full API integration
+      return 0;
     },
     get duration() {
-      return videoRef.current?.duration || 0;
+      if (videoSource?.type === 'mp4') {
+        return videoRef.current?.duration || 0;
+      }
+      // For iframes, we can't get duration without full API integration
+      return 100; // Fake duration for progress bar
     },
     get paused() {
-      if (videoSource?.type !== 'mp4') return false;
-      return videoRef.current?.paused ?? true;
+      if (videoSource?.type === 'mp4') {
+        return videoRef.current?.paused ?? true;
+      }
+      return !iframePlaying;
     },
     get muted() {
-      if (videoSource?.type !== 'mp4') return true;
-      return videoRef.current?.muted ?? true;
+      if (videoSource?.type === 'mp4') {
+        return videoRef.current?.muted ?? true;
+      }
+      return iframeMuted;
     }
   }));
 
@@ -116,11 +165,12 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
     );
   }
 
-  // For YouTube/Vimeo, render iframe (limited control)
+  // For YouTube/Vimeo, render iframe with ref for control
   if (videoSource.type === 'youtube' || videoSource.type === 'vimeo') {
     return (
       <div className={`w-full h-full ${className}`} onClick={onClick}>
         <iframe
+          ref={iframeRef}
           src={videoSource.embedUrl}
           className="w-full h-full"
           frameBorder="0"

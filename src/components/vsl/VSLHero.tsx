@@ -35,6 +35,7 @@ export const VSLHero = ({
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   // A/B test for CTA copy
   const ctaCopyVariant = getABVariant("vsl_hero_cta", ["standard", "urgent", "benefit"]);
@@ -64,6 +65,7 @@ export const VSLHero = ({
         await videoRef.current.play();
         setIsPlaying(true);
         setHasStartedPlaying(true);
+        setShowOverlay(false); // Hide overlay after first play for better UX
         trackVSLEvent('play', {
           currentTime,
           progress
@@ -152,7 +154,7 @@ export const VSLHero = ({
                 <SmartVSLMedia ref={videoRef} src={videoSrc} poster={posterSrc} className="w-full h-full object-cover" muted={isMuted} autoPlay={!isMobile} onClick={handlePlay} onError={() => setHasError(true)} onTimeUpdate={handleTimeUpdate} onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} />
 
                 {/* Video Controls Overlay */}
-                <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${!hasStartedPlaying ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
+                <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
                   <button onClick={handlePlay} className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}>
                     {isPlaying ? <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" /> : <Play className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" />}
                   </button>
