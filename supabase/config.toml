@@ -33,3 +33,6 @@ verify_jwt = false
 
 [functions.validate-booking]
 verify_jwt = false
+
+[functions.analytics-batch]
+verify_jwt = false

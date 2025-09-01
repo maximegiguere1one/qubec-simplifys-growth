@@ -71,22 +71,29 @@ class AnalyticsQueue {
     this.queue = [];
 
     try {
-      const { error } = await supabase
-        .from('funnel_events')
-        .insert(
-          eventsToSend.map(event => ({
-            event_type: event.eventType as any,
-            event_data: event.eventData,
+      // Use analytics-batch Edge Function for reliable persistence
+      const { data, error } = await supabase.functions.invoke('analytics-batch', {
+        body: {
+          events: eventsToSend.map(event => ({
+            event_type: event.eventType,
+            event_data: {
+              ...event.eventData,
+              referrer: document.referrer,
+              page_url: window.location.href
+            },
             lead_id: event.leadId,
             session_id: event.eventData.session_id || '',
             created_at: new Date(event.timestamp).toISOString(),
           }))
-        );
+        }
+      });
 
       if (error) {
         console.error('Failed to flush analytics events:', error);
         // Re-add failed events to queue for retry
         this.queue.unshift(...eventsToSend);
+      } else {
+        console.log(`Successfully flushed ${eventsToSend.length} events`);
       }
     } catch (error) {
       console.error('Analytics flush error:', error);
@@ -106,14 +113,20 @@ class AnalyticsQueue {
       const payload = JSON.stringify({
         events: eventsToSend.map(event => ({
           event_type: event.eventType,
-          event_data: event.eventData,
+          event_data: {
+            ...event.eventData,
+            referrer: document.referrer,
+            page_url: window.location.href
+          },
           lead_id: event.leadId,
+          session_id: event.eventData.session_id || '',
           created_at: new Date(event.timestamp).toISOString(),
         }))
       });
 
       try {
-        navigator.sendBeacon('/api/analytics-batch', payload);
+        const url = `https://lbwjesrgernvjiorktia.supabase.co/functions/v1/analytics-batch`;
+        navigator.sendBeacon(url, payload);
       } catch (error) {
         console.error('sendBeacon failed:', error);
       }

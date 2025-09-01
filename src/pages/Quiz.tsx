@@ -166,8 +166,12 @@ const Quiz = () => {
 
     setIsSubmittingContact(true);
     try {
-      // Create lead in database
+      // Create lead using reliable Edge Function
       const lead = await createLead(contactInfo.email, contactInfo.name, contactInfo.phone, 'quiz');
+      
+      if (!lead) {
+        throw new Error('Failed to create lead');
+      }
       
       // Track the opt-in event
       await trackEvent('lp_submit_optin', {
@@ -177,13 +181,13 @@ const Quiz = () => {
         source: 'quiz'
       });
 
-      // Removed toast notification as requested
-
+      console.log('Lead created successfully, moving to quiz');
       setCurrentStep(1); // Move to first quiz question
     } catch (error) {
+      console.error('Contact submission error:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        description: "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
