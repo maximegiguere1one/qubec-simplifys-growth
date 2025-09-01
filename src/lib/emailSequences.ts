@@ -32,32 +32,40 @@ export const emailSequences: Record<LeadScore['segment'], EmailSequence> = {
     emails: [
       {
         id: 'qualified_1',
-        subject: '🎯 Votre analyse est prête - Économies potentielles identifiées',
+        subject: '🎯 Analyse complétée - {{score}}% de potentiel d\'optimisation détecté',
         content: `Bonjour {{name}},
 
-Félicitations ! Votre analyse révèle un potentiel d'économie significatif avec One Système.
+Excellentes nouvelles ! Votre évaluation révèle un potentiel d'optimisation de {{score}}%.
 
-Basé sur vos réponses :
-• Temps économisé potentiel : {{time_savings}} heures/semaine
-• Réduction d'erreurs estimée : {{error_reduction}}%
-• ROI projeté : {{roi_estimate}} sur 12 mois
+📊 VOTRE PROFIL D'OPTIMISATION :
+• Temps récupérable : {{time_savings}} heures/semaine
+• Réduction d'erreurs possible : {{error_reduction}}%
+• ROI estimé : {{roi_estimate}} sur 12 mois
 
-✅ Vous êtes éligible à notre consultation stratégique GRATUITE (valeur 500$)
+🎯 PROCHAINES ÉTAPES RECOMMANDÉES :
+Les entreprises {{industry}} de votre taille qui automatisent leurs processus voient en moyenne :
+✅ +67% de productivité équipe
+✅ -85% d'erreurs administratives
+✅ +340% ROI en 18 mois
 
-Réservons 30 minutes cette semaine pour :
-1. Analyser vos processus actuels
-2. Identifier les gains rapides (implémentation sous 2 semaines)
-3. Créer votre roadmap personnalisé
+Votre consultation stratégique personnalisée (valeur 500$) est prête.
 
-Nos créneaux cette semaine :`,
+Durant ces 30 minutes, nous couvrirons :
+1. Audit express de vos processus actuels
+2. Plan d'automatisation prioritaire (gains rapides)
+3. Roadmap personnalisée avec timeline réaliste
+
+Quel créneau vous convient le mieux cette semaine ?`,
         delay: 1,
         personalization: {
-          time_savings: 'dynamicValue',
-          error_reduction: 'dynamicValue',
-          roi_estimate: 'dynamicValue'
+          score: 'quizScore',
+          time_savings: 'calculatedTimeSavings',
+          error_reduction: 'calculatedErrorReduction',
+          roi_estimate: 'calculatedROI',
+          industry: 'leadIndustry'
         },
         cta: {
-          text: 'Réserver ma consultation gratuite →',
+          text: 'Réserver ma consultation stratégique →',
           url: 'https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite?utm_source=qualified_email_1',
           tracking: 'qualified_cta_1'
         }
@@ -101,8 +109,8 @@ Voulez-vous voir exactement comment cela fonctionnerait pour votre entreprise ?`
           similar_company: 'dynamicValue'
         },
         cta: {
-          text: 'Voir la démonstration personnalisée',
-          url: '/demo?source=hot_email_1',
+          text: 'Voir ma démonstration personnalisée',
+          url: '/vsl?source=hot_email_1&utm_campaign=demo_request',
           tracking: 'hot_cta_1'
         }
       },
@@ -177,7 +185,7 @@ Découvrez les automatisations les plus rentables en moins de 15 minutes.`,
         personalization: {},
         cta: {
           text: 'Télécharger le guide gratuit →',
-          url: '/guide?source=warm_email_1',
+          url: '/agents?source=warm_email_1&utm_campaign=guide_download',
           tracking: 'warm_cta_1'
         }
       }
@@ -213,8 +221,8 @@ Restez à l'écoute !`,
         delay: 6,
         personalization: {},
         cta: {
-          text: 'Voir les tendances complètes →',
-          url: '/insights?source=cold_email_1',
+          text: 'Découvrir les tendances 2024 →',
+          url: '/quiz?source=cold_email_1&utm_campaign=trends_2024',
           tracking: 'cold_cta_1'
         }
       }
