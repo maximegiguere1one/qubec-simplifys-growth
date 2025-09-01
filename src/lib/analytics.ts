@@ -149,6 +149,27 @@ export const getUTMParams = () => {
   };
 };
 
+// Session ID validation
+export const validateSessionId = (sessionId: string): boolean => {
+  return /^sess_\d+_[a-zA-Z0-9]{9}$/.test(sessionId);
+};
+
+// UTM parameter sanitization
+export const sanitizeUTMParams = (params: Record<string, any>) => {
+  const sanitized: Record<string, string> = {};
+  
+  ['utm_source', 'utm_medium', 'utm_campaign'].forEach(key => {
+    if (params[key]) {
+      const value = String(params[key]).trim();
+      if (value.length <= 255) {
+        sanitized[key] = value;
+      }
+    }
+  });
+  
+  return sanitized;
+};
+
 // Create or update lead
 export const createLead = async (email: string, name: string, phone?: string, source: string = 'landing_page') => {
   const utmParams = getUTMParams();
