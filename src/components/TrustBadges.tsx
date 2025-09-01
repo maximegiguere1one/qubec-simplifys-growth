@@ -20,14 +20,10 @@ export const TrustBadges = () => {
     icon: CheckCircle2,
     title: "Support local",
     subtitle: "Équipe au Québec"
-  }, {
-    icon: Phone,
-    title: "Support 9h-17h",
-    subtitle: "Lundi au vendredi"
   }];
   return (
     <div className="py-8">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
         {badges.map((badge, index) => {
           const Icon = badge.icon;
           return (
