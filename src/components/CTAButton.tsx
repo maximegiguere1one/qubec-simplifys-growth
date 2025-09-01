@@ -30,19 +30,5 @@ export const CTAButton = ({
     await trackCTAClick(location, variant, destination);
     onClick?.();
   };
-
-  return (
-    <Button
-      variant={size}
-      onClick={handleClick}
-      disabled={disabled}
-      className={cn(
-        mobileButtonClass,
-        animationClass,
-        className
-      )}
-    >
-      {children}
-    </Button>
-  );
+  return;
 };
