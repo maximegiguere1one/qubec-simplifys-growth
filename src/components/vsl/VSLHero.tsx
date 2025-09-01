@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import { trackEvent, getABVariant, trackVSLEvent } from '@/lib/analytics';
 import { getCalDataAttributes } from '@/lib/cal';
+import { SmartVSLMedia, SmartVSLMediaRef } from '@/components/video/SmartVSLMedia';
 
 interface VSLHeroProps {
   videoSrc: string;
@@ -26,10 +27,12 @@ export const VSLHero = ({
   quizResults,
   isMobile
 }: VSLHeroProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<SmartVSLMediaRef>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [showStickyDesktop, setShowStickyDesktop] = useState(false);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
@@ -49,76 +52,64 @@ export const VSLHero = ({
     }
   };
 
-  // Video event handlers
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+  // Event handlers
+  const handlePlay = async () => {
+    if (!videoRef.current) return;
+    
+    try {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+        trackVSLEvent('pause', { currentTime, progress });
+      } else {
+        await videoRef.current.play();
+        setIsPlaying(true);
+        setHasStartedPlaying(true);
+        trackVSLEvent('play', { currentTime, progress });
+        
+        // Track first play (use 'play' event with metadata)
+        if (!hasStartedPlaying) {
+          trackEvent('vsl_play', { first_play: true, quizScore: quizResults?.total_score });
+        }
+      }
+    } catch (error) {
+      console.error('Video play error:', error);
+      setHasError(true);
+    }
+  };
 
-    const handleTimeUpdate = () => {
-      const currentTime = video.currentTime;
-      const duration = video.duration;
-      const progressPercent = (currentTime / duration) * 100;
+  const handleMute = () => {
+    if (!videoRef.current) return;
+    
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    // Use a custom event for volume toggle since it's not in standard funnel events
+    console.log('Volume toggled:', { muted: newMutedState });
+  };
+
+  const handleTimeUpdate = () => {
+    if (!videoRef.current) return;
+    
+    const current = videoRef.current.currentTime;
+    const total = videoRef.current.duration;
+    
+    setCurrentTime(current);
+    setDuration(total);
+    
+    if (total > 0) {
+      const progressPercent = (current / total) * 100;
       setProgress(progressPercent);
-
+      
       // Track video engagement milestones
       if (progressPercent >= 25 && progressPercent < 30) {
         trackVSLEvent('progress', { milestone: '25_percent', cta_variant: ctaVariant });
       } else if (progressPercent >= 50 && progressPercent < 55) {
         trackVSLEvent('progress', { milestone: '50_percent', cta_variant: ctaVariant });
-        setShowStickyCTA(true); // Show sticky CTA at 50%
+        setShowStickyCTA(true);
       } else if (progressPercent >= 75 && progressPercent < 80) {
         trackVSLEvent('progress', { milestone: '75_percent', cta_variant: ctaVariant });
-        setShowStickyDesktop(true); // Show desktop sticky at 75%
+        setShowStickyDesktop(true);
       }
-    };
-
-    const handlePlay = () => {
-      setIsPlaying(true);
-      if (!hasStartedPlaying) {
-        setHasStartedPlaying(true);
-        trackVSLEvent('play', { first_play: true, cta_variant: ctaVariant });
-      }
-      trackVSLEvent('play', { progress, cta_variant: ctaVariant });
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-      trackVSLEvent('pause', { progress, cta_variant: ctaVariant });
-    };
-
-    const handleEnded = () => {
-      setIsPlaying(false);
-      trackVSLEvent('complete', { cta_variant: ctaVariant });
-    };
-
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('ended', handleEnded);
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('ended', handleEnded);
-    };
-  }, [progress, hasStartedPlaying, ctaVariant]);
-
-  const handlePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-    }
-  };
-
-  const handleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-      trackVSLEvent('progress', { action: 'unmute', progress, cta_variant: ctaVariant });
     }
   };
 
@@ -149,42 +140,24 @@ export const VSLHero = ({
 
           {/* VSL Video Container */}
           <div className="relative mb-8 animate-scale-in">
-            {/* Desktop: 75% width, Mobile: 100% width */}
             <div className="relative w-full max-w-4xl mx-auto">
               <div className="relative aspect-video bg-black rounded-lg overflow-hidden shadow-2xl">
-                <video
+                <SmartVSLMedia
                   ref={videoRef}
-                  className="w-full h-full object-cover"
+                  src={videoSrc}
                   poster={posterSrc}
-                  preload="metadata"
-                  playsInline
-                  webkit-playsinline="true"
+                  className="w-full h-full object-cover"
                   muted={isMuted}
+                  autoPlay={!isMobile}
                   onClick={handlePlay}
                   onError={() => setHasError(true)}
-                  onLoadedMetadata={() => {
-                    // Auto-play muted on desktop only
-                    if (!isMobile && videoRef.current) {
-                      videoRef.current.play().catch(() => {
-                        // Autoplay failed - user interaction required
-                      });
-                    }
-                  }}
-                >
-                  <source src={videoSrc} type="video/mp4" />
-                  <track
-                    kind="captions"
-                    src="/captions/vsl-fr.vtt"
-                    srcLang="fr"
-                    label="Français"
-                    default
-                  />
-                  Votre navigateur ne supporte pas la lecture vidéo.
-                </video>
+                  onTimeUpdate={handleTimeUpdate}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                />
 
                 {/* Video Controls Overlay */}
                 <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${!hasStartedPlaying ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
-                  {/* Central Play/Pause Button */}
                   <button
                     onClick={handlePlay}
                     className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110"
@@ -237,9 +210,14 @@ export const VSLHero = ({
           </div>
 
           {hasError && (
-            <p className="text-sm text-destructive text-center mb-6">
-              Vidéo introuvable. Remplacez <code>videoSrc</code> par votre URL (YouTube, Vimeo, MP4) ou ajoutez votre fichier à <code>public/video/vsl-demo.mp4</code>.
-            </p>
+            <div className="text-center mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive mb-2">
+                <strong>Vidéo introuvable</strong>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Remplacez <code className="bg-muted px-1 rounded">videoSrc</code> par votre URL (YouTube, Vimeo, MP4) ou ajoutez votre fichier à <code className="bg-muted px-1 rounded">public/video/vsl-demo.mp4</code>
+              </p>
+            </div>
           )}
 
           {/* Trust Indicators & Qualification */}
