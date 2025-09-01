@@ -194,6 +194,65 @@ export type Database = {
           },
         ]
       }
+      email_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          email_type: string
+          error_message: string | null
+          html_content: string
+          id: string
+          lead_id: string | null
+          max_attempts: number
+          recipient_email: string
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          email_type: string
+          error_message?: string | null
+          html_content: string
+          id?: string
+          lead_id?: string | null
+          max_attempts?: number
+          recipient_email: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          html_content?: string
+          id?: string
+          lead_id?: string | null
+          max_attempts?: number
+          recipient_email?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_queue_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_sequence_triggers: {
         Row: {
           created_at: string
@@ -264,6 +323,38 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      email_unsubscribes: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          lead_id: string | null
+          unsubscribed_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          lead_id?: string | null
+          unsubscribed_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string | null
+          unsubscribed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_unsubscribes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       funnel_events: {
         Row: {
