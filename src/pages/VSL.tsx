@@ -124,7 +124,7 @@ const VSL = () => {
 
       {/* Hero Section with VSL */}
       <VSLHero 
-        videoSrc="/video/vsl-demo.mp4"
+        videoSrc="https://youtu.be/e7Q68Z-0gao?si=pi6tKqg2kTYJ-qhA"
         posterSrc="/images/vsl-poster.jpg"
         headline={getPersonalizedMessage()}
         ctaText={getPrimaryCTAText()}
