@@ -1,11 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
@@ -81,19 +79,12 @@ const EmailSettings = () => {
     setIsSaving(true);
     
     try {
-      const response = await fetch('/functions/v1/update-email-settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.supabaseKey}`
-        },
-        body: JSON.stringify({ settings })
+      const { data, error } = await supabase.functions.invoke('update-email-settings', {
+        body: { settings }
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Erreur lors de la sauvegarde');
+      if (error) {
+        throw error;
       }
 
       toast({
@@ -126,21 +117,15 @@ const EmailSettings = () => {
     setIsTesting(true);
 
     try {
-      const response = await fetch('/functions/v1/test-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('test-email', {
+        body: {
           to_email: settings.test_recipient,
           test_message: 'Test de configuration email - One Système'
-        })
+        }
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Erreur lors du test');
+      if (error) {
+        throw error;
       }
 
       toast({
