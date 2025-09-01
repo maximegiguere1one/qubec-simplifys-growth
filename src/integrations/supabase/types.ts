@@ -547,9 +547,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          ip_address: unknown
+          max_operations?: number
+          table_name: string
+          time_window_minutes?: number
+        }
+        Returns: boolean
+      }
       cleanup_old_events: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      detect_honeypot: {
+        Args: { form_data: Json }
+        Returns: boolean
       }
       get_advanced_metrics: {
         Args: { days_back?: number }
@@ -595,6 +608,14 @@ export type Database = {
           total_views: number
           variant: string
         }[]
+      }
+      validate_session_id: {
+        Args: { session_id: string }
+        Returns: boolean
+      }
+      validate_utm_params: {
+        Args: { utm_data: Json }
+        Returns: boolean
       }
     }
     Enums: {
