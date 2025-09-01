@@ -18,6 +18,7 @@ interface ConversionEvent {
   event_name: string;
   event_time: number;
   event_source_url: string;
+  action_source: string;
   user_data: {
     em?: string[];
     ph?: string[];
@@ -47,10 +48,16 @@ const hashString = async (str: string): Promise<string> => {
 };
 
 const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionEvent => {
+  // Ensure timestamp is in seconds and not in the future
+  const now = Math.floor(Date.now() / 1000);
+  const eventTime = eventData.timestamp ? Math.floor(eventData.timestamp / 1000) : now;
+  const clampedEventTime = Math.min(eventTime, now);
+
   const baseEvent: ConversionEvent = {
     event_name: 'Custom',
-    event_time: Math.floor((eventData.timestamp || Date.now()) / 1000), // Convert to seconds
+    event_time: clampedEventTime,
     event_source_url: eventData.url || 'https://onesysteme.com',
+    action_source: 'website',
     user_data: {
       client_ip_address: eventData.client_ip,
       client_user_agent: eventData.user_agent,
@@ -182,13 +189,20 @@ serve(async (req) => {
     }
 
     // Send to Facebook Conversions API
-    const requestBody = {
+    const testEventCode = Deno.env.get('FACEBOOK_TEST_EVENT_CODE');
+    const requestBody: any = {
       data: [conversionEvent],
       access_token: FACEBOOK_ACCESS_TOKEN,
-      test_event_code: 'TEST12758', // Code de test pour l'Explorateur de l'API Graph
     };
+    
+    // Add test event code if available (for testing in Graph API Explorer)
+    if (testEventCode) {
+      requestBody.test_event_code = testEventCode;
+    }
 
-    console.log('Facebook API Request Body:', JSON.stringify(requestBody, null, 2));
+    // Log request body but hide access token for security
+    const logBody = { ...requestBody, access_token: '[HIDDEN]' };
+    console.log('Facebook API Request Body:', JSON.stringify(logBody, null, 2));
 
     const facebookResponse = await fetch(`https://graph.facebook.com/v18.0/${FACEBOOK_PIXEL_ID}/events`, {
       method: 'POST',
