@@ -1,13 +1,17 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
 import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 import { ExperimentTracker } from '@/components/ExperimentTracker';
+import { LeadsManagement } from '@/components/admin/LeadsManagement';
+import { AdminAuth } from '@/components/admin/AdminAuth';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import type { User } from '@supabase/supabase-js';
 import { 
   BarChart3, 
   Users, 
@@ -18,11 +22,83 @@ import {
   Settings,
   Download,
   Filter,
-  Cog
+  Cog,
+  LogOut
 } from 'lucide-react';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check current auth state
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        checkAdminStatus(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          checkAdminStatus(session.user.id);
+        } else {
+          setIsAdmin(false);
+          setLoading(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const checkAdminStatus = async (userId: string) => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
+
+      setIsAdmin(profile?.role === 'admin');
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !isAdmin) {
+    return <AdminAuth onAuthSuccess={(user) => setUser(user)} />;
+  }
 
   return (
     <div className="min-h-[100dvh] bg-gradient-background">
@@ -40,6 +116,17 @@ const Dashboard = () => {
               <Badge variant="outline" className="text-success border-success">
                 🟢 Live
               </Badge>
+              <span className="text-sm text-muted-foreground">
+                {user.email}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Déconnexion
+              </Button>
               <Link to="/email-settings">
                 <Button variant="outline" size="sm">
                   <Cog className="h-4 w-4 mr-2" />
@@ -98,27 +185,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="leads">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestion des Leads</CardTitle>
-                <CardDescription>
-                  Gérez et qualifiez vos leads par segment
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Gestion des Leads</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Interface de gestion des leads en cours de développement
-                  </p>
-                  <Button variant="outline">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Voir tous les leads
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <LeadsManagement />
           </TabsContent>
 
           <TabsContent value="campaigns">
