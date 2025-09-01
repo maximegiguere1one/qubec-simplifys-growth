@@ -920,6 +920,41 @@ export type Database = {
           total_entries: number
         }[]
       }
+      get_lead_quality_insights: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_score: number
+          recent_activity: string
+          segment_distribution: Json
+          source_performance: Json
+          total_leads: number
+        }[]
+      }
+      get_real_dashboard_metrics: {
+        Args: { days_back?: number }
+        Returns: {
+          avg_quiz_score: number
+          bookings: number
+          conversion_rate: number
+          quiz_completions: number
+          total_leads: number
+          vsl_views: number
+        }[]
+      }
+      get_real_leads_analysis: {
+        Args: { days_back?: number }
+        Returns: {
+          avg_score: number
+          cold_leads: number
+          date_bucket: string
+          hot_leads: number
+          total_leads: number
+          utm_direct: number
+          utm_facebook: number
+          utm_instagram: number
+          warm_leads: number
+        }[]
+      }
       get_tracking_health_metrics: {
         Args: { days_back?: number }
         Returns: {

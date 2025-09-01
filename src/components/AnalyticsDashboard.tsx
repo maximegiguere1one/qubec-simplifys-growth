@@ -1,6 +1,6 @@
 
-import { EnhancedOverviewDashboard } from '@/components/analytics/EnhancedOverviewDashboard';
+import { RealDataDashboard } from '@/components/analytics/RealDataDashboard';
 
 export const AnalyticsDashboard = () => {
-  return <EnhancedOverviewDashboard />;
+  return <RealDataDashboard />;
 };

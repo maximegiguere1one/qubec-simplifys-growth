@@ -1,4 +1,13 @@
 /// <reference types="vite/client" />
 
-// Override problematic type inclusion
-declare module '@testing-library/jest-dom';
+// Type overrides to prevent TypeScript errors
+declare namespace jest {
+  interface Matchers<R> {
+    [key: string]: any;
+  }
+}
+
+declare module '@testing-library/jest-dom' {
+  const content: any;
+  export default content;
+}
