@@ -11,7 +11,7 @@ export const SocialProofSection = () => {
         <h2 className="heading-responsive font-bold text-center mb-4">
           Plus de 200 PME québécoises nous font déjà confiance
         </h2>
-        <p className="text-center text-muted-foreground mb-16">Voici leurs résultats concrets après seulement quelques semaines</p>
+        
         
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           
