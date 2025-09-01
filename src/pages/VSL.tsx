@@ -38,12 +38,36 @@ const VSL = () => {
   // Track page view
   usePageTracking();
 
-  // A/B test for VSL layout
-  const layoutVariant = getABVariant("vsl_layout", ["classic", "enhanced"]);
+  // A/B test for VSL layout - bias Enhanced on mobile for better UX
+  const layoutVariant = getABVariant("vsl_layout", isMobile ? ["enhanced", "enhanced", "classic"] : ["classic", "enhanced"]);
 
   // A/B test for autoplay (mobile-sensitive)
   const autoplayVariant = getABVariant("vsl_autoplay", ["autoplay", "click_to_play"]);
   const shouldAutoplay = autoplayVariant === "autoplay" && !isMobile;
+
+  // A/B test for primary CTA copy
+  const ctaCopyVariant = getABVariant("vsl_primary_cta", ["standard", "urgent", "benefit"]);
+
+  const getPrimaryCTAText = () => {
+    switch (ctaCopyVariant) {
+      case "urgent":
+        return "📞 Réserver MAINTENANT (Places limitées)";
+      case "benefit":
+        return "📞 Économiser 15h dès le mois prochain";
+      default:
+        return "📞 Planifier mon appel gratuit";
+    }
+  };
+
+  // Track VSL view with variant data
+  useEffect(() => {
+    trackEvent('vsl_view', {
+      layout_variant: layoutVariant,
+      autoplay_variant: autoplayVariant,
+      quiz_score: quizResults?.totalScore || 0,
+      mobile: isMobile
+    });
+  }, [layoutVariant, autoplayVariant, quizResults, isMobile]);
   useEffect(() => {
     const results = localStorage.getItem("quizResults");
     if (results) {
@@ -67,11 +91,12 @@ const VSL = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  const handleCTAClick = () => {
+  const handleCTAClick = (section = 'primary_cta') => {
     trackEvent('vsl_cta_click', {
-      section: 'primary_cta',
+      section,
       quiz_score: quizResults?.totalScore || 0,
-      layout_variant: layoutVariant
+      layout_variant: layoutVariant,
+      cta_copy_variant: ctaCopyVariant
     });
     openCal('vsl_main');
   };
@@ -97,7 +122,7 @@ const VSL = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="pt-14 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20">
+      <section className="pt-14 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20 animate-fade-in">
         <div className="container mx-auto container-mobile max-w-6xl">
           <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
@@ -154,10 +179,11 @@ const VSL = () => {
               <Button 
                 variant="cta" 
                 className="px-8 py-3 font-semibold whitespace-normal break-words text-center leading-snug" 
-                onClick={handleCTAClick}
+                onClick={() => handleCTAClick('hero_cta')}
+                aria-label={`Réserver une consultation gratuite - ${ctaCopyVariant} variant`}
                 {...getCalDataAttributes()}
               >
-                📞 Planifier mon appel gratuit
+                {getPrimaryCTAText()}
               </Button>
               
               {/* Urgence douce sous le CTA */}
@@ -169,7 +195,7 @@ const VSL = () => {
 
           <div className="text-center">
             {/* Bullets optimisés orientés résultats */}
-            <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-4xl mx-auto mb-8">
+            <div className="bg-muted/30 border border-border/50 rounded-lg p-6 max-w-4xl mx-auto mb-8 animate-fade-in">
               <h3 className="text-xl font-bold mb-6">👉 Ce que vous allez découvrir dans cette vidéo :</h3>
               <div className="space-y-4 text-left max-w-3xl mx-auto">
                 <div className="flex items-start gap-3">
@@ -205,7 +231,7 @@ const VSL = () => {
           </div>
 
           {/* Enhanced Primary CTA with generous whitespace - Single clear action */}
-          <div className="text-center py-12 sm:py-16 px-6 sm:px-8 mb-16">
+          <div className="text-center py-12 sm:py-16 px-6 sm:px-8 mb-16 animate-scale-in">
             <div className="max-w-2xl mx-auto space-y-8">
               <h3 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
                 🎯 Prêt à récupérer 15+ heures par semaine ?
@@ -220,10 +246,11 @@ const VSL = () => {
                 <Button 
                   variant="cta-large" 
                   className="w-full sm:w-auto text-lg sm:text-xl font-bold px-12 sm:px-16 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 whitespace-normal break-words text-center leading-snug" 
-                  onClick={handleCTAClick}
+                  onClick={() => handleCTAClick('main_cta')}
+                  aria-label={`Obtenir une consultation gratuite - ${ctaCopyVariant} variant`}
                   {...getCalDataAttributes()}
                 >
-                  📞 Obtenir ma consultation gratuite
+                  {ctaCopyVariant === "benefit" ? "📞 Économiser 15h dès le mois prochain" : "📞 Obtenir ma consultation gratuite"}
                 </Button>
                 
                 {/* Trust indicators directly below CTA */}
@@ -292,9 +319,14 @@ const VSL = () => {
       </LazySection>
 
 
-      {/* Sticky CTA Button */}
-      {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full">
-          <Button variant="cta-large" className="w-full shadow-2xl" onClick={handleCTAClick}>
+      {/* Sticky CTA Button - Mobile Safe Area */}
+      {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full safe-area-inset-bottom">
+          <Button 
+            variant="cta-large" 
+            className="w-full shadow-2xl" 
+            onClick={() => handleCTAClick('sticky_cta')}
+            aria-label="Réserver consultation - CTA flottant"
+          >
             📞 Réserver maintenant (gratuit)
           </Button>
         </div>}
