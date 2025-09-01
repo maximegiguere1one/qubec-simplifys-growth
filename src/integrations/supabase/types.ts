@@ -863,6 +863,21 @@ export type Database = {
           warm_leads_count: number
         }[]
       }
+      get_attribution_analysis: {
+        Args: { days_back?: number }
+        Returns: {
+          bookings: number
+          conversion_rate: number
+          cost_per_lead: number
+          leads: number
+          quiz_completions: number
+          roi_score: number
+          utm_campaign: string
+          utm_medium: string
+          utm_source: string
+          visitors: number
+        }[]
+      }
       get_dashboard_metrics: {
         Args: { days_back?: number }
         Returns: {
@@ -891,6 +906,55 @@ export type Database = {
           test_name: string
           total_views: number
           variant: string
+        }[]
+      }
+      get_funnel_analysis: {
+        Args: { days_back?: number }
+        Returns: {
+          bottleneck_score: number
+          conversion_rate: number
+          conversions: number
+          drop_off_rate: number
+          step_name: string
+          step_order: number
+          total_entries: number
+        }[]
+      }
+      get_tracking_health_metrics: {
+        Args: { days_back?: number }
+        Returns: {
+          metric_name: string
+          metric_value: number
+          recommendation: string
+          status: string
+        }[]
+      }
+      get_trended_dashboard_metrics: {
+        Args: { compare_period?: boolean; days_back?: number }
+        Returns: {
+          avg_quiz_score: number
+          bookings: number
+          conversion_rate: number
+          date: string
+          previous_period_bookings: number
+          previous_period_conversion: number
+          previous_period_leads: number
+          quiz_completions: number
+          total_leads: number
+          vsl_views: number
+        }[]
+      }
+      get_vsl_engagement_analysis: {
+        Args: { days_back?: number }
+        Returns: {
+          avg_watch_duration: number
+          completion_events: number
+          cta_clicks: number
+          cta_conversion_rate: number
+          engagement_rate: number
+          pause_events: number
+          play_events: number
+          time_bucket: string
         }[]
       }
       validate_session_id: {
