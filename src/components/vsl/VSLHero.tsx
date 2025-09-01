@@ -33,6 +33,7 @@ export const VSLHero = ({
   const [showStickyDesktop, setShowStickyDesktop] = useState(false);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // A/B test for CTA copy
   const ctaCopyVariant = getABVariant("vsl_hero_cta", ["standard", "urgent", "benefit"]);
@@ -159,6 +160,8 @@ export const VSLHero = ({
                   playsInline
                   webkit-playsinline="true"
                   muted={isMuted}
+                  onClick={handlePlay}
+                  onError={() => setHasError(true)}
                   onLoadedMetadata={() => {
                     // Auto-play muted on desktop only
                     if (!isMobile && videoRef.current) {
@@ -180,7 +183,7 @@ export const VSLHero = ({
                 </video>
 
                 {/* Video Controls Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${!hasStartedPlaying ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
                   {/* Central Play/Pause Button */}
                   <button
                     onClick={handlePlay}
@@ -232,6 +235,12 @@ export const VSLHero = ({
               </div>
             </div>
           </div>
+
+          {hasError && (
+            <p className="text-sm text-destructive text-center mb-6">
+              Vidéo introuvable. Remplacez <code>videoSrc</code> par votre URL (YouTube, Vimeo, MP4) ou ajoutez votre fichier à <code>public/video/vsl-demo.mp4</code>.
+            </p>
+          )}
 
           {/* Trust Indicators & Qualification */}
           <div className="text-center mb-8 animate-fade-in">
