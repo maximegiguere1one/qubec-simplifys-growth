@@ -143,7 +143,9 @@ serve(async (req) => {
     const sequence = emailSequences[segment] || emailSequences.cold
     const bookingUrl = 'https://lbwjesrgernvjiorktia.supabase.co/book-call'
 
-    // Enqueue each email in the sequence
+    // Send immediate email (delay = 0) via Resend, queue others
+    const resend = new (await import("npm:resend@4.0.0")).Resend(Deno.env.get('RESEND_API_KEY'))
+    
     for (const email of sequence) {
       const scheduledFor = new Date()
       scheduledFor.setHours(scheduledFor.getHours() + email.delay)
@@ -158,6 +160,41 @@ serve(async (req) => {
         .replace(/{{score}}/g, quizScore.toString())
         .replace(/{{booking_url}}/g, bookingUrl)
 
+      // Send immediate emails (delay = 0) directly via Resend
+      if (email.delay === 0) {
+        try {
+          const { data: emailData, error: emailError } = await resend.emails.send({
+            from: 'One Système <hello@onesysteme.ca>',
+            to: [leadEmail],
+            subject: personalizedSubject,
+            html: personalizedContent,
+          })
+          
+          if (emailError) {
+            console.error(`Error sending immediate email ${email.id}:`, emailError)
+            // Fall back to queueing if direct send fails
+          } else {
+            console.log(`Immediate email ${email.id} sent successfully:`, emailData)
+            // Log successful delivery
+            await supabase
+              .from('email_delivery_logs')
+              .insert({
+                lead_id: leadId,
+                recipient_email: leadEmail,
+                email_type: email.id,
+                subject: personalizedSubject,
+                status: 'sent',
+                provider_response: emailData
+              })
+            continue // Skip queueing for successfully sent immediate emails
+          }
+        } catch (error) {
+          console.error(`Failed to send immediate email ${email.id}:`, error)
+          // Fall through to queue the email
+        }
+      }
+
+      // Queue email (for delayed emails or failed immediate sends)
       const { error } = await supabase
         .from('email_queue')
         .insert({

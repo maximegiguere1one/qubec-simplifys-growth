@@ -170,30 +170,31 @@ export const sanitizeUTMParams = (params: Record<string, any>) => {
   return sanitized;
 };
 
-// Create or update lead
+// Create or update lead using Edge Function for reliable persistence
 export const createLead = async (email: string, name: string, phone?: string, source: string = 'landing_page') => {
   const utmParams = getUTMParams();
+  const sessionId = getSessionId();
   
   try {
-    const { data, error } = await supabase
-      .from('leads')
-      .upsert({
+    // Use validate-lead Edge Function for reliable persistence with proper RLS
+    const { data, error } = await supabase.functions.invoke('validate-lead', {
+      body: {
         email,
         name,
         phone,
         source,
+        session_id: sessionId,
         ...utmParams,
-      }, {
-        onConflict: 'email',
-        ignoreDuplicates: false
-      })
-      .select()
-      .single();
+        honeypot: '' // Empty honeypot for legitimate submissions
+      }
+    });
 
     if (error) throw error;
     
-    if (data) {
-      setLeadId(data.id);
+    if (data?.success && data?.lead) {
+      setLeadId(data.lead.id);
+      console.log('Lead created successfully:', data.lead.id);
+      
       // Track Meta Pixel Lead event for successful lead creation
       trackMetaPixelEvent('Lead', {
         content_name: 'Lead Capture',
@@ -201,9 +202,11 @@ export const createLead = async (email: string, name: string, phone?: string, so
         value: 0.00,
         currency: 'CAD'
       });
+      
+      return data.lead;
+    } else {
+      throw new Error(data?.error || 'Failed to create lead');
     }
-    
-    return data;
   } catch (error) {
     console.error('Error creating lead:', error);
     return null;
