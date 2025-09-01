@@ -112,6 +112,53 @@ export type Database = {
         }
         Relationships: []
       }
+      email_delivery_logs: {
+        Row: {
+          created_at: string
+          email_type: string
+          error_message: string | null
+          id: string
+          lead_id: string | null
+          provider_response: Json | null
+          recipient_email: string
+          sent_at: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email_type: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          provider_response?: Json | null
+          recipient_email: string
+          sent_at?: string
+          status: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          lead_id?: string | null
+          provider_response?: Json | null
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_delivery_logs_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_events: {
         Row: {
           action: string
@@ -392,6 +439,9 @@ export type Database = {
         | "bookcall_submit"
         | "bookcall_confirm"
         | "quiz_view"
+        | "performance_metric"
+        | "guarantee_view"
+        | "guarantee_cta_click"
       quiz_session_status: "started" | "completed" | "abandoned"
     }
     CompositeTypes: {
@@ -540,6 +590,9 @@ export const Constants = {
         "bookcall_submit",
         "bookcall_confirm",
         "quiz_view",
+        "performance_metric",
+        "guarantee_view",
+        "guarantee_cta_click",
       ],
       quiz_session_status: ["started", "completed", "abandoned"],
     },
