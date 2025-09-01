@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -67,7 +68,9 @@ serve(async (req) => {
         limit: parseInt(url.searchParams.get('limit') || '50'),
       };
 
-      // Build query
+      console.log('Fetching leads with filters:', filters);
+
+      // Build query with correct column selection
       let query = supabaseClient
         .from('leads')
         .select(`
@@ -87,13 +90,13 @@ serve(async (req) => {
         `);
 
       // Apply filters
-      if (filters.segment) {
+      if (filters.segment && filters.segment !== '') {
         query = query.eq('segment', filters.segment);
       }
-      if (filters.source) {
+      if (filters.source && filters.source !== '') {
         query = query.eq('source', filters.source);
       }
-      if (filters.search) {
+      if (filters.search && filters.search !== '') {
         query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
       }
 
@@ -106,21 +109,24 @@ serve(async (req) => {
       const { data: leads, error } = await query;
 
       if (error) {
+        console.error('Error fetching leads:', error);
         throw error;
       }
+
+      console.log(`Successfully fetched ${leads?.length || 0} leads`);
 
       // Get total count for pagination
       let countQuery = supabaseClient
         .from('leads')
         .select('*', { count: 'exact', head: true });
 
-      if (filters.segment) {
+      if (filters.segment && filters.segment !== '') {
         countQuery = countQuery.eq('segment', filters.segment);
       }
-      if (filters.source) {
+      if (filters.source && filters.source !== '') {
         countQuery = countQuery.eq('source', filters.source);
       }
-      if (filters.search) {
+      if (filters.search && filters.search !== '') {
         countQuery = countQuery.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,company.ilike.%${filters.search}%`);
       }
 
@@ -155,8 +161,11 @@ serve(async (req) => {
           .eq('id', leadId);
 
         if (error) {
+          console.error('Error updating lead score:', error);
           throw error;
         }
+
+        console.log(`Successfully updated lead ${leadId} score to ${score}, segment to ${segment}`);
 
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -172,6 +181,7 @@ serve(async (req) => {
           .single();
 
         if (leadError) {
+          console.error('Error fetching lead details:', leadError);
           throw leadError;
         }
 
@@ -196,6 +206,8 @@ serve(async (req) => {
           .eq('lead_id', leadId)
           .order('created_at', { ascending: false })
           .limit(50);
+
+        console.log(`Successfully fetched details for lead ${leadId}`);
 
         return new Response(JSON.stringify({
           lead,
