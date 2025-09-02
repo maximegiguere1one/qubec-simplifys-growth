@@ -10,23 +10,24 @@ import { useToast } from "@/hooks/use-toast";
 import { startQuizSession, trackQuizAnswer, completeQuizSession, trackEvent, createLead, sendQuizConfirmationEmail, getLeadId, getABVariant } from "@/lib/analytics";
 import { NavigationService } from "@/lib/navigation";
 import { usePageTracking } from "@/hooks/usePageTracking";
-import { MicroSurvey } from "@/components/MicroSurvey";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePrefetch } from "@/hooks/usePrefetch";
 import { useOptimizedTimer } from "@/hooks/useOptimizedTimer";
 import { QUIZ_QUESTIONS, QuestionOption } from "@/components/optimized/QuizQuestions";
-import { OptimizedQuizProgress } from "@/components/optimized/OptimizedQuizProgress";
 import { getCachedABVariant, quizAnalytics } from "@/lib/analytics/optimized";
 import { QuizHero } from "@/components/quiz/QuizHero";
 import { QuizStoryOffer } from "@/components/quiz/QuizStoryOffer";
+import { MobileStoryOffer } from "@/components/quiz/MobileStoryOffer";
 import { QuizScarcityCounter } from "@/components/quiz/QuizScarcityCounter";
 import { QuizPreFrame } from "@/components/quiz/QuizPreFrame";
+import { OptimizedProgress } from "@/components/quiz/OptimizedProgress";
+import { MidQuizEmailGate } from "@/components/quiz/MidQuizEmailGate";
+import { StickyMobileCTA } from "@/components/quiz/StickyMobileCTA";
 
 const Quiz = () => {
-  const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
+  const [currentStep, setCurrentStep] = useState(1); // Start directly at quiz, no initial contact capture
   const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [showSurvey, setShowSurvey] = useState(false);
   const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
   const [exitIntentShown, setExitIntentShown] = useState(false);
@@ -35,6 +36,8 @@ const Quiz = () => {
   const [quizSessionStarted, setQuizSessionStarted] = useState(false);
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [currentDiagnostic, setCurrentDiagnostic] = useState("");
+  const [showEmailGate, setShowEmailGate] = useState(false);
+  const [hasPassedGate, setHasPassedGate] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -51,9 +54,15 @@ const Quiz = () => {
   
   // Memoized constants to prevent recreations
   const questions = useMemo(() => QUIZ_QUESTIONS, []);
-  const totalSteps = useMemo(() => questions.length + 1, [questions.length]);
-  const progress = useMemo(() => ((currentStep + 1) / totalSteps) * 100, [currentStep, totalSteps]);
+  const totalSteps = useMemo(() => questions.length, [questions.length]); // Remove +1 since no initial contact step
+  const progress = useMemo(() => (currentStep / totalSteps) * 100, [currentStep, totalSteps]);
   const currentQuestion = useMemo(() => currentStep - 1, [currentStep]);
+  
+  // Email gate trigger (after question 2)
+  const shouldShowEmailGate = useMemo(() => 
+    currentStep === 3 && !hasPassedGate && !contactInfo.email, 
+    [currentStep, hasPassedGate, contactInfo.email]
+  );
   
   // Cached A/B test variant
   const progressVariant = useMemo(() => 
@@ -102,17 +111,17 @@ const Quiz = () => {
   usePageTracking();
   
   useEffect(() => {
-    // Only start quiz session once after contact capture
-    if (currentStep > 0 && !quizSessionStarted) {
+    // Start quiz session immediately since we start with questions
+    if (!quizSessionStarted) {
       startQuizSession();
       setQuizSessionStarted(true);
-      resetTimer(); // Reset timer when starting quiz
+      resetTimer();
     }
-  }, [currentStep, quizSessionStarted, resetTimer]);
+  }, [quizSessionStarted, resetTimer]);
   
   // Track question views for analytics
   useEffect(() => {
-    if (currentStep > 0) {
+    if (currentStep >= 1) {
       quizAnalytics.trackQuestionView(currentQuestion);
     }
   }, [currentStep, currentQuestion]);
@@ -131,19 +140,10 @@ const Quiz = () => {
     return value;
   };
 
-  const handleContactSubmit = async () => {
-    if (!contactInfo.name.trim() || !contactInfo.email.trim() || !contactInfo.phone.trim()) {
-      toast({
-        title: "Information requise",
-        description: "Veuillez remplir tous les champs avant de continuer.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleEmailGateSubmit = async (email: string, name: string) => {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(contactInfo.email)) {
+    if (!emailRegex.test(email)) {
       toast({
         title: "Email invalide",
         description: "Veuillez entrer une adresse email valide.",
@@ -155,27 +155,35 @@ const Quiz = () => {
     setIsSubmittingContact(true);
     try {
       // Create lead using reliable Edge Function
-      const lead = await createLead(contactInfo.email, contactInfo.name, contactInfo.phone, 'quiz');
+      const lead = await createLead(email, name, "", 'quiz_mid');
       
       if (!lead) {
         throw new Error('Failed to create lead');
       }
       
-      // Track the opt-in event
+      // Update contact info and pass the gate
+      setContactInfo({ name, email, phone: "" });
+      setHasPassedGate(true);
+      setShowEmailGate(false);
+      
+      // Track the mid-quiz opt-in event
       await trackEvent('lp_submit_optin', {
-        name: contactInfo.name,
-        email: contactInfo.email,
-        phone: contactInfo.phone,
-        source: 'quiz'
+        name,
+        email,
+        source: 'quiz_mid',
+        question_number: currentStep
       });
 
-      console.log('Lead created successfully, moving to quiz');
-      setCurrentStep(1); // Move to first quiz question
+      toast({
+        title: "Parfait !",
+        description: "Continue le quiz pour découvrir tes résultats personnalisés.",
+      });
+
     } catch (error) {
-      console.error('Contact submission error:', error);
+      console.error('Email gate submission error:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.",
+        description: "Une erreur est survenue. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {
@@ -221,6 +229,12 @@ const Quiz = () => {
   }, [currentQuestion, questions, timeSpent]);
 
   const handleNext = async () => {
+    // Check if we need to show email gate
+    if (shouldShowEmailGate) {
+      setShowEmailGate(true);
+      return;
+    }
+
     // Only validate if this is a manual click (not auto-advance)
     if (!isAdvancingRef.current && !answers[currentQuestion]) {
       toast({
@@ -237,7 +251,7 @@ const Quiz = () => {
       advanceTimeoutRef.current = null;
     }
 
-    if (currentStep < totalSteps - 1) {
+    if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
       resetTimer(); // Reset timer for next question
     } else {
@@ -292,7 +306,7 @@ const Quiz = () => {
   };
 
   const handlePrevious = () => {
-    if (currentStep > 0) {
+    if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -318,112 +332,63 @@ const Quiz = () => {
     document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Show email gate if needed
+  if (showEmailGate) {
+    return (
+      <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
+        <div className="container mx-auto container-mobile max-w-4xl">
+          <OptimizedProgress 
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            timeSpent={timeSpent}
+          />
+          <MidQuizEmailGate 
+            onSubmit={handleEmailGateSubmit}
+            isSubmitting={isSubmittingContact}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
+    <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12 pb-20 md:pb-12">
       <div className="container mx-auto container-mobile max-w-4xl">
-        {currentStep === 0 && (
+        {currentStep === 1 && (
           <>
             {/* Hero Section */}
-            <QuizHero onStartQuiz={scrollToForm} />
+            <QuizHero onStartQuiz={() => setCurrentStep(1)} />
             
-            {/* Story-Offer Section */}
-            <QuizStoryOffer />
+            {/* Story-Offer Section - Desktop vs Mobile */}
+            <div className="hidden md:block">
+              <QuizStoryOffer />
+            </div>
+            <div className="md:hidden">
+              <MobileStoryOffer />
+            </div>
             
             {/* Scarcity Counter */}
             <QuizScarcityCounter />
+            
+            {/* Pre-frame */}
+            <QuizPreFrame />
           </>
-        )}
-
-        {currentStep === 1 && (
-          <QuizPreFrame />
         )}
         
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
-          {currentStep === 0 && (
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4 leading-tight">
-                Commençons par faire connaissance
-              </h2>
-              <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
-                Pour te donner des recommandations ultra-personnalisées
-              </p>
-            </div>
-          )}
-          
-          {currentStep > 0 && (
-            /* Optimized Progress Bar with A/B test */
-            <OptimizedQuizProgress 
+          {currentStep >= 1 && (
+            /* Optimized Progress Bar */
+            <OptimizedProgress 
               currentStep={currentStep}
               totalSteps={totalSteps}
-              variant={progressVariant}
               timeSpent={timeSpent}
             />
           )}
         </div>
 
-        {/* Contact Capture or Question Card */}
-        {currentStep === 0 ? (
-          <Card id="contact-form" className="p-6 sm:p-8 md:p-10 shadow-card max-w-3xl mx-auto border-2 border-primary/20">
-            <div className="space-y-6">
-              <div>
-                <Input
-                  id="name"
-                  placeholder="Prénom et nom"
-                  value={contactInfo.name}
-                  onChange={(e) => setContactInfo(prev => ({ ...prev, name: e.target.value }))}
-                  className="text-base sm:text-lg btn-touch"
-                  autoComplete="name"
-                  autoCapitalize="words"
-                />
-              </div>
-              
-              <div>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Adresse email"
-                  value={contactInfo.email}
-                  onChange={(e) => setContactInfo(prev => ({ ...prev, email: e.target.value }))}
-                  className="text-base sm:text-lg btn-touch"
-                  autoComplete="email"
-                  inputMode="email"
-                  autoCapitalize="none"
-                />
-              </div>
-              
-              <div>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Numéro de téléphone"
-                  value={contactInfo.phone}
-                  onChange={(e) => {
-                    const formatted = formatPhoneNumber(e.target.value);
-                    if (formatted.length <= 14) { // Max length for formatted phone
-                      setContactInfo(prev => ({ ...prev, phone: formatted }));
-                    }
-                  }}
-                  className="text-base sm:text-lg btn-touch"
-                  autoComplete="tel"
-                  inputMode="tel"
-                />
-              </div>
-            </div>
-            
-            <div className="text-center mt-6">
-              <Button
-                variant="cta-large"
-                onClick={handleContactSubmit}
-                disabled={isSubmittingContact}
-                className={`w-full h-14 sm:h-16 ${mobileButtonClass} btn-touch text-base sm:text-lg font-semibold ${animationClass} shadow-lg hover:shadow-xl transition-all duration-300`}
-              >
-                {isSubmittingContact ? "Un instant..." : "Commencer maintenant"}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </Card>
-        ) : (
+        {/* Question Card */}
+        {currentStep >= 1 && currentStep <= totalSteps && (
           <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
             <div className="mb-8">
               <div className="mb-4 sm:mb-6">
@@ -485,50 +450,14 @@ const Quiz = () => {
           </p>
         </div>
 
-        {/* Micro Survey for quiz abandonment */}
-        {currentStep > 2 && !showSurvey && (
-          <MicroSurvey
-            surveyId="quiz_experience"
-            question="Comment trouvez-vous ce quiz jusqu'à présent ?"
-            options={[
-              { value: 'easy', label: 'Facile à comprendre' },
-              { value: 'relevant', label: 'Très pertinent' },
-              { value: 'long', label: 'Un peu long' },
-              { value: 'confusing', label: 'Quelques questions confuses' },
-            ]}
-            onComplete={() => setShowSurvey(true)}
-            onDismiss={() => setShowSurvey(true)}
-          />
-        )}
 
-        {/* Quiz Completion Message */}
-        {showCompletionMessage && (
-          <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <Alert className="max-w-md mx-auto bg-card border-primary/20 shadow-lg">
-              <CheckCircle className="h-4 w-4 text-primary" />
-              <AlertDescription className="text-center space-y-4">
-                <div>
-                  <p className="font-semibold text-lg mb-2">Merci {contactInfo.name.split(' ')[0]} !</p>
-                  <p className="text-muted-foreground">
-                    Vos résultats personnalisés ont été envoyés à votre adresse email.
-                  </p>
-                </div>
-                <div className="pt-2">
-                  <Button 
-                    variant="cta" 
-                    onClick={() => NavigationService.goToVSL()}
-                    className="w-full"
-                  >
-                    Voir votre analyse détaillée
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Redirection automatique dans quelques secondes...
-                  </p>
-                </div>
-              </AlertDescription>
-            </Alert>
-          </div>
-        )}
+        {/* Sticky Mobile CTA */}
+        <StickyMobileCTA 
+          onAction={handleNext}
+          isVisible={currentStep >= 1 && currentStep <= totalSteps && !showCompletionMessage}
+          text={currentStep === totalSteps ? "Voir mes résultats" : "Question suivante"}
+          isDisabled={!answers[currentQuestion] && !isAdvancingRef.current}
+        />
       </div>
     </div>
   );
