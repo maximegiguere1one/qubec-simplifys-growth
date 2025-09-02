@@ -280,7 +280,7 @@ serve(async (req) => {
           })
           .eq('id', email.id)
 
-        // Log delivery
+        // Log delivery with queue_id for event linking
         await supabase
           .from('email_delivery_logs')
           .insert({
@@ -289,6 +289,7 @@ serve(async (req) => {
             email_type: email.email_type,
             subject: email.subject,
             status: 'sent',
+            queue_id: email.id, // Link to email_queue for event tracking
             provider_response: emailResponse
           })
 
@@ -314,7 +315,7 @@ serve(async (req) => {
           })
           .eq('id', email.id)
 
-        // Log failed delivery
+        // Log failed delivery with queue_id
         await supabase
           .from('email_delivery_logs')
           .insert({
@@ -323,6 +324,7 @@ serve(async (req) => {
             email_type: email.email_type,
             subject: email.subject,
             status: 'failed',
+            queue_id: email.id, // Link to email_queue for consistency
             error_message: emailError.message
           })
       }

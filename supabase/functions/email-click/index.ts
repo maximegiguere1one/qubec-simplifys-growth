@@ -28,13 +28,18 @@ serve(async (req) => {
 
     console.log(`Email link clicked: ${emailId}, target: ${targetUrl}`)
 
-    // Log the email click event
+    // Log the email click event with URL tracking
     await supabase
       .from('email_events')
       .insert({
         email_id: emailId,
         action: 'clicked',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        event_data: { 
+          target_url: decodeURIComponent(targetUrl),
+          user_agent: req.headers.get('user-agent') || null,
+          ip_address: req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || null
+        }
       })
 
     // Redirect to the target URL

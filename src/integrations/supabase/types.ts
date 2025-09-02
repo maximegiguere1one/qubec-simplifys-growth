@@ -120,6 +120,7 @@ export type Database = {
           id: string
           lead_id: string | null
           provider_response: Json | null
+          queue_id: string | null
           recipient_email: string
           sent_at: string
           status: string
@@ -132,6 +133,7 @@ export type Database = {
           id?: string
           lead_id?: string | null
           provider_response?: Json | null
+          queue_id?: string | null
           recipient_email: string
           sent_at?: string
           status: string
@@ -144,6 +146,7 @@ export type Database = {
           id?: string
           lead_id?: string | null
           provider_response?: Json | null
+          queue_id?: string | null
           recipient_email?: string
           sent_at?: string
           status?: string
@@ -164,6 +167,7 @@ export type Database = {
           action: string
           created_at: string
           email_id: string
+          event_data: Json
           id: string
           lead_id: string | null
           timestamp: string
@@ -172,6 +176,7 @@ export type Database = {
           action: string
           created_at?: string
           email_id: string
+          event_data?: Json
           id?: string
           lead_id?: string | null
           timestamp?: string
@@ -180,6 +185,7 @@ export type Database = {
           action?: string
           created_at?: string
           email_id?: string
+          event_data?: Json
           id?: string
           lead_id?: string | null
           timestamp?: string
