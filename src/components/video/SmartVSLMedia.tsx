@@ -20,6 +20,7 @@ export interface SmartVSLMediaRef {
   pause: () => void;
   setMuted: (muted: boolean) => void;
   seekTo: (time: number) => void;
+  toggleFullscreen: () => void;
   currentTime: number;
   duration: number;
   paused: boolean;
@@ -215,6 +216,29 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
         return videoRef.current?.muted ?? true;
       }
       return iframeMuted;
+    },
+    toggleFullscreen: () => {
+      if (videoSource?.type === 'mp4' && videoRef.current) {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          videoRef.current.requestFullscreen().catch(err => {
+            console.error('Fullscreen error:', err);
+          });
+        }
+      } else {
+        // For iframe videos, make the parent container fullscreen
+        const container = iframeRef.current?.parentElement;
+        if (container) {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            container.requestFullscreen().catch(err => {
+              console.error('Fullscreen error:', err);
+            });
+          }
+        }
+      }
     }
   }));
 

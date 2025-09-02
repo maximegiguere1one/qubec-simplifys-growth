@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause, Maximize } from 'lucide-react';
 import { trackEvent, getABVariant, trackVSLEvent } from '@/lib/analytics';
 import { getCalDataAttributes } from '@/lib/cal';
 import { SmartVSLMedia, SmartVSLMediaRef } from '@/components/video/SmartVSLMedia';
@@ -89,7 +89,8 @@ export const VSLHero = ({
       setHasError(true);
     }
   };
-  const handleMute = () => {
+  const handleMute = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent video pause when clicking sound button
     if (!videoRef.current) return;
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
@@ -145,6 +146,23 @@ export const VSLHero = ({
       to: time,
       progress
     });
+  };
+
+  const handleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent video pause when clicking fullscreen button
+    if (!videoRef.current) return;
+    
+    // For iframe videos (YouTube/Vimeo), try to make the iframe fullscreen
+    const videoElement = document.querySelector('.aspect-video') as HTMLElement;
+    if (videoElement) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        videoElement.requestFullscreen().catch(err => {
+          console.error('Fullscreen error:', err);
+        });
+      }
+    }
   };
   return <div className="relative">
       {/* Hero Section */}
@@ -244,15 +262,26 @@ export const VSLHero = ({
                     )}
                   </div>
 
-                  {/* Sound Control */}
-                  <button 
-                    onClick={handleMute} 
-                    className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
-                    aria-label={isMuted ? "Activer le son" : "Désactiver le son"}
-                    title={isMuted ? "Activer le son (recommandé)" : "Désactiver le son"}
-                  >
-                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                  </button>
+                  {/* Controls */}
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={handleMute} 
+                      className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
+                      aria-label={isMuted ? "Activer le son" : "Désactiver le son"}
+                      title={isMuted ? "Activer le son (recommandé)" : "Désactiver le son"}
+                    >
+                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                    </button>
+                    
+                    <button 
+                      onClick={handleFullscreen} 
+                      className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
+                      aria-label="Plein écran"
+                      title="Plein écran"
+                    >
+                      <Maximize className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Captions Notice */}

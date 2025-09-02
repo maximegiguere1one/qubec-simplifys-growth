@@ -350,27 +350,17 @@ const Quiz = () => {
         console.warn("Cannot send email: missing leadId or email address");
       }
       
-      // Auto-redirect to VSL after 1 second with counter
-      let countdown = 1;
-      const countdownInterval = setInterval(() => {
-        toast({
-          title: `Redirection dans ${countdown}s...`,
-          description: "Préparation de votre stratégie personnalisée",
+      // Auto-redirect to VSL after 2 seconds (no countdown toast to prevent overload)
+      setTimeout(() => {
+        navigate("/vsl", { 
+          state: { 
+            fromQuiz: true, 
+            emailSent, 
+            userEmail: contactInfo.email,
+            diagnostic: diagnosticMessage 
+          } 
         });
-        countdown--;
-        
-        if (countdown < 0) {
-          clearInterval(countdownInterval);
-          navigate("/vsl", { 
-            state: { 
-              fromQuiz: true, 
-              emailSent, 
-              userEmail: contactInfo.email,
-              diagnostic: diagnosticMessage 
-            } 
-          });
-        }
-      }, 1000);
+      }, 2000);
     }
   };
 
