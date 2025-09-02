@@ -300,12 +300,13 @@ export const VSLHero = ({
           <div className="text-center mb-12 animate-scale-in">
             <Button 
               variant="cta-large" 
-              className="text-xl sm:text-2xl font-bold px-12 sm:px-16 py-6 shadow-glow hover:shadow-glow transition-all duration-300 hover:scale-105 w-full sm:w-auto mb-6" 
+              className="text-lg sm:text-xl font-bold px-8 sm:px-16 py-6 shadow-glow hover:shadow-glow transition-all duration-300 hover:scale-105 w-full sm:w-auto mb-6 leading-tight" 
               onClick={() => handleCTAClick('hero_primary')} 
               aria-label="Réserver consultation gratuite"
               {...getCalDataAttributes()}
             >
-              🚀 Oui, je veux sauver +10h/semaine – Réserver mon appel gratuit
+              <span className="block sm:hidden">🚀 Réserver mon appel gratuit</span>
+              <span className="hidden sm:block">🚀 Oui, je veux sauver +10h/semaine – Réserver mon appel gratuit</span>
             </Button>
             
             {/* Trust & Reassurance Points */}
