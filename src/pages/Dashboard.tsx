@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SimplifiedOverview } from '@/components/dashboard/SimplifiedOverview';
+import { SimplifiedFunnel } from '@/components/dashboard/SimplifiedFunnel';
+import { TopSources } from '@/components/dashboard/TopSources';
+import { ActionableInsights } from '@/components/dashboard/ActionableInsights';
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
 import { EnhancedOverviewDashboard } from '@/components/analytics/EnhancedOverviewDashboard';
 import { ExperimentTracker } from '@/components/ExperimentTracker';
@@ -94,6 +98,10 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  const handleFiltersChange = (filters: Partial<GlobalFiltersState>) => {
+    setGlobalFilters(prev => ({ ...prev, ...filters }));
   };
 
   const handleRefresh = () => {
@@ -212,7 +220,20 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <EnhancedOverviewDashboard key={`${refreshTrigger}-${globalFilters.dateRange}-${globalFilters.comparison}`} />
+            {/* Simplified 10x clearer overview */}
+            <SimplifiedOverview 
+              globalFilters={globalFilters}
+              onFiltersChange={handleFiltersChange}
+            />
+            
+            <div className="grid gap-6 lg:grid-cols-2 mt-6">
+              <SimplifiedFunnel daysBack={globalFilters.dateRange} />
+              <TopSources daysBack={globalFilters.dateRange} />
+            </div>
+            
+            <div className="mt-6">
+              <ActionableInsights daysBack={globalFilters.dateRange} />
+            </div>
           </TabsContent>
 
           <TabsContent value="advanced">
