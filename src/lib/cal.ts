@@ -76,7 +76,16 @@ export const openCal = (source?: string) => {
       method: 'cal_embed'
     });
 
-    if (typeof window !== 'undefined' && window.Cal && window.Cal.ns[CAL_CONFIG.namespace]) {
+    console.log('Attempting to open Cal.com booking...', {
+      source,
+      hasWindow: typeof window !== 'undefined',
+      hasCal: !!(typeof window !== 'undefined' && window.Cal),
+      hasNamespace: !!(typeof window !== 'undefined' && window.Cal && window.Cal.ns && window.Cal.ns[CAL_CONFIG.namespace]),
+      calConfig: CAL_CONFIG
+    });
+
+    if (typeof window !== 'undefined' && window.Cal && window.Cal.ns && window.Cal.ns[CAL_CONFIG.namespace]) {
+      console.log('Opening Cal.com modal via embed...');
       // Use Cal.com namespace to open modal
       window.Cal.ns[CAL_CONFIG.namespace]("openModal", {
         calLink: CAL_CONFIG.link,
@@ -84,16 +93,59 @@ export const openCal = (source?: string) => {
           layout: "month_view"
         }
       });
+      
+      // Track successful embed opening
+      trackEvent('bookcall_view' as any, {
+        event_type: 'booking_modal_opened',
+        source: source || 'direct',
+        method: 'cal_embed_success'
+      });
+      
     } else {
-      // Fallback: open direct Cal.com link in new tab
-      console.warn('Cal.com embed not loaded, opening direct link');
-      window.open(CAL_CONFIG.directUrl, '_blank');
+      // Enhanced fallback with more debugging
+      console.warn('Cal.com embed not available, using fallback...', {
+        hasWindow: typeof window !== 'undefined',
+        hasCal: !!(typeof window !== 'undefined' && window.Cal),
+        hasNamespace: !!(typeof window !== 'undefined' && window.Cal && window.Cal.ns && window.Cal.ns[CAL_CONFIG.namespace])
+      });
+      
+      // Track fallback usage
+      trackEvent('bookcall_view' as any, {
+        event_type: 'booking_fallback_used',
+        source: source || 'direct',
+        method: 'direct_link'
+      });
+      
+      // Open direct Cal.com link in same tab for better mobile experience
+      if (typeof window !== 'undefined') {
+        const url = new URL(CAL_CONFIG.directUrl);
+        if (source) {
+          url.searchParams.set('utm_source', source);
+          url.searchParams.set('utm_medium', 'vsl');
+          url.searchParams.set('utm_campaign', 'one_systeme');
+        }
+        window.location.href = url.toString();
+      }
     }
   } catch (error) {
     console.error('Error opening Cal.com:', error);
-    // Ultimate fallback
+    
+    // Track error
+    trackEvent('bookcall_view' as any, {
+      event_type: 'booking_error',
+      source: source || 'direct',
+      method: 'error_fallback',
+      error: error.message
+    });
+    
+    // Ultimate fallback - direct link
     if (typeof window !== 'undefined') {
-      window.open(CAL_CONFIG.directUrl, '_blank');
+      const url = new URL(CAL_CONFIG.directUrl);
+      url.searchParams.set('utm_source', 'error_fallback');
+      if (source) {
+        url.searchParams.set('utm_campaign', source);
+      }
+      window.location.href = url.toString();
     }
   }
 };

@@ -167,7 +167,13 @@ const VSL = () => {
 
       {/* Sticky CTA Button - Mobile Safe Area */}
       {showStickyButton && <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 max-w-sm w-full safe-area-inset-bottom">
-          <Button variant="cta-large" className="w-full shadow-2xl" onClick={() => handleCTAClick('sticky_cta')} aria-label="Réserver consultation - CTA flottant">
+          <Button 
+            variant="cta-large" 
+            className="w-full shadow-2xl" 
+            onClick={() => handleCTAClick('sticky_cta')} 
+            aria-label="Réserver consultation - CTA flottant"
+            {...getCalDataAttributes()}
+          >
             📞 Réserver maintenant (gratuit)
           </Button>
         </div>}

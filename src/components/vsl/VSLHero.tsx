@@ -324,14 +324,26 @@ export const VSLHero = ({
 
       {/* Sticky CTA - Mobile (appears at 50% progress) */}
       {isMobile && showStickyCTA && <div className="fixed bottom-4 left-4 right-4 z-50 safe-area-inset-bottom">
-          <Button variant="cta" className="w-full shadow-2xl text-base font-bold py-3" onClick={() => handleCTAClick('hero_sticky_mobile')} aria-label="Réserver consultation - CTA mobile">
+          <Button 
+            variant="cta" 
+            className="w-full shadow-2xl text-base font-bold py-3" 
+            onClick={() => handleCTAClick('hero_sticky_mobile')} 
+            aria-label="Réserver consultation - CTA mobile"
+            {...getCalDataAttributes()}
+          >
             📞 Réserver maintenant (gratuit)
           </Button>
         </div>}
 
       {/* Sticky CTA - Desktop (appears at 75% progress) */}
       {!isMobile && showStickyDesktop && <div className="fixed bottom-8 right-8 z-50">
-          <Button variant="cta" className="shadow-2xl text-base font-bold px-6 py-3 rounded-full" onClick={() => handleCTAClick('hero_sticky_desktop')} aria-label="Réserver consultation - CTA desktop">
+          <Button 
+            variant="cta" 
+            className="shadow-2xl text-base font-bold px-6 py-3 rounded-full" 
+            onClick={() => handleCTAClick('hero_sticky_desktop')} 
+            aria-label="Réserver consultation - CTA desktop"
+            {...getCalDataAttributes()}
+          >
             📞 Réserver
           </Button>
         </div>}
