@@ -34,11 +34,11 @@ const QuickEmailTest = () => {
       // Trigger email sequence via edge function
       const { data, error } = await supabase.functions.invoke('enqueue-email-sequence', {
         body: {
-          leadId: `test_${Date.now()}`,
           leadName: testData.leadName,
           leadEmail: testData.leadEmail,
           segment: testData.segment,
           quizScore: testData.score
+          // Ne pas envoyer de leadId pour les tests
         }
       });
 

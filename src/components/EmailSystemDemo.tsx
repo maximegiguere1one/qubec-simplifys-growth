@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { enqueueEmailSequence, getEmailQueueStatus, type LeadData } from '@/lib/emailQueue';
 import { Mail, Send, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
@@ -28,7 +29,6 @@ const EmailSystemDemo = () => {
     
     // Demo lead data
     const testLead: LeadData = {
-      id: 'demo_lead_' + Date.now(),
       name: 'Demo User',
       email: 'demo@example.com', // In production, use real email
       segment: 'warm',
@@ -54,6 +54,34 @@ const EmailSystemDemo = () => {
       toast({
         title: "Erreur",
         description: "Impossible de déclencher la séquence d'emails",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleProcessQueue = async () => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('process-email-queue');
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "File traitée",
+        description: "Traitement de la file d'emails déclenché",
+      });
+      
+      // Refresh status after processing
+      setTimeout(fetchQueueStatus, 2000);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de traiter la file d'emails",
         variant: "destructive"
       });
     } finally {
@@ -157,6 +185,16 @@ const EmailSystemDemo = () => {
             >
               <Send className="h-4 w-4 mr-2" />
               {isLoading ? 'Déclenchement...' : 'Tester une Séquence'}
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onClick={handleProcessQueue}
+              disabled={isLoading}
+              className="flex items-center"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Traiter la file maintenant
             </Button>
             
             <Button 

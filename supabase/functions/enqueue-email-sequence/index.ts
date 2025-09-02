@@ -7,11 +7,17 @@ const corsHeaders = {
 }
 
 interface EnqueueRequest {
-  leadId: string
+  leadId?: string | null
   quizScore: number
   segment: 'qualified' | 'hot' | 'warm' | 'cold'
   leadName: string
   leadEmail: string
+}
+
+// Helper function to validate UUID format
+function isValidUUID(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
 }
 
 // Séquences d'emails de conversion optimales avec design professionnel
@@ -330,8 +336,11 @@ serve(async (req) => {
     )
 
     const { leadId, quizScore, segment, leadName, leadEmail }: EnqueueRequest = await req.json()
+    
+    // Validate and sanitize leadId
+    const validatedLeadId = leadId && isValidUUID(leadId) ? leadId : null
 
-    console.log(`Enqueuing email sequence for lead ${leadId}, segment: ${segment}`)
+    console.log(`Enqueuing email sequence for lead ${validatedLeadId || 'anonymous'}, segment: ${segment}`)
 
     // Get the appropriate email sequence
     const sequence = emailSequences[segment] || emailSequences.cold
@@ -379,7 +388,7 @@ serve(async (req) => {
             await supabase
               .from('email_delivery_logs')
               .insert({
-                lead_id: leadId,
+                lead_id: validatedLeadId,
                 recipient_email: leadEmail,
                 email_type: email.id,
                 subject: personalizedSubject,
@@ -398,7 +407,7 @@ serve(async (req) => {
       const { error } = await supabase
         .from('email_queue')
         .insert({
-          lead_id: leadId,
+          lead_id: validatedLeadId,
           recipient_email: leadEmail,
           email_type: email.id,
           subject: personalizedSubject,
@@ -417,11 +426,11 @@ serve(async (req) => {
     await supabase
       .from('email_sequence_triggers')
       .insert({
-        lead_id: leadId,
+        lead_id: validatedLeadId,
         sequence_id: segment
       })
 
-    console.log(`Successfully enqueued ${sequence.length} emails for lead ${leadId}`)
+    console.log(`Successfully enqueued ${sequence.length} emails for lead ${validatedLeadId || 'anonymous'}`)
 
     return new Response(
       JSON.stringify({ 
