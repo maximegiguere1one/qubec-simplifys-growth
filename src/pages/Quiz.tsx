@@ -24,6 +24,7 @@ import { QuizPreFrame } from "@/components/quiz/QuizPreFrame";
 import { OptimizedProgress } from "@/components/quiz/OptimizedProgress";
 import { MidQuizEmailGate } from "@/components/quiz/MidQuizEmailGate";
 import { StickyMobileCTA } from "@/components/quiz/StickyMobileCTA";
+import { QuizCompletionDialog } from "@/components/QuizCompletionDialog";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // Start at step 0 to show hero first
@@ -34,10 +35,12 @@ const Quiz = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSessionStarted, setQuizSessionStarted] = useState(false);
-  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [currentDiagnostic, setCurrentDiagnostic] = useState("");
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [hasPassedGate, setHasPassedGate] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState<string>();
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -118,16 +121,6 @@ const Quiz = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, questions.length, exitIntentShown, quizStartTime]);
 
-  // Auto-redirect to VSL after completion message
-  useEffect(() => {
-    if (showCompletionMessage) {
-      const timer = setTimeout(() => {
-        NavigationService.goToVSL();
-      }, 3000); // 3 seconds delay
-
-      return () => clearTimeout(timer);
-    }
-  }, [showCompletionMessage]);
   
   // Track page view and start quiz session
   usePageTracking();
@@ -304,10 +297,10 @@ const Quiz = () => {
         contactInfo 
       }));
 
-      // Show completion message
-      setShowCompletionMessage(true);
+      // Show completion dialog
+      setShowCompletionDialog(true);
 
-      // Send confirmation email asynchronously (keep analytics)
+      // Send confirmation email asynchronously
       const leadId = getLeadId();
       if (leadId) {
         try {
@@ -319,9 +312,11 @@ const Quiz = () => {
             diagnosticMessage,
             contactInfo
           );
+          setEmailSent(true);
           console.log("Quiz confirmation email sent successfully");
         } catch (error) {
           console.error("Failed to send confirmation email:", error);
+          setEmailError("Erreur lors de l'envoi de l'email");
         }
       }
     }
@@ -498,9 +493,24 @@ const Quiz = () => {
         {/* Sticky Mobile CTA */}
         <StickyMobileCTA 
           onAction={handleNext}
-          isVisible={currentStep >= 1 && currentStep <= totalSteps && !showCompletionMessage}
+          isVisible={currentStep >= 1 && currentStep <= totalSteps && !showCompletionDialog}
           text={currentStep === totalSteps ? "Voir mes résultats" : "Question suivante"}
           isDisabled={!answers[currentQuestion] && !isAdvancingRef.current}
+        />
+
+        {/* Quiz Completion Dialog */}
+        <QuizCompletionDialog
+          isOpen={showCompletionDialog}
+          onClose={() => setShowCompletionDialog(false)}
+          diagnostic={currentDiagnostic}
+          contactName={contactInfo.name}
+          totalScore={Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
+            const question = questions[parseInt(questionId)];
+            const option = question.options.find(opt => opt.value === answerValue);
+            return sum + (option?.score || 0);
+          }, 0)}
+          emailSent={emailSent}
+          emailError={emailError}
         />
       </div>
     </div>
