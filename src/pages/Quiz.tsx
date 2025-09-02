@@ -318,7 +318,7 @@ const Quiz = () => {
       let emailSent = false;
       
       // Try to send email, but don't wait for it
-      if (leadId) {
+      if (leadId && contactInfo.email) {
         sendQuizConfirmationEmail(
           leadId,
           totalScore,
@@ -329,9 +329,25 @@ const Quiz = () => {
         ).then(() => {
           emailSent = true;
           console.log("Quiz confirmation email sent successfully");
+          
+          // Show success toast
+          toast({
+            title: "Email de confirmation envoyé !",
+            description: "Vérifiez votre boîte de réception pour votre diagnostic personnalisé.",
+            action: <ToastAction altText="OK">OK</ToastAction>,
+          });
         }).catch((error) => {
           console.error("Failed to send confirmation email:", error);
+          
+          // Show error toast but don't block the flow
+          toast({
+            title: "Email non envoyé",
+            description: "Votre diagnostic est quand même prêt dans la vidéo suivante !",
+            variant: "destructive",
+          });
         });
+      } else {
+        console.warn("Cannot send email: missing leadId or email address");
       }
       
       // Auto-redirect to VSL after 1 second with counter

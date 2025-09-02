@@ -190,10 +190,14 @@ serve(async (req) => {
   }
 
   if (!FACEBOOK_ACCESS_TOKEN) {
-    console.error('Facebook access token not configured');
+    console.info('Facebook Conversions API skipped: Access token not configured. This is normal in development.');
     return new Response(
-      JSON.stringify({ error: 'Facebook access token not configured' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        success: false, 
+        error: 'Facebook access token not configured',
+        skipped: true 
+      }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 

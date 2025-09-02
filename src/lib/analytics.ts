@@ -1,6 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { analyticsQueue } from "@/lib/analyticsQueue";
 
+// Track Facebook API failures to avoid spam
+let facebookAPIEnabled = true;
+let lastFailureTime = 0;
+const FACEBOOK_RETRY_DELAY = 60000; // 1 minute before retrying
+
 // Send event to Facebook Conversions API via Edge Function with enhanced deduplication
 const sendToConversionsAPI = async (
   eventType: string,
@@ -8,6 +13,16 @@ const sendToConversionsAPI = async (
   leadId?: string | null,
   eventId?: string
 ) => {
+  // Skip if Facebook API is disabled due to repeated failures
+  if (!facebookAPIEnabled) {
+    const now = Date.now();
+    if (now - lastFailureTime < FACEBOOK_RETRY_DELAY) {
+      return; // Skip silently during cooldown
+    } else {
+      facebookAPIEnabled = true; // Re-enable after cooldown
+    }
+  }
+
   try {
     // Get Facebook attribution cookies
     const fbParams = getFacebookParams();
@@ -28,7 +43,14 @@ const sendToConversionsAPI = async (
     });
 
     if (response.error) {
-      console.warn('Facebook Conversions API warning:', response.error);
+      // Check if it's a configuration error (no access token)
+      if (response.error.message?.includes('Facebook access token not configured')) {
+        facebookAPIEnabled = false;
+        lastFailureTime = Date.now();
+        console.info('Facebook Conversions API disabled: Access token not configured. Continuing with Pixel-only tracking.');
+      } else {
+        console.warn('Facebook Conversions API warning:', response.error);
+      }
     } else {
       console.log('Facebook Conversions API success:', { 
         eventType, 
@@ -38,7 +60,14 @@ const sendToConversionsAPI = async (
       });
     }
   } catch (error) {
-    console.warn('Failed to send to Facebook Conversions API:', error);
+    // Handle network/server errors
+    if (error instanceof Error && error.message.includes('non-2xx status code')) {
+      facebookAPIEnabled = false;
+      lastFailureTime = Date.now();
+      console.info('Facebook Conversions API temporarily disabled due to server error. Continuing with Pixel-only tracking.');
+    } else {
+      console.warn('Failed to send to Facebook Conversions API:', error);
+    }
     // Don't throw - we don't want to break the main tracking flow
   }
 };
