@@ -25,6 +25,7 @@ interface ConversionEvent {
     ph?: string[];
     fn?: string[];
     ln?: string[];
+    external_id?: string[];
     client_ip_address?: string;
     client_user_agent?: string;
     fbc?: string;
@@ -46,6 +47,40 @@ const hashString = async (str: string): Promise<string> => {
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
+const normalizeEmail = (email: string): string => {
+  return email.toLowerCase().trim();
+};
+
+const normalizePhone = (phone: string): string => {
+  // Remove all non-digit characters
+  let normalized = phone.replace(/[^\d]/g, '');
+  
+  // Remove leading zeros
+  normalized = normalized.replace(/^0+/, '');
+  
+  // Add country code if missing (assume Canada +1 for Quebec market)
+  if (normalized.length === 10) {
+    normalized = '1' + normalized;
+  }
+  
+  return normalized;
+};
+
+const normalizeName = (name: string): string => {
+  return name.toLowerCase().trim();
+};
+
+const getClientIP = (req: Request): string | undefined => {
+  return req.headers.get('x-forwarded-for') || 
+         req.headers.get('x-real-ip') || 
+         req.headers.get('cf-connecting-ip') ||
+         undefined;
+};
+
+const getClientUserAgent = (req: Request): string | undefined => {
+  return req.headers.get('user-agent') || undefined;
 };
 
 const mapEventToFacebookEvent = (eventType: string, eventData: any): ConversionEvent => {
@@ -167,20 +202,77 @@ serve(async (req) => {
 
     console.log('Processing Facebook Conversions API event:', { eventType, eventData, leadData });
 
-    // Create the conversion event
-    const conversionEvent = mapEventToFacebookEvent(eventType, eventData);
+    // Get client IP and user agent from headers
+    const clientIP = getClientIP(req);
+    const clientUserAgent = getClientUserAgent(req);
 
-    // Add user data if available
-    if (leadData?.email) {
-      conversionEvent.user_data.em = [await hashString(leadData.email)];
+    // Create the conversion event with enhanced client data
+    const conversionEvent = mapEventToFacebookEvent(eventType, {
+      ...eventData,
+      client_ip: clientIP || eventData.client_ip,
+      user_agent: clientUserAgent || eventData.user_agent,
+    });
+
+    // Enriched lead data - fetch from DB if we only have lead ID
+    let enrichedLeadData = leadData;
+    if (leadData?.id && (!leadData.email || !leadData.name)) {
+      try {
+        const { data: lead, error } = await supabase
+          .from('leads')
+          .select('email, name, phone')
+          .eq('id', leadData.id)
+          .maybeSingle();
+        
+        if (lead && !error) {
+          enrichedLeadData = {
+            ...leadData,
+            email: lead.email || leadData.email,
+            name: lead.name || leadData.name,
+            phone: lead.phone || leadData.phone,
+          };
+        }
+      } catch (dbError) {
+        console.warn('Failed to enrich lead data:', dbError);
+      }
     }
-    if (leadData?.phone) {
-      conversionEvent.user_data.ph = [await hashString(leadData.phone)];
+
+    // Add normalized and hashed user data
+    if (enrichedLeadData?.email) {
+      const normalizedEmail = normalizeEmail(enrichedLeadData.email);
+      conversionEvent.user_data.em = [await hashString(normalizedEmail)];
     }
-    if (leadData?.name) {
-      // Split name into first name for hashing
-      const firstName = leadData.name.split(' ')[0];
-      conversionEvent.user_data.fn = [await hashString(firstName)];
+    
+    if (enrichedLeadData?.phone) {
+      const normalizedPhone = normalizePhone(enrichedLeadData.phone);
+      conversionEvent.user_data.ph = [await hashString(normalizedPhone)];
+    }
+    
+    if (enrichedLeadData?.name) {
+      const normalizedName = normalizeName(enrichedLeadData.name);
+      const nameParts = normalizedName.split(' ');
+      
+      // First name
+      if (nameParts[0]) {
+        conversionEvent.user_data.fn = [await hashString(nameParts[0])];
+      }
+      
+      // Last name (if available)
+      if (nameParts.length > 1) {
+        const lastName = nameParts.slice(1).join(' ');
+        conversionEvent.user_data.ln = [await hashString(lastName)];
+      }
+    }
+
+    // Add external IDs for better matching
+    const externalIds = [];
+    if (enrichedLeadData?.id) {
+      externalIds.push(enrichedLeadData.id);
+    }
+    if (eventData.session_id) {
+      externalIds.push(eventData.session_id);
+    }
+    if (externalIds.length > 0) {
+      conversionEvent.user_data.external_id = externalIds;
     }
 
     // Add Facebook Click ID and Browser ID if available
@@ -224,26 +316,37 @@ serve(async (req) => {
 
     // Enhanced logging for monitoring and debugging
     console.log('Facebook API Response:', JSON.stringify(facebookResult, null, 2));
-    console.log('Event processed:', {
+    console.log('Event processed successfully:', {
       eventType,
+      facebookEventName: conversionEvent.event_name,
       eventId: conversionEvent.event_id,
-      hasLeadData: !!leadData,
+      hasEmail: !!conversionEvent.user_data.em,
+      hasPhone: !!conversionEvent.user_data.ph,
+      hasFirstName: !!conversionEvent.user_data.fn,
+      hasLastName: !!conversionEvent.user_data.ln,
+      hasExternalId: !!conversionEvent.user_data.external_id,
+      hasClientIP: !!conversionEvent.user_data.client_ip_address,
+      hasUserAgent: !!conversionEvent.user_data.client_user_agent,
       hasFBC: !!conversionEvent.user_data.fbc,
       hasFBP: !!conversionEvent.user_data.fbp,
+      leadEnriched: !!enrichedLeadData && enrichedLeadData !== leadData,
       timestamp: new Date().toISOString()
     });
 
-    // Store the event in our database for tracking
+    // Store the event in our database for tracking (with deduplication)
     const { error: dbError } = await supabase
       .from('conversion_events')
-      .insert({
+      .upsert({
+        event_id: conversionEvent.event_id, // Use event_id as unique constraint for deduplication
         event_type: eventType,
         facebook_event_name: conversionEvent.event_name,
         event_data: eventData,
-        lead_id: eventData.lead_id,
+        lead_id: eventData.lead_id || enrichedLeadData?.id,
         session_id: eventData.session_id,
         facebook_response: facebookResult,
         sent_at: new Date().toISOString(),
+      }, {
+        onConflict: 'event_id'
       });
 
     if (dbError) {
