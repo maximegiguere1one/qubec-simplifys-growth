@@ -74,6 +74,7 @@ interface QuestionOptionProps {
   touchTargetClass: string;
   animationClass: string;
   onSelect: (value: string) => void;
+  [key: string]: any; // Allow additional props like data attributes
 }
 
 export const QuestionOption = memo<QuestionOptionProps>(({ 
@@ -83,15 +84,20 @@ export const QuestionOption = memo<QuestionOptionProps>(({
   showFeedback, 
   touchTargetClass, 
   animationClass,
-  onSelect 
+  onSelect,
+  ...props
 }) => {
   return (
     <div 
+      {...props}
       className={`flex items-center space-x-3 p-3 sm:p-4 rounded-lg border transition-all duration-300 cursor-pointer ${touchTargetClass}
         ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-accent/50'}
         ${isCurrentSelection && showFeedback ? 'bg-green-50 border-green-400 scale-[1.02]' : ''}
         ${animationClass}`}
       onClick={() => onSelect(option.value)}
+      tabIndex={0}
+      role="radio"
+      aria-checked={isSelected}
     >
       <input 
         type="radio" 

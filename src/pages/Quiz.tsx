@@ -26,7 +26,7 @@ import { MidQuizEmailGate } from "@/components/quiz/MidQuizEmailGate";
 import { StickyMobileCTA } from "@/components/quiz/StickyMobileCTA";
 
 const Quiz = () => {
-  const [currentStep, setCurrentStep] = useState(1); // Start directly at quiz, no initial contact capture
+  const [currentStep, setCurrentStep] = useState(0); // Start at step 0 to show hero first
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [contactInfo, setContactInfo] = useState({ name: "", email: "", phone: "" });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
@@ -133,13 +133,13 @@ const Quiz = () => {
   usePageTracking();
   
   useEffect(() => {
-    // Start quiz session immediately since we start with questions
-    if (!quizSessionStarted) {
+    // Start quiz session only when user actually starts the quiz (step >= 1)
+    if (currentStep >= 1 && !quizSessionStarted) {
       startQuizSession();
       setQuizSessionStarted(true);
       resetTimer();
     }
-  }, [quizSessionStarted, resetTimer]);
+  }, [currentStep, quizSessionStarted, resetTimer]);
   
   // Track question views for analytics
   useEffect(() => {
@@ -333,6 +333,27 @@ const Quiz = () => {
     }
   };
 
+  // Ref for scrolling to first question
+  const firstQuestionRef = useRef<HTMLDivElement>(null);
+
+  const handleStartQuiz = () => {
+    setCurrentStep(1);
+    
+    // Scroll to first question after state update
+    setTimeout(() => {
+      firstQuestionRef.current?.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      
+      // Focus first answer option for accessibility
+      setTimeout(() => {
+        const firstOption = document.querySelector('[data-question-option="0"]') as HTMLElement;
+        firstOption?.focus();
+      }, 300);
+    }, 100);
+  };
+
   const generateDiagnostic = (score: number, answers: Record<number, string>) => {
     // Get the main priority from first question (now question id 1)
     const firstAnswer = questions[0].options.find(opt => opt.value === answers[0]);
@@ -376,10 +397,10 @@ const Quiz = () => {
   return (
     <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12 pb-20 md:pb-12">
       <div className="container mx-auto container-mobile max-w-4xl">
-        {currentStep === 1 && (
+        {currentStep === 0 && (
           <>
             {/* Hero Section */}
-            <QuizHero onStartQuiz={() => setCurrentStep(1)} />
+            <QuizHero onStartQuiz={handleStartQuiz} />
             
             {/* Story-Offer Section - Desktop vs Mobile */}
             <div className="hidden md:block">
@@ -411,7 +432,7 @@ const Quiz = () => {
 
         {/* Question Card */}
         {currentStep >= 1 && currentStep <= totalSteps && (
-          <Card className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
+          <Card ref={firstQuestionRef} className="p-4 sm:p-6 md:p-8 shadow-card max-w-3xl mx-auto">
             <div className="mb-8">
               <div className="mb-4 sm:mb-6">
                 <p className="text-sm font-medium text-primary mb-2">
@@ -424,7 +445,7 @@ const Quiz = () => {
               </div>
 
               <div className="space-y-4">
-                {questions[currentQuestion].options.map((option) => (
+                {questions[currentQuestion].options.map((option, index) => (
                   <QuestionOption
                     key={option.value}
                     option={option}
@@ -434,6 +455,7 @@ const Quiz = () => {
                     touchTargetClass={touchTargetClass}
                     animationClass={animationClass}
                     onSelect={handleAnswerChange}
+                    data-question-option={index}
                   />
                 ))}
               </div>
