@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-/// <reference types="testing-library__jest-dom" />
 
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string;
