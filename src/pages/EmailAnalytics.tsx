@@ -220,24 +220,24 @@ export default function EmailAnalytics() {
                 />
               </div>
 
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value, page: 1 }))}>
+              <Select value={filters.status || "all"} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === "all" ? "" : value, page: 1 }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Statut" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
                   <SelectItem value="sent">Envoyé</SelectItem>
                   <SelectItem value="failed">Échoué</SelectItem>
                   <SelectItem value="pending">En attente</SelectItem>
                 </SelectContent>
               </Select>
 
-              <Select value={filters.email_type} onValueChange={(value) => setFilters(prev => ({ ...prev, email_type: value, page: 1 }))}>
+              <Select value={filters.email_type || "all-types"} onValueChange={(value) => setFilters(prev => ({ ...prev, email_type: value === "all-types" ? "" : value, page: 1 }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Type d'email" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les types</SelectItem>
+                  <SelectItem value="all-types">Tous les types</SelectItem>
                   <SelectItem value="welcome">Bienvenue</SelectItem>
                   <SelectItem value="quiz_confirmation">Confirmation Quiz</SelectItem>
                   <SelectItem value="nurture">Nurture</SelectItem>
@@ -297,8 +297,8 @@ export default function EmailAnalytics() {
                             <td className="p-2">
                               <div className="flex items-center gap-2">
                                 {getStatusBadge(log.status)}
-                                {opened && <Eye className="h-4 w-4 text-blue-500" title="Ouvert" />}
-                                {clicked && <MousePointer className="h-4 w-4 text-green-500" title="Cliqué" />}
+                                {opened && <Eye className="h-4 w-4 text-blue-500" />}
+                                {clicked && <MousePointer className="h-4 w-4 text-green-500" />}
                               </div>
                             </td>
                             <td className="p-2 text-sm text-muted-foreground">
