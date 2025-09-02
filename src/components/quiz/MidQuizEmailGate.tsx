@@ -82,11 +82,13 @@ export const MidQuizEmailGate = ({ onSubmit, isSubmitting }: MidQuizEmailGatePro
           variant="cta"
           onClick={handleSubmit}
           disabled={!email.trim() || !name.trim() || isSubmitting}
-          className="w-full h-14 text-lg font-semibold mt-6"
+          className="w-full h-auto py-4 text-base sm:text-lg font-semibold mt-6 leading-tight"
         >
-          <Mail className="w-5 h-5 mr-2" />
-          {isSubmitting ? "Un instant..." : "Débloquer mes résultats et continuer"}
-          <ArrowRight className="w-5 h-5 ml-2" />
+          <Mail className="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" />
+          <span className="text-center flex-1 px-1">
+            {isSubmitting ? "Un instant..." : "Débloquer mes résultats et continuer"}
+          </span>
+          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
         </Button>
         
         <p className="text-xs text-center text-muted-foreground mt-3">
