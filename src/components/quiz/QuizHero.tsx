@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 
 interface QuizHeroProps {
   onStartQuiz: () => void;
 }
 
 export const QuizHero = ({ onStartQuiz }: QuizHeroProps) => {
+  const { mobileButtonClass, mobileContainerClass } = useMobileOptimized();
+  
   return (
-    <div className="text-center mb-8 sm:mb-12">
+    <div className={`text-center mb-8 sm:mb-12 ${mobileContainerClass}`}>
       {/* Hero Title */}
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
         Découvre en 60 secondes pourquoi tu perds des heures chaque semaine…
@@ -25,10 +28,10 @@ export const QuizHero = ({ onStartQuiz }: QuizHeroProps) => {
       <Button
         variant="cta-large"
         onClick={onStartQuiz}
-        className="text-lg sm:text-xl px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-subtle"
+        className={`w-full sm:w-auto max-w-full mx-auto block text-base sm:text-lg px-5 py-4 sm:px-8 sm:py-6 h-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-100 md:hover:scale-105 ${mobileButtonClass}`}
       >
         👉 Commencer le Quiz Gratuit
-        <ArrowRight className="w-6 h-6 ml-3" />
+        <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" />
       </Button>
     </div>
   );
