@@ -18,6 +18,12 @@ export const MidQuizEmailGate = ({ onSubmit, isSubmitting }: MidQuizEmailGatePro
     await onSubmit(email, name);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
     <Card className="p-6 sm:p-8 border-2 border-primary/30 bg-gradient-to-br from-primary/10 to-accent/5 max-w-2xl mx-auto">
       <div className="text-center mb-6">
@@ -53,6 +59,7 @@ export const MidQuizEmailGate = ({ onSubmit, isSubmitting }: MidQuizEmailGatePro
             placeholder="Ton prénom"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="text-base h-12"
             autoComplete="given-name"
           />
@@ -64,6 +71,7 @@ export const MidQuizEmailGate = ({ onSubmit, isSubmitting }: MidQuizEmailGatePro
             placeholder="Ton adresse email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="text-base h-12"
             autoComplete="email"
             inputMode="email"
@@ -77,9 +85,13 @@ export const MidQuizEmailGate = ({ onSubmit, isSubmitting }: MidQuizEmailGatePro
           className="w-full h-14 text-lg font-semibold mt-6"
         >
           <Mail className="w-5 h-5 mr-2" />
-          {isSubmitting ? "Un instant..." : "Voir mes résultats personnalisés"}
+          {isSubmitting ? "Un instant..." : "Débloquer mes résultats et continuer"}
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
+        
+        <p className="text-xs text-center text-muted-foreground mt-3">
+          Tu pourras continuer le quiz tout de suite après. Pas de spam.
+        </p>
       </div>
       
       <p className="text-xs text-muted-foreground text-center mt-4">

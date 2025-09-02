@@ -58,9 +58,12 @@ const Quiz = () => {
   const progress = useMemo(() => (currentStep / totalSteps) * 100, [currentStep, totalSteps]);
   const currentQuestion = useMemo(() => currentStep - 1, [currentStep]);
   
-  // Email gate trigger (after question 2)
+  // Email gate configuration - adjust this to change when the gate appears
+  const EMAIL_GATE_STEP = 3; // After question 2, shows on step 3
+  
+  // Email gate trigger 
   const shouldShowEmailGate = useMemo(() => 
-    currentStep === 3 && !hasPassedGate && !contactInfo.email, 
+    currentStep === EMAIL_GATE_STEP && !hasPassedGate && !contactInfo.email, 
     [currentStep, hasPassedGate, contactInfo.email]
   );
   
