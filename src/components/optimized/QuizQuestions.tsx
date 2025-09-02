@@ -4,58 +4,63 @@ import React, { memo } from 'react';
 export const QUIZ_QUESTIONS = [
   {
     id: 1,
-    question: "En ce moment, qu'est-ce qui vous fait perdre le plus de temps dans votre quotidien d'entrepreneur ?",
-    subtitle: "Question 1 sur 5 - Identifions votre plus gros défi",
+    emoji: "😤",
+    question: "En ce moment, qu'est-ce qui te fait perdre le plus de temps dans ton quotidien d'entrepreneur ?",
+    subtitle: "Question 1 sur 5 - Identifions ton plus gros défi",
     options: [
-      { value: "inventory", label: "Compter mon inventaire et suivre mes stocks", score: 25, priority: "Gestion d'inventaire" },
-      { value: "billing", label: "Faire mes factures et tenir mes livres à jour", score: 20, priority: "Facturation" },
-      { value: "hr", label: "Gérer les horaires et calculer la paie", score: 15, priority: "Gestion des employés" },
-      { value: "projects", label: "Suivre mes projets et respecter mes échéances", score: 20, priority: "Suivi de projets" },
-      { value: "crm", label: "Tenir à jour mes contacts et suivre mes clients", score: 25, priority: "Gestion clients" }
+      { value: "inventory", emoji: "📦", label: "Compter mon inventaire et suivre mes stocks", score: 25, priority: "Gestion d'inventaire" },
+      { value: "billing", emoji: "💰", label: "Faire mes factures et tenir mes livres à jour", score: 20, priority: "Facturation" },
+      { value: "hr", emoji: "👥", label: "Gérer les horaires et calculer la paie", score: 15, priority: "Gestion des employés" },
+      { value: "projects", emoji: "📋", label: "Suivre mes projets et respecter mes échéances", score: 20, priority: "Suivi de projets" },
+      { value: "crm", emoji: "📞", label: "Tenir à jour mes contacts et suivre mes clients", score: 25, priority: "Gestion clients" }
     ]
   },
   {
     id: 2,
-    question: "Quand vous pensez aux heures que vous passez dans la paperasse chaque semaine, que ressentez-vous ?",
+    emoji: "⏰",
+    question: "Quand tu penses aux heures que tu passes dans la paperasse chaque semaine, que ressens-tu ?",
     subtitle: "Question 2 sur 5 - Quantifions le temps perdu",
     options: [
-      { value: "low", label: "Moins de 5 heures - c'est gérable", score: 5 },
-      { value: "medium", label: "5 à 15 heures - ça commence à peser", score: 15 },
-      { value: "high", label: "15 à 25 heures - c'est vraiment trop", score: 25 },
-      { value: "very_high", label: "Plus de 25 heures - j'en ai assez !", score: 35 }
+      { value: "low", emoji: "😊", label: "Moins de 5 heures - c'est gérable", score: 5 },
+      { value: "medium", emoji: "😐", label: "5 à 15 heures - ça commence à peser", score: 15 },
+      { value: "high", emoji: "😩", label: "15 à 25 heures - c'est vraiment trop", score: 25 },
+      { value: "very_high", emoji: "🤬", label: "Plus de 25 heures - j'en ai assez !", score: 35 }
     ]
   },
   {
     id: 3,
-    question: "Avez-vous déjà pensé : 'Si seulement il existait un outil qui faisait exactement ce dont j'ai besoin' ?",
-    subtitle: "Question 3 sur 5 - Évaluons votre besoin de solution personnalisée",
+    emoji: "💭",
+    question: "As-tu déjà pensé : 'Si seulement il existait un outil qui faisait exactement ce dont j'ai besoin' ?",
+    subtitle: "Question 3 sur 5 - Évaluons ton besoin de solution personnalisée",
     options: [
-      { value: "never", label: "Non, mes outils actuels me conviennent", score: 1 },
-      { value: "sometimes", label: "Oui, de temps en temps", score: 2 },
-      { value: "often", label: "Oui, assez souvent même !", score: 3 },
-      { value: "constantly", label: "Tout le temps ! C'est frustrant", score: 4 }
+      { value: "never", emoji: "👌", label: "Non, mes outils actuels me conviennent", score: 1 },
+      { value: "sometimes", emoji: "🤔", label: "Oui, de temps en temps", score: 2 },
+      { value: "often", emoji: "😤", label: "Oui, assez souvent même !", score: 3 },
+      { value: "constantly", emoji: "😡", label: "Tout le temps ! C'est frustrant", score: 4 }
     ]
   },
   {
     id: 4,
-    question: "Si quelqu'un pouvait créer pour vous l'outil parfait adapté à votre entreprise, comment réagiriez-vous ?",
-    subtitle: "Question 4 sur 5 - Mesurons votre intérêt pour une solution personnalisée",
+    emoji: "🎯",
+    question: "Si quelqu'un pouvait créer pour toi l'outil parfait adapté à ton entreprise, comment réagirais-tu ?",
+    subtitle: "Question 4 sur 5 - Mesurons ton intérêt pour une solution personnalisée",
     options: [
-      { value: "skeptical", label: "Je serais prudent, ça semble trop beau", score: 1 },
-      { value: "interested", label: "Ça m'intéresserait vraiment", score: 2 },
-      { value: "excited", label: "Je serais très enthousiaste !", score: 3 },
-      { value: "dream", label: "Ce serait un rêve qui se réalise !", score: 4 }
+      { value: "skeptical", emoji: "🤨", label: "Je serais prudent, ça semble trop beau", score: 1 },
+      { value: "interested", emoji: "🙂", label: "Ça m'intéresserait vraiment", score: 2 },
+      { value: "excited", emoji: "🤩", label: "Je serais très enthousiaste !", score: 3 },
+      { value: "dream", emoji: "🚀", label: "Ce serait un rêve qui se réalise !", score: 4 }
     ]
   },
   {
     id: 5,
-    question: "Quel type de solution transformerait le plus votre façon de travailler ?",
-    subtitle: "Question 5 sur 5 - Définissons votre solution idéale",
+    emoji: "✨",
+    question: "Quel type de solution transformerait le plus ta façon de travailler ?",
+    subtitle: "Question 5 sur 5 - Définissons ta solution idéale",
     options: [
-      { value: "automation", label: "Que tout se fasse automatiquement", score: 2, type: "Système d'automatisation" },
-      { value: "integration", label: "Avoir tous mes outils dans un seul endroit", score: 3, type: "Plateforme intégrée" },
-      { value: "custom", label: "Quelque chose conçu spécifiquement pour moi", score: 4, type: "Solution sur mesure complète" },
-      { value: "mobile", label: "Pouvoir tout gérer depuis mon téléphone", score: 3, type: "Application mobile personnalisée" }
+      { value: "automation", emoji: "🤖", label: "Que tout se fasse automatiquement", score: 2, type: "Système d'automatisation" },
+      { value: "integration", emoji: "🔗", label: "Avoir tous mes outils dans un seul endroit", score: 3, type: "Plateforme intégrée" },
+      { value: "custom", emoji: "🎨", label: "Quelque chose conçu spécifiquement pour moi", score: 4, type: "Solution sur mesure complète" },
+      { value: "mobile", emoji: "📱", label: "Pouvoir tout gérer depuis mon téléphone", score: 3, type: "Application mobile personnalisée" }
     ]
   }
 ] as const;
@@ -103,8 +108,9 @@ export const QuestionOption = memo<QuestionOptionProps>(({
       </div>
       <label 
         htmlFor={option.value} 
-        className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed"
+        className="text-base sm:text-lg cursor-pointer flex-1 leading-relaxed flex items-center gap-2"
       >
+        {option.emoji && <span className="text-xl">{option.emoji}</span>}
         {option.label}
       </label>
       {isCurrentSelection && showFeedback && (

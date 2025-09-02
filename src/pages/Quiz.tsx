@@ -18,6 +18,10 @@ import { useOptimizedTimer } from "@/hooks/useOptimizedTimer";
 import { QUIZ_QUESTIONS, QuestionOption } from "@/components/optimized/QuizQuestions";
 import { OptimizedQuizProgress } from "@/components/optimized/OptimizedQuizProgress";
 import { getCachedABVariant, quizAnalytics } from "@/lib/analytics/optimized";
+import { QuizHero } from "@/components/quiz/QuizHero";
+import { QuizStoryOffer } from "@/components/quiz/QuizStoryOffer";
+import { QuizScarcityCounter } from "@/components/quiz/QuizScarcityCounter";
+import { QuizPreFrame } from "@/components/quiz/QuizPreFrame";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // 0 = contact capture, 1+ = quiz questions
@@ -310,29 +314,52 @@ const Quiz = () => {
     } 
   };
 
+  const scrollToForm = () => {
+    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-[100dvh] bg-gradient-background py-6 sm:py-8 md:py-12">
       <div className="container mx-auto container-mobile max-w-4xl">
+        {currentStep === 0 && (
+          <>
+            {/* Hero Section */}
+            <QuizHero onStartQuiz={scrollToForm} />
+            
+            {/* Story-Offer Section */}
+            <QuizStoryOffer />
+            
+            {/* Scarcity Counter */}
+            <QuizScarcityCounter />
+          </>
+        )}
+
+        {currentStep === 1 && (
+          <QuizPreFrame />
+        )}
+        
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
           {currentStep === 0 && (
             <div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 leading-tight">
-                Découvrons ensemble votre potentiel d'économie de temps
-              </h1>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 leading-tight">
+                Commençons par faire connaissance
+              </h2>
               <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8">
-                Aidez-nous à comprendre votre réalité d'entrepreneur
+                Pour te donner des recommandations ultra-personnalisées
               </p>
             </div>
           )}
           
-          {/* Optimized Progress Bar with A/B test */}
-          <OptimizedQuizProgress 
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            variant={progressVariant}
-            timeSpent={timeSpent}
-          />
+          {currentStep > 0 && (
+            /* Optimized Progress Bar with A/B test */
+            <OptimizedQuizProgress 
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              variant={progressVariant}
+              timeSpent={timeSpent}
+            />
+          )}
         </div>
 
         {/* Contact Capture or Question Card */}
@@ -403,7 +430,8 @@ const Quiz = () => {
                 <p className="text-sm font-medium text-primary mb-2">
                   {questions[currentQuestion].subtitle}
                 </p>
-                <h2 className="text-responsive-lg font-bold leading-relaxed">
+                <h2 className="text-responsive-lg font-bold leading-relaxed flex items-center gap-3">
+                  <span className="text-3xl">{questions[currentQuestion].emoji}</span>
                   {questions[currentQuestion].question}
                 </h2>
               </div>
