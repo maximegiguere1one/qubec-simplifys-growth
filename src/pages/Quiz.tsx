@@ -152,6 +152,8 @@ const Quiz = () => {
     return value;
   };
 
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+
   const handleEmailGateSubmit = async (email: string, name: string) => {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -186,10 +188,27 @@ const Quiz = () => {
         question_number: currentStep
       });
 
-      toast({
-        title: "Parfait !",
-        description: "Continue le quiz pour découvrir tes résultats personnalisés.",
-      });
+      // Show success banner for 4s, then auto-advance
+      setShowSuccessBanner(true);
+      setTimeout(() => {
+        setShowSuccessBanner(false);
+        setCurrentStep(currentStep + 1);
+        resetTimer();
+        
+        // Smooth scroll to next question and focus
+        setTimeout(() => {
+          firstQuestionRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Focus first answer option
+          setTimeout(() => {
+            const firstOption = document.querySelector('[data-question-option="0"]') as HTMLElement;
+            firstOption?.focus();
+          }, 300);
+        }, 100);
+      }, 4000);
 
     } catch (error) {
       console.error('Email gate submission error:', error);
@@ -294,67 +313,48 @@ const Quiz = () => {
         contactInfo 
       }));
 
-      // Send confirmation email asynchronously
+      // Send confirmation email in background and redirect
       const leadId = getLeadId();
+      let emailSent = false;
+      
+      // Try to send email, but don't wait for it
       if (leadId) {
-        try {
-          await sendQuizConfirmationEmail(
-            leadId,
-            totalScore,
-            totalTimeSpent,
-            answers,
-            diagnosticMessage,
-            contactInfo
-          );
-          
-          // Show success toast with action to continue to VSL
-          toast({
-            title: "Analyse envoyée par courriel ✅",
-            description: "Votre analyse détaillée vous attend dans votre boîte de réception.",
-            action: (
-              <ToastAction 
-                altText="Voir maintenant"
-                onClick={() => navigate("/vsl")}
-              >
-                Voir maintenant
-              </ToastAction>
-            ),
-          });
-          
+        sendQuizConfirmationEmail(
+          leadId,
+          totalScore,
+          totalTimeSpent,
+          answers,
+          diagnosticMessage,
+          contactInfo
+        ).then(() => {
+          emailSent = true;
           console.log("Quiz confirmation email sent successfully");
-        } catch (error) {
+        }).catch((error) => {
           console.error("Failed to send confirmation email:", error);
-          
-          // Show error toast with action to continue anyway
-          toast({
-            title: "Erreur d'envoi",
-            description: "Problème technique, mais vos résultats sont sauvegardés.",
-            variant: "destructive",
-            action: (
-              <ToastAction 
-                altText="Continuer"
-                onClick={() => navigate("/vsl")}
-              >
-                Continuer
-              </ToastAction>
-            ),
-          });
-        }
-      } else {
-        // Fallback toast if no leadId
-        toast({
-          title: "Quiz terminé !",
-          description: "Découvrez votre stratégie personnalisée maintenant.",
-          action: (
-            <ToastAction 
-              altText="Voir maintenant"
-              onClick={() => navigate("/vsl")}
-            >
-              Voir maintenant
-            </ToastAction>
-          ),
         });
       }
+      
+      // Auto-redirect to VSL after 1 second with counter
+      let countdown = 1;
+      const countdownInterval = setInterval(() => {
+        toast({
+          title: `Redirection dans ${countdown}s...`,
+          description: "Préparation de votre stratégie personnalisée",
+        });
+        countdown--;
+        
+        if (countdown < 0) {
+          clearInterval(countdownInterval);
+          navigate("/vsl", { 
+            state: { 
+              fromQuiz: true, 
+              emailSent, 
+              userEmail: contactInfo.email,
+              diagnostic: diagnosticMessage 
+            } 
+          });
+        }
+      }, 1000);
     }
   };
 
@@ -460,6 +460,21 @@ const Quiz = () => {
             />
           )}
         </div>
+
+        {/* Success Banner */}
+        {showSuccessBanner && (
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+            <div className="bg-primary text-primary-foreground px-6 py-4 rounded-lg shadow-lg border border-primary/20">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5" />
+                <div>
+                  <p className="font-semibold">Parfait ! Récap envoyé...</p>
+                  <p className="text-sm opacity-90">Continue pour tes résultats personnalisés</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Question Card */}
         {currentStep >= 1 && currentStep <= totalSteps && (

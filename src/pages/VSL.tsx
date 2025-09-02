@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Zap } from "lucide-react";
@@ -28,7 +28,9 @@ const VSL = () => {
   const [quizResults, setQuizResults] = useState<any>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [showStickyButton, setShowStickyButton] = useState(false);
+  const [showVSLBanner, setShowVSLBanner] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     getPersonalizedVSL
   } = usePersonalizedMessaging();
@@ -74,6 +76,12 @@ const VSL = () => {
       setQuizResults(JSON.parse(results));
     }
 
+    // Show VSL banner if coming from quiz
+    if (location.state?.fromQuiz) {
+      setShowVSLBanner(true);
+      setTimeout(() => setShowVSLBanner(false), 8000);
+    }
+
     // Show survey after 60 seconds
     const timer = setTimeout(() => setShowSurvey(true), 60000);
 
@@ -116,6 +124,31 @@ const VSL = () => {
     }
   };
   return <div className="min-h-[100dvh] bg-gradient-background">
+      {/* VSL Success Banner */}
+      {showVSLBanner && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full mx-4">
+          <div className="bg-primary text-primary-foreground px-6 py-4 rounded-lg shadow-lg border border-primary/20">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5" />
+                <div>
+                  <p className="font-semibold">Analyse envoyée à {location.state?.userEmail} ✅</p>
+                  <p className="text-sm opacity-90">Lance la vidéo pour ta stratégie sur mesure</p>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-white/10 border-white/20 hover:bg-white/20 text-white text-xs px-3 py-1"
+                onClick={() => setShowVSLBanner(false)}
+              >
+                ✕
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-secondary/30 border-b safe-area-inset-top">
         
