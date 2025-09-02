@@ -4,9 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
-import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { EnhancedOverviewDashboard } from '@/components/analytics/EnhancedOverviewDashboard';
 import { ExperimentTracker } from '@/components/ExperimentTracker';
 import { LeadsManagement } from '@/components/admin/LeadsManagement';
+import { GlobalFilters, GlobalFiltersState } from '@/components/dashboard/GlobalFilters';
+import { PipelineHealthPanel } from '@/components/dashboard/PipelineHealthPanel';
 import { AdminAuth } from '@/components/admin/AdminAuth';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
@@ -31,6 +33,15 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Global filters state
+  const [globalFilters, setGlobalFilters] = useState<GlobalFiltersState>({
+    dateRange: 30,
+    timezone: 'America/Toronto',
+    comparison: true,
+    autoRefresh: false
+  });
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     // Check current auth state
@@ -84,6 +95,21 @@ const Dashboard = () => {
       console.error('Error signing out:', error);
     }
   };
+
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!globalFilters.autoRefresh) return;
+    
+    const interval = setInterval(() => {
+      handleRefresh();
+    }, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [globalFilters.autoRefresh]);
 
   if (loading) {
     return (
@@ -147,6 +173,19 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Global Filters */}
+        <GlobalFilters 
+          filters={globalFilters}
+          onFiltersChange={setGlobalFilters}
+          onRefresh={handleRefresh}
+          isLoading={loading}
+        />
+
+        {/* Pipeline Health Panel (visible on all tabs) */}
+        <div className="mb-6">
+          <PipelineHealthPanel key={refreshTrigger} />
+        </div>
+
         {/* Main Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
@@ -173,7 +212,7 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <AnalyticsDashboard />
+            <EnhancedOverviewDashboard key={`${refreshTrigger}-${globalFilters.dateRange}-${globalFilters.comparison}`} />
           </TabsContent>
 
           <TabsContent value="advanced">

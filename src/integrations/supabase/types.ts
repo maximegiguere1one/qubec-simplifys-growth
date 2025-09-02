@@ -902,6 +902,18 @@ export type Database = {
           visitors: number
         }[]
       }
+      get_compact_overview_metrics: {
+        Args: { days_back?: number }
+        Returns: {
+          avg_quiz_score: number
+          conversion_rate: number
+          health_score: number
+          total_bookings: number
+          total_leads: number
+          total_quiz_completions: number
+          total_vsl_views: number
+        }[]
+      }
       get_dashboard_metrics: {
         Args: { days_back?: number }
         Returns: {
@@ -1048,6 +1060,8 @@ export type Database = {
         | "performance_metric"
         | "guarantee_view"
         | "guarantee_cta_click"
+        | "vsl_pause"
+        | "vsl_complete"
       quiz_session_status: "started" | "completed" | "abandoned"
     }
     CompositeTypes: {
@@ -1199,6 +1213,8 @@ export const Constants = {
         "performance_metric",
         "guarantee_view",
         "guarantee_cta_click",
+        "vsl_pause",
+        "vsl_complete",
       ],
       quiz_session_status: ["started", "completed", "abandoned"],
     },
