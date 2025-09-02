@@ -19,6 +19,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Agents = lazy(() => import("./pages/Agents"));
 const EmailSettings = lazy(() => import("./pages/EmailSettings"));
 const EmailDiagnostic = lazy(() => import("./pages/EmailDiagnostic"));
+const EmailAnalytics = lazy(() => import("./pages/EmailAnalytics"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const AppContent = () => {
           <Route path="/agents" element={<Agents />} />
           <Route path="/email-settings" element={<EmailSettings />} />
           <Route path="/email-diagnostic" element={<EmailDiagnostic />} />
+          <Route path="/email-analytics" element={<EmailAnalytics />} />
           <Route path="/index" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
