@@ -9,21 +9,11 @@ const sendToConversionsAPI = async (
   eventId?: string
 ) => {
   try {
-    // Get lead data for enhanced tracking
-    let leadData = null;
-    if (leadId) {
-      const { data } = await supabase
-        .from('leads')
-        .select('email, name, phone')
-        .eq('id', leadId)
-        .single();
-      leadData = data;
-    }
-
     // Get Facebook attribution cookies
     const fbParams = getFacebookParams();
 
     // Call our Edge Function to send to Facebook Conversions API
+    // Lead data enrichment is handled in the Edge Function using service role
     const response = await supabase.functions.invoke('facebook-conversions-api', {
       body: {
         eventType,
@@ -33,7 +23,7 @@ const sendToConversionsAPI = async (
           fbc: fbParams.fbc,
           fbp: fbParams.fbp,
         },
-        leadData,
+        leadData: leadId ? { id: leadId } : null, // Pass leadId for server-side enrichment
       }
     });
 

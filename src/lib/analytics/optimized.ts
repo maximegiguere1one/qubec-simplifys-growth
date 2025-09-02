@@ -26,7 +26,8 @@ class QuizAnalyticsManager {
   trackQuestionView(questionIndex: number) {
     if (!this.analytics.questionViews.has(questionIndex)) {
       this.analytics.questionViews.add(questionIndex);
-      throttledTrackEvent('quiz_question_view', {
+      throttledTrackEvent('quiz_start', {
+        event_type: 'question_view',
         question_index: questionIndex,
         total_viewed: this.analytics.questionViews.size
       });
@@ -50,7 +51,8 @@ class QuizAnalyticsManager {
   trackABTestAssignment(testName: string, variant: string) {
     if (!this.analytics.abTests.has(testName)) {
       this.analytics.abTests.set(testName, variant);
-      throttledTrackEvent('ab_test_assignment', {
+      throttledTrackEvent('quiz_start', {
+        event_type: 'ab_test_assignment',
         test_name: testName,
         variant,
         user_segment: this.getUserSegment()

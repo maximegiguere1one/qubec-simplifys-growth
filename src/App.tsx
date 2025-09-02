@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useNavigationSetup } from "@/lib/navigation";
 import { useWebVitals } from "@/hooks/useWebVitals";
 import { CalEmbedProvider } from "@/lib/cal";
-import { ConversionTracker } from "@/components/enhanced/ConversionTracker";
+
 
 // Route-level code splitting for better performance - ALL pages lazy loaded now
 const Index = lazy(() => import("./pages/Index"));
@@ -47,7 +47,6 @@ const AppContent = () => {
     <>
       <Toaster />
       <Sonner />
-      <ConversionTracker /> {/* Global conversion tracking */}
       <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route path="/" element={<Landing />} />

@@ -29,7 +29,7 @@ class AnalyticsQueue {
       this.isOnline = false;
     });
 
-    // Use sendBeacon on page unload to prevent data loss
+  // Use sendBeacon on page unload to prevent data loss
     window.addEventListener('beforeunload', () => {
       this.flushWithBeacon();
     });
@@ -53,7 +53,10 @@ class AnalyticsQueue {
   public add(eventType: string, eventData: Record<string, any> = {}, leadId?: string | null) {
     this.queue.push({
       eventType,
-      eventData,
+      eventData: {
+        ...eventData,
+        page_url: window.location.href, // Capture page_url at event creation time
+      },
       leadId,
       timestamp: Date.now(),
     });
@@ -79,7 +82,7 @@ class AnalyticsQueue {
             event_data: {
               ...event.eventData,
               referrer: document.referrer,
-              page_url: window.location.href
+              // page_url already captured at event creation time
             },
             lead_id: event.leadId,
             session_id: event.eventData.session_id || '',
@@ -116,7 +119,7 @@ class AnalyticsQueue {
           event_data: {
             ...event.eventData,
             referrer: document.referrer,
-            page_url: window.location.href
+            // page_url already captured at event creation time
           },
           lead_id: event.leadId,
           session_id: event.eventData.session_id || '',

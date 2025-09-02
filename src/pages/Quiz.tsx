@@ -83,18 +83,37 @@ const Quiz = () => {
   // Track start time for timing calculations
   const [quizStartTime] = useState(Date.now());
   
-  // Track quiz abandonment (optimized)
+  // Track quiz abandonment (optimized with Beacon API)
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (currentStep > 0 && currentStep < questions.length && !exitIntentShown) {
-        quizAnalytics.flush();
+        // Use Beacon API for reliable tracking on unload
+        if (navigator.sendBeacon) {
+          const url = `https://lbwjesrgernvjiorktia.supabase.co/functions/v1/analytics-batch`;
+          const payload = JSON.stringify({
+            events: [{
+              event_type: 'quiz_question_answer',
+              event_data: {
+                event_type: 'quiz_abandoned',
+                question_number: currentStep,
+                time_spent: Date.now() - quizStartTime,
+                session_id: localStorage.getItem('session_id'),
+                page_url: window.location.href,
+              },
+              lead_id: getLeadId(),
+              session_id: localStorage.getItem('session_id'),
+              created_at: new Date().toISOString(),
+            }]
+          });
+          navigator.sendBeacon(url, payload);
+        }
         setExitIntentShown(true);
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [currentStep, questions.length, exitIntentShown]);
+  }, [currentStep, questions.length, exitIntentShown, quizStartTime]);
 
   // Auto-redirect to VSL after completion message
   useEffect(() => {
@@ -436,7 +455,7 @@ const Quiz = () => {
                 className={`flex items-center gap-2 px-6 sm:px-8 btn-touch ${mobileButtonClass} ${animationClass} ${isAdvancingRef.current ? 'opacity-50' : ''}`}
                 style={{ display: showFeedback ? 'none' : 'flex' }}
               >
-                {currentStep === totalSteps - 1 ? "Voir mes résultats" : "Suivant"}
+                {currentStep === totalSteps ? "Voir mes résultats" : "Suivant"}
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
