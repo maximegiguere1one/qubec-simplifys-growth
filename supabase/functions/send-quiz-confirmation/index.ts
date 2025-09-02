@@ -96,7 +96,7 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
         <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 25px; border-radius: 10px; text-align: center; margin: 30px 0;">
           <h3 style="margin: 0 0 15px; font-size: 20px;">⚡ ${urgencyLevel}</h3>
           <p style="margin: 0 0 20px; font-size: 16px;">Découvrez comment nous pourrions transformer votre entreprise en 30 jours :</p>
-          <a href="https://lbwjesrgernvjiorktia.lovableproject.com/vsl" style="display: inline-block; background: white; color: #ee5a24; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">🎥 Voir ma solution personnalisée</a>
+          <a href="https://systeme.agence1.ca/vsl" style="display: inline-block; background: white; color: #ee5a24; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">🎥 Voir ma solution personnalisée</a>
         </div>
 
         <!-- Guarantee Block -->
@@ -139,7 +139,7 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
               Clique ci-dessous pour voir ce que ça peut changer dans ta business.
             </p>
           </div>
-          <a href="https://lbwjesrgernvjiorktia.lovableproject.com/vsl" 
+          <a href="https://systeme.agence1.ca/vsl" 
              style="display: inline-block; background: #3b82f6; color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">
             📞 Voir la vidéo complète
           </a>
@@ -161,7 +161,7 @@ const generatePersonalizedEmail = (data: QuizResultsRequest) => {
         </div>
 
         <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 14px;">
-          <p>Cet email vous a été envoyé car vous avez complété notre analyse gratuite sur <a href="https://lbwjesrgernvjiorktia.lovableproject.com" style="color: #667eea;">One Système</a></p>
+          <p>Cet email vous a été envoyé car vous avez complété notre analyse gratuite sur <a href="https://agenceone.ca/" style="color: #667eea;">One Système</a></p>
           <p style="margin-top: 10px;">One Système - Solutions sur mesure pour entrepreneurs québécois</p>
         </div>
       </body>

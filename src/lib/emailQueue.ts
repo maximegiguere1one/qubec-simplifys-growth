@@ -125,6 +125,9 @@ const generateEmailHTML = (template: EmailTemplate, leadData: LeadData): string 
     content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
   });
 
+  // Normalize URLs to ensure absolute links
+  content = normalizeEmailUrls(content);
+
   // Wrap in professional HTML template
   return `
     <!DOCTYPE html>
@@ -170,7 +173,7 @@ const generateEmailHTML = (template: EmailTemplate, leadData: LeadData): string 
         <p>One Système - Solutions d'automatisation pour entreprises québécoises</p>
         <p>
           <a href="#" style="color: #6B7280;">Se désabonner</a> | 
-          <a href="#" style="color: #6B7280;">Politique de confidentialité</a>
+          <a href="https://agenceone.ca/" style="color: #6B7280;">Politique de confidentialité</a>
         </p>
       </div>
 
@@ -219,6 +222,16 @@ const getDynamicValues = (segment: string, industry?: string, businessSize?: str
   }
 
   return values;
+};
+
+// Normalize URLs in email content to ensure absolute links
+const normalizeEmailUrls = (content: string): string => {
+  return content
+    .replace(/href="\/vsl"/g, 'href="https://systeme.agence1.ca/vsl"')
+    .replace(/href="\/quiz"/g, 'href="https://systeme.agence1.ca/quiz"')
+    .replace(/href="\/"/g, 'href="https://systeme.agence1.ca/"')
+    .replace(/src="\/images\//g, 'src="https://systeme.agence1.ca/images/')
+    .replace(/href="\/([^"]+)"/g, 'href="https://systeme.agence1.ca/$1"');
 };
 
 // Check email queue status

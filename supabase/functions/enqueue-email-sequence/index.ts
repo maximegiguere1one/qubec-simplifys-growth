@@ -345,7 +345,7 @@ serve(async (req) => {
     // Get the appropriate email sequence
     const sequence = emailSequences[segment] || emailSequences.cold
     const bookingUrl = 'https://cal.com/maxime-giguere-umemh7/reservez-votre-consultation-gratuite'
-    const vslUrl = 'https://lbwjesrgernvjiorktia.supabase.co/vsl'
+    const vslUrl = 'https://systeme.agence1.ca/vsl'
     const resourcesUrl = 'https://lbwjesrgernvjiorktia.supabase.co/agents'
     const quizUrl = 'https://lbwjesrgernvjiorktia.supabase.co/quiz'
 
