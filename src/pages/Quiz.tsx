@@ -24,7 +24,7 @@ import { QuizPreFrame } from "@/components/quiz/QuizPreFrame";
 import { OptimizedProgress } from "@/components/quiz/OptimizedProgress";
 import { MidQuizEmailGate } from "@/components/quiz/MidQuizEmailGate";
 import { StickyMobileCTA } from "@/components/quiz/StickyMobileCTA";
-import { QuizCompletionDialog } from "@/components/QuizCompletionDialog";
+import { ToastAction } from "@/components/ui/toast";
 
 const Quiz = () => {
   const [currentStep, setCurrentStep] = useState(0); // Start at step 0 to show hero first
@@ -35,12 +35,9 @@ const Quiz = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [showFeedback, setShowFeedback] = useState(false);
   const [quizSessionStarted, setQuizSessionStarted] = useState(false);
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [currentDiagnostic, setCurrentDiagnostic] = useState("");
   const [showEmailGate, setShowEmailGate] = useState(false);
   const [hasPassedGate, setHasPassedGate] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [emailError, setEmailError] = useState<string>();
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -297,9 +294,6 @@ const Quiz = () => {
         contactInfo 
       }));
 
-      // Show completion dialog
-      setShowCompletionDialog(true);
-
       // Send confirmation email asynchronously
       const leadId = getLeadId();
       if (leadId) {
@@ -312,12 +306,54 @@ const Quiz = () => {
             diagnosticMessage,
             contactInfo
           );
-          setEmailSent(true);
+          
+          // Show success toast with action to continue to VSL
+          toast({
+            title: "Analyse envoyée par courriel ✅",
+            description: "Votre analyse détaillée vous attend dans votre boîte de réception.",
+            action: (
+              <ToastAction 
+                altText="Voir maintenant"
+                onClick={() => navigate("/vsl")}
+              >
+                Voir maintenant
+              </ToastAction>
+            ),
+          });
+          
           console.log("Quiz confirmation email sent successfully");
         } catch (error) {
           console.error("Failed to send confirmation email:", error);
-          setEmailError("Erreur lors de l'envoi de l'email");
+          
+          // Show error toast with action to continue anyway
+          toast({
+            title: "Erreur d'envoi",
+            description: "Problème technique, mais vos résultats sont sauvegardés.",
+            variant: "destructive",
+            action: (
+              <ToastAction 
+                altText="Continuer"
+                onClick={() => navigate("/vsl")}
+              >
+                Continuer
+              </ToastAction>
+            ),
+          });
         }
+      } else {
+        // Fallback toast if no leadId
+        toast({
+          title: "Quiz terminé !",
+          description: "Découvrez votre stratégie personnalisée maintenant.",
+          action: (
+            <ToastAction 
+              altText="Voir maintenant"
+              onClick={() => navigate("/vsl")}
+            >
+              Voir maintenant
+            </ToastAction>
+          ),
+        });
       }
     }
   };
@@ -493,24 +529,9 @@ const Quiz = () => {
         {/* Sticky Mobile CTA */}
         <StickyMobileCTA 
           onAction={handleNext}
-          isVisible={currentStep >= 1 && currentStep <= totalSteps && !showCompletionDialog}
+          isVisible={currentStep >= 1 && currentStep <= totalSteps}
           text={currentStep === totalSteps ? "Voir mes résultats" : "Question suivante"}
           isDisabled={!answers[currentQuestion] && !isAdvancingRef.current}
-        />
-
-        {/* Quiz Completion Dialog */}
-        <QuizCompletionDialog
-          isOpen={showCompletionDialog}
-          onClose={() => setShowCompletionDialog(false)}
-          diagnostic={currentDiagnostic}
-          contactName={contactInfo.name}
-          totalScore={Object.entries(answers).reduce((sum, [questionId, answerValue]) => {
-            const question = questions[parseInt(questionId)];
-            const option = question.options.find(opt => opt.value === answerValue);
-            return sum + (option?.score || 0);
-          }, 0)}
-          emailSent={emailSent}
-          emailError={emailError}
         />
       </div>
     </div>
