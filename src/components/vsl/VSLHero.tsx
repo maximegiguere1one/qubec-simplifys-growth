@@ -8,20 +8,16 @@ import { SmartVSLMedia, SmartVSLMediaRef } from '@/components/video/SmartVSLMedi
 import { ProgressBar } from '@/components/video/ProgressBar';
 interface VSLHeroProps {
   videoSrc: string;
+  fallbackSrc?: string;
   posterSrc: string;
-  headline: string;
-  ctaText: string;
-  ctaVariant: string;
   onCTAClick: (section?: string) => void;
   quizResults?: any;
   isMobile: boolean;
 }
 export const VSLHero = ({
   videoSrc,
+  fallbackSrc,
   posterSrc,
-  headline,
-  ctaText,
-  ctaVariant,
   onCTAClick,
   quizResults,
   isMobile
@@ -38,6 +34,7 @@ export const VSLHero = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
   const [showPlayHint, setShowPlayHint] = useState(true);
+  const [currentVideoSrc, setCurrentVideoSrc] = useState(videoSrc);
 
   // Time formatting utility
   const formatTime = (seconds: number): string => {
@@ -46,16 +43,14 @@ export const VSLHero = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // A/B test for CTA copy
-  const ctaCopyVariant = getABVariant("vsl_hero_cta", ["standard", "urgent", "benefit"]);
-  const getHeroCTAText = () => {
-    switch (ctaCopyVariant) {
-      case "urgent":
-        return "🚀 Réserver MA place (Urgent)";
-      case "benefit":
-        return "💰 Économiser 15h dès maintenant";
-      default:
-        return "📞 Planifier mon appel gratuit";
+  // Handle video error with fallback
+  const handleVideoError = () => {
+    if (fallbackSrc && currentVideoSrc !== fallbackSrc) {
+      console.log('Switching to fallback video source:', fallbackSrc);
+      setCurrentVideoSrc(fallbackSrc);
+      setHasError(false);
+    } else {
+      setHasError(true);
     }
   };
 
@@ -117,19 +112,16 @@ export const VSLHero = ({
       // Track video engagement milestones
       if (progressPercent >= 25 && progressPercent < 30) {
         trackVSLEvent('progress', {
-          milestone: '25_percent',
-          cta_variant: ctaVariant
+          milestone: '25_percent'
         });
       } else if (progressPercent >= 50 && progressPercent < 55) {
         trackVSLEvent('progress', {
-          milestone: '50_percent',
-          cta_variant: ctaVariant
+          milestone: '50_percent'
         });
         setShowStickyCTA(true);
       } else if (progressPercent >= 75 && progressPercent < 80) {
         trackVSLEvent('progress', {
-          milestone: '75_percent',
-          cta_variant: ctaVariant
+          milestone: '75_percent'
         });
         setShowStickyDesktop(true);
       }
@@ -139,7 +131,6 @@ export const VSLHero = ({
     trackEvent('vsl_cta_click', {
       section,
       progress,
-      cta_variant: ctaCopyVariant,
       quiz_score: quizResults?.totalScore || 0
     });
     onCTAClick(section);
@@ -157,23 +148,21 @@ export const VSLHero = ({
   };
   return <div className="relative">
       {/* Hero Section */}
-      <section className="pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 md:pb-20 bg-gradient-background">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Headline */}
-          <div className="text-center mb-8 animate-fade-in">
+      <section className="pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16 bg-gradient-background">
+        <div className="container mx-auto px-4 max-w-5xl">
+          {/* Headline - Updated for conversion focus */}
+          <div className="text-center mb-6 animate-fade-in">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-foreground">
-              {headline}
+              Deviens 4x plus profitable en éliminant 80 % de tes tâches répétitives
+              <span className="block text-primary">(sans être techno)</span>
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-              👉 Découvrez en 4 min comment économiser 10–25h par semaine
-            </p>
           </div>
 
           {/* VSL Video Container */}
-          <div className="relative mb-8 animate-scale-in">
+          <div className="relative mb-6 animate-scale-in">
             <div className="relative w-full max-w-4xl mx-auto">
               <div 
-                className="relative aspect-video bg-black rounded-lg overflow-hidden shadow-2xl cursor-pointer"
+                className="relative aspect-video bg-black rounded-xl overflow-hidden shadow-elegant cursor-pointer"
                 onClick={handlePlay}
                 onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? handlePlay() : null}
                 tabIndex={0}
@@ -182,12 +171,12 @@ export const VSLHero = ({
               >
                 <SmartVSLMedia 
                   ref={videoRef} 
-                  src={videoSrc} 
+                  src={currentVideoSrc} 
                   poster={posterSrc} 
                   className="w-full h-full object-cover" 
                   muted={isMuted} 
                   autoPlay={!isMobile} 
-                  onError={() => setHasError(true)} 
+                  onError={handleVideoError} 
                   onTimeUpdate={handleTimeUpdate} 
                   onPlay={() => setIsPlaying(true)} 
                   onPause={() => setIsPlaying(false)} 
@@ -195,43 +184,43 @@ export const VSLHero = ({
 
                 {/* Play Hint (before first play) */}
                 {showPlayHint && !hasStartedPlaying && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 transition-opacity duration-300">
-                    <div className="text-center mb-4">
-                      <p className="text-white text-lg sm:text-xl font-medium mb-2">
-                        {isMobile ? "Touchez pour lire" : "Cliquez pour lire"}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 transition-opacity duration-300">
+                    <div className="text-center mb-6">
+                      <p className="text-white text-xl sm:text-2xl font-semibold mb-3">
+                        {isMobile ? "▶ Touche pour voir ta solution" : "▶ Clique pour voir ta solution"}
                       </p>
-                      <p className="text-white/80 text-sm">
-                        👆 Vidéo de 4 minutes
+                      <p className="text-white/90 text-base font-medium bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
+                        ⏱️ 4 min seulement
                       </p>
                     </div>
                     <button 
                       onClick={handlePlay} 
-                      className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-white/95 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110 animate-pulse" 
+                      className="flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 bg-primary hover:bg-primary/90 rounded-full shadow-glow transition-all duration-300 hover:scale-110 animate-pulse" 
                       aria-label="Lire la vidéo"
                     >
-                      <Play className="w-10 h-10 sm:w-12 sm:h-12 text-gray-800 ml-1" />
+                      <Play className="w-12 h-12 sm:w-14 sm:h-14 text-white ml-1" />
                     </button>
                   </div>
                 )}
 
                 {/* Center Play/Pause Button (after first play) */}
                 {!showPlayHint && (
-                  <div className={`absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
+                  <div className={`absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
                     <button 
                       onClick={handlePlay} 
-                      className="flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/90 hover:bg-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" 
+                      className="flex items-center justify-center w-18 h-18 sm:w-22 sm:h-22 bg-primary/95 hover:bg-primary rounded-full shadow-glow transition-all duration-200 hover:scale-110" 
                       aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
                     >
-                      {isPlaying ? <Pause className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" /> : <Play className="w-8 h-8 sm:w-10 sm:h-10 text-gray-800 ml-1" />}
+                      {isPlaying ? <Pause className="w-9 h-9 sm:w-11 sm:h-11 text-white" /> : <Play className="w-9 h-9 sm:w-11 sm:h-11 text-white ml-1" />}
                     </button>
                   </div>
                 )}
 
-                {/* Floating Play/Pause Button (bottom-right) */}
-                <div className="absolute bottom-20 right-4 sm:bottom-16 sm:right-6">
+                {/* Floating Controls (bottom-right) */}
+                <div className="absolute bottom-20 right-4 sm:bottom-16 sm:right-6 flex flex-col gap-2">
                   <button 
                     onClick={handlePlay} 
-                    className="flex items-center justify-center w-12 h-12 bg-black/70 hover:bg-black/90 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" 
+                    className="flex items-center justify-center w-11 h-11 bg-black/80 hover:bg-black/95 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110" 
                     aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
                     title={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
                   >
@@ -239,19 +228,29 @@ export const VSLHero = ({
                   </button>
                 </div>
 
-                {/* Mobile-Friendly Controls */}
+                {/* Bottom Controls */}
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  {/* Progress Bar */}
+                  {/* Progress Indicator */}
                   <div className="flex-1 mr-4">
-                    <div className="w-full h-2 bg-white/30 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary transition-all duration-300" style={{
+                    <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+                      <div className="h-full bg-gradient-primary transition-all duration-300 ease-out" style={{
                       width: `${progress}%`
                     }} />
                     </div>
+                    {progress > 0 && (
+                      <div className="mt-1 text-white/90 text-xs font-medium">
+                        {Math.round(progress)}% complété
+                      </div>
+                    )}
                   </div>
 
-                  {/* Unmute Button */}
-                  <button onClick={handleMute} className="flex items-center justify-center w-10 h-10 bg-black/60 hover:bg-black/80 rounded-full text-white transition-colors" aria-label={isMuted ? "Activer le son" : "Désactiver le son"}>
+                  {/* Sound Control */}
+                  <button 
+                    onClick={handleMute} 
+                    className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
+                    aria-label={isMuted ? "Activer le son" : "Désactiver le son"}
+                    title={isMuted ? "Activer le son (recommandé)" : "Désactiver le son"}
+                  >
                     {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
                 </div>
@@ -262,90 +261,106 @@ export const VSLHero = ({
                   </div>}
               </div>
 
-              {/* Timeline - Progress bar with time display */}
-              <div className="mt-4 max-w-4xl mx-auto">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="min-w-[3rem] text-right">
-                    {formatTime(currentTime)}
-                  </span>
-                  <div className="flex-1">
-                    <ProgressBar 
-                      currentTime={currentTime}
-                      duration={duration}
-                      onSeek={handleSeek}
-                      className="h-2 sm:h-3"
-                    />
-                  </div>
-                  <span className="min-w-[3rem]">
-                    {formatTime(duration)}
-                  </span>
-                </div>
+              {/* Subtitle below video */}
+              <div className="text-center mt-4 animate-fade-in">
+                <p className="text-lg sm:text-xl text-muted-foreground font-medium max-w-4xl mx-auto">
+                  Regarde cette courte vidéo et découvre comment <span className="text-primary font-semibold">+3200 dirigeants québécois</span> sauvent du temps chaque semaine.
+                </p>
               </div>
             </div>
           </div>
 
-          {hasError}
-
-          {/* Trust Indicators & Qualification */}
+          {/* Social Proof Section */}
           <div className="text-center mb-8 animate-fade-in">
-            {quizResults?.totalScore >= 12 && <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary border-primary/20">
-                🎯 Vous vous qualifiez pour notre service prioritaire
-              </Badge>}
-            
-            {/* Trust logos placeholder */}
-            <div className="flex justify-center items-center gap-4 mb-6">
-              <span className="text-sm text-muted-foreground">Vu dans:</span>
-              <div className="flex gap-4 opacity-60">
-                <span className="text-xs bg-muted px-2 py-1 rounded">Radio-Canada</span>
-                <span className="text-xs bg-muted px-2 py-1 rounded">La Presse</span>
-                <span className="text-xs bg-muted px-2 py-1 rounded">JDM</span>
+            <div className="flex justify-center items-center gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">3200+</div>
+                <div className="text-sm text-muted-foreground">dirigeants québécois<br/>accompagnés</div>
+              </div>
+              <div className="w-px h-12 bg-border"></div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">15h</div>
+                <div className="text-sm text-muted-foreground">économisées par<br/>semaine en moyenne</div>
+              </div>
+              <div className="w-px h-12 bg-border"></div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-primary">72h</div>
+                <div className="text-sm text-muted-foreground">pour voir les<br/>premiers résultats</div>
               </div>
             </div>
+            
+            {quizResults?.totalScore >= 12 && (
+              <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary border-primary/20 px-4 py-2">
+                🎯 Ton profil se qualifie pour un accompagnement prioritaire
+              </Badge>
+            )}
           </div>
 
-          {/* Primary CTA - Always Visible */}
+          {/* Main CTA Section */}
           <div className="text-center mb-12 animate-scale-in">
-            <Button variant="cta-large" className="text-lg sm:text-xl font-bold px-8 sm:px-12 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 w-full sm:w-auto" onClick={() => handleCTAClick('hero_primary')} aria-label={`Réserver consultation - ${ctaCopyVariant} variant`} {...getCalDataAttributes()}>
-              {getHeroCTAText()}
+            <Button 
+              variant="cta-large" 
+              className="text-xl sm:text-2xl font-bold px-12 sm:px-16 py-6 shadow-glow hover:shadow-glow transition-all duration-300 hover:scale-105 w-full sm:w-auto mb-6" 
+              onClick={() => handleCTAClick('hero_primary')} 
+              aria-label="Réserver consultation gratuite"
+              {...getCalDataAttributes()}
+            >
+              🚀 Oui, je veux sauver +10h/semaine – Réserver mon appel gratuit
             </Button>
             
-            {/* Safety & Urgency Indicators */}
-            <div className="mt-4 space-y-2">
-              <p className="text-sm text-muted-foreground">
-                ✅ Consultation 100% gratuite • 🕒 30 minutes • 📞 Sans engagement
-              </p>
-              {quizResults?.totalScore >= 12 && <p className="text-xs text-primary font-medium">
-                  ⚠️ Places limitées ce mois-ci pour les profils prioritaires
-                </p>}
+            {/* Trust & Reassurance Points */}
+            <div className="max-w-md mx-auto space-y-3">
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">✓</span>
+                </div>
+                <span className="text-base">Gratuit & sans engagement</span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">✓</span>
+                </div>
+                <span className="text-base">Support 100 % local en français</span>
+              </div>
+              <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">✓</span>
+                </div>
+                <span className="text-base">Résultats visibles dès les premières semaines</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Sticky CTA - Mobile (appears at 50% progress) */}
-      {isMobile && showStickyCTA && <div className="fixed bottom-4 left-4 right-4 z-50 safe-area-inset-bottom">
+      {isMobile && showStickyCTA && (
+        <div className="fixed bottom-4 left-4 right-4 z-50 safe-area-inset-bottom">
           <Button 
             variant="cta" 
-            className="w-full shadow-2xl text-base font-bold py-3" 
+            className="w-full shadow-glow text-lg font-bold py-4 animate-pulse" 
             onClick={() => handleCTAClick('hero_sticky_mobile')} 
             aria-label="Réserver consultation - CTA mobile"
             {...getCalDataAttributes()}
           >
-            📞 Réserver maintenant (gratuit)
+            🚀 Réserver maintenant (gratuit)
           </Button>
-        </div>}
+        </div>
+      )}
 
       {/* Sticky CTA - Desktop (appears at 75% progress) */}
-      {!isMobile && showStickyDesktop && <div className="fixed bottom-8 right-8 z-50">
+      {!isMobile && showStickyDesktop && (
+        <div className="fixed bottom-8 right-8 z-50">
           <Button 
             variant="cta" 
-            className="shadow-2xl text-base font-bold px-6 py-3 rounded-full" 
+            className="shadow-glow text-lg font-bold px-8 py-4 rounded-full animate-pulse" 
             onClick={() => handleCTAClick('hero_sticky_desktop')} 
             aria-label="Réserver consultation - CTA desktop"
             {...getCalDataAttributes()}
           >
-            📞 Réserver
+            🚀 Réserver
           </Button>
-        </div>}
+        </div>
+      )}
     </div>;
 };

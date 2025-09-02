@@ -72,7 +72,9 @@
     --shadow-soft: 0 4px 20px -4px hsl(214 84% 56% / 0.15);
     --shadow-medium: 0 8px 32px -8px hsl(214 84% 56% / 0.2);
     --shadow-strong: 0 16px 48px -12px hsl(214 84% 56% / 0.25);
+    --shadow-elegant: 0 12px 40px -8px hsl(214 84% 56% / 0.25);
     --shadow-cta: 0 8px 32px -8px hsl(25 95% 58% / 0.3);
+    --shadow-glow: 0 0 40px hsl(25 95% 58% / 0.4);
     --shadow-card: 0 4px 24px -6px hsl(225 15% 15% / 0.1);
 
     /* Animation variables */

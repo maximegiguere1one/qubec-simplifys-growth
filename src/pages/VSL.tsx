@@ -155,7 +155,14 @@ const VSL = () => {
       </div>
 
       {/* Hero Section with VSL */}
-      <VSLHero videoSrc="https://www.youtube.com/embed/e7Q68Z-0gao?si=vjJdB3q-rzWNhX_b" posterSrc="/images/vsl-poster.jpg" headline={getPersonalizedMessage()} ctaText={getPrimaryCTAText()} ctaVariant={ctaCopyVariant} onCTAClick={handleCTAClick} quizResults={quizResults} isMobile={isMobile} />
+      <VSLHero 
+        videoSrc="/video/vsl-main.mp4" 
+        fallbackSrc="https://www.youtube.com/embed/e7Q68Z-0gao?si=vjJdB3q-rzWNhX_b"
+        posterSrc="/images/vsl-poster.jpg" 
+        onCTAClick={handleCTAClick} 
+        quizResults={quizResults} 
+        isMobile={isMobile} 
+      />
 
       {/* Product Visuals - Lazy loaded */}
       <LazySection fallback={<div className="h-96 bg-muted/20 animate-pulse" />}>
