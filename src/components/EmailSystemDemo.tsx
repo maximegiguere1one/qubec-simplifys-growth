@@ -29,6 +29,7 @@ const EmailSystemDemo = () => {
     
     // Demo lead data
     const testLead: LeadData = {
+      id: 'demo-lead-' + Date.now(),
       name: 'Demo User',
       email: 'demo@example.com', // In production, use real email
       segment: 'warm',
