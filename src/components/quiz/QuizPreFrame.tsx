@@ -1,9 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Users, Heart, TrendingUp } from "lucide-react";
-
 export const QuizPreFrame = () => {
-  return (
-    <Card className="p-6 sm:p-8 mb-8 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
+  return <Card className="p-6 sm:p-8 mb-8 bg-gradient-to-r from-primary/5 to-accent/5 border-2 border-primary/20">
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Users className="w-6 h-6 text-primary" />
@@ -12,7 +10,7 @@ export const QuizPreFrame = () => {
         </div>
         
         <h3 className="text-xl sm:text-2xl font-bold mb-4">
-          🎯 Ce quiz a aidé <span className="text-primary">+plusieurs propriétaires d'entreprise</span> comme toi
+          🎯 Ce quiz a aidé <span className="text-primary">plusieurs propriétaires d'entreprise</span> comme toi
         </h3>
         
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
@@ -21,6 +19,5 @@ export const QuizPreFrame = () => {
           <span className="text-primary font-semibold">Découvre maintenant ce qui t'empêche vraiment de souffler…</span>
         </p>
       </div>
-    </Card>
-  );
+    </Card>;
 };
