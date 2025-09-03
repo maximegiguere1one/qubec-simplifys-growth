@@ -34,6 +34,7 @@ export const VSLHero = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(true);
   const [showPlayHint, setShowPlayHint] = useState(true);
+  const [showCenterButton, setShowCenterButton] = useState(true);
   const [currentVideoSrc, setCurrentVideoSrc] = useState(videoSrc);
 
   // Time formatting utility
@@ -76,6 +77,7 @@ export const VSLHero = ({
         setHasStartedPlaying(true);
         setShowOverlay(false); // Hide overlay after first play for better UX
         setShowPlayHint(false); // Hide play hint after first interaction
+        setShowCenterButton(false); // Hide center button after first click
         trackVSLEvent('play', {
           currentTime,
           progress
@@ -227,7 +229,7 @@ export const VSLHero = ({
                 )}
 
                 {/* Center Play/Pause Button (after first play) */}
-                {!showPlayHint && (
+                {!showPlayHint && showCenterButton && (
                   <div className={`absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
                     <button 
                       onClick={handlePlay} 
