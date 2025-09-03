@@ -20,7 +20,7 @@ export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
     <section className="py-20 bg-gradient-hero text-white">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">
-          Chaque jour passé sans agir vous coûte du temps et de l'argent
+          Chaque jour passé sans automatiser vous coûte du temps et de l'argent
         </h2>
         <p className="text-xl mb-8 opacity-90 max-w-4xl mx-auto leading-relaxed">
           Pendant que vous hésitez, vos concurrents optimisent déjà leurs opérations. Pendant que vous perdez 15 heures par semaine sur de la paperasse, eux se concentrent sur la croissance. <strong>Il est temps de reprendre les rênes.</strong>
