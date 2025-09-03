@@ -324,7 +324,7 @@ export const VSLHero = ({
               {/* Subtitle below video */}
               <div className="text-center mt-4 animate-fade-in">
                 <p className="text-lg sm:text-xl text-muted-foreground font-medium max-w-4xl mx-auto">
-                  Regarde cette courte vidéo et découvre comment <span className="text-primary font-semibold">+3200 dirigeants québécois</span> sauvent du temps chaque semaine.
+                  Regarde cette courte vidéo et découvre comment <span className="text-primary font-semibold">des dizaines</span> sauvent du temps chaque semaine.
                 </p>
               </div>
             </div>
