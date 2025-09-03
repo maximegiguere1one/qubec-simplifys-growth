@@ -1,23 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { openCal, getCalDataAttributes } from "@/lib/cal";
-
 interface UrgencySectionProps {
   onCTAClick?: () => void;
 }
-
-export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
+export const UrgencySection = ({
+  onCTAClick
+}: UrgencySectionProps) => {
   const handleCTAClick = () => {
-    trackEvent('vsl_cta_click', { cta_location: 'final' });
+    trackEvent('vsl_cta_click', {
+      cta_location: 'final'
+    });
     if (onCTAClick) {
       onCTAClick();
     } else {
       openCal('urgency_section');
     }
   };
-
-  return (
-    <section className="py-20 bg-gradient-hero text-white">
+  return <section className="py-20 bg-gradient-hero text-white">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold mb-6">
           Chaque jour passé sans automatiser vous coûte du temps et de l'argent
@@ -29,19 +29,10 @@ export const UrgencySection = ({ onCTAClick }: UrgencySectionProps) => {
           <p className="text-lg font-semibold mb-2">🎯 Consultation 100% gratuite et sans engagement</p>
           <p className="text-base opacity-90">30 minutes qui peuvent changer la trajectoire de votre entreprise</p>
         </div>
-        <Button
-          variant="cta-large"
-          size="xl"
-          onClick={handleCTAClick}
-          className="w-full max-w-[560px] mx-auto whitespace-normal break-words text-base sm:text-lg px-4 sm:px-8 py-4 hover:scale-100 sm:hover:scale-105 transition-all duration-300"
-          {...getCalDataAttributes()}
-        >
+        <Button variant="cta-large" size="xl" onClick={handleCTAClick} className="w-full max-w-[560px] mx-auto whitespace-normal break-words text-base sm:text-lg px-4 sm:px-8 py-4 hover:scale-100 sm:hover:scale-105 transition-all duration-300" {...getCalDataAttributes()}>
           Je réserve ma consultation MAINTENANT
         </Button>
-        <p className="text-sm opacity-75 mt-6">
-          ⚠️ Places limitées cette semaine - Ne laissez pas passer cette opportunité
-        </p>
+        <p className="text-sm opacity-75 mt-6">⚠️ Places limitées - Ne laissez pas passer cette opportunité</p>
       </div>
-    </section>
-  );
+    </section>;
 };
