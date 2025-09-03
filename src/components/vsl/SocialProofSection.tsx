@@ -10,13 +10,13 @@ export const SocialProofSection = () => {
   }, {
     name: "Philippe Jacob",
     company: "Pro Remorque",
-    text: "Honnêtement, j'aurais dû faire ça il y a 5 ans. Avec le site transactionnel de ONE. Système, la location de nos remorques est rendue simple et rapide, autant pour nous que pour nos clients.",
+    text: "Honnêtement, j'aurais dû faire ça il y a 5 ans. Avec le système transactionnel de ONE. Système, la location de nos remorques est rendue simple et rapide, autant pour nous que pour nos clients.",
     benefits: "Transactionnel rapide • Location simplifiée",
     rating: 5
   }, {
     name: "Jessy Sioui",
     company: "Élite",
-    text: "Mon site web, c'est exactement ce qu'il me fallait. J'ai reçu un service impeccable, ça m'a déjà rapporté de nouveaux clients et en plus, l'image de mon entreprise est beaucoup plus professionnelle.",
+    text: "Mon système web, c'est exactement ce qu'il me fallait. J'ai reçu un service impeccable, ça m'a déjà rapporté de nouveaux clients et en plus, l'image de mon entreprise est beaucoup plus professionnelle.",
     benefits: "Image pro renforcée • Nouveaux clients",
     rating: 5
   }];
