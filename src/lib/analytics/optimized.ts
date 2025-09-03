@@ -92,7 +92,7 @@ class QuizAnalyticsManager {
 
 export const quizAnalytics = new QuizAnalyticsManager();
 
-// Optimized A/B test hook with caching
+// Optimized A/B test hook with caching - export fix
 const abTestCache = new Map<string, string>();
 
 export const getCachedABVariant = (testName: string, variants: string[]): string => {

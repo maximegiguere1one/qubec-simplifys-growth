@@ -6,6 +6,7 @@ import { useMobileOptimized } from "@/hooks/useMobileOptimized";
 import { usePrefetch } from "@/hooks/usePrefetch";
 import { useOptimizedTimer } from "@/hooks/useOptimizedTimer";
 import { QUIZ_QUESTIONS } from "@/components/optimized/QuizQuestions";
+// Forcing module refresh - getCachedABVariant import
 import { getABVariant } from "@/lib/analytics";
 import { getCachedABVariant } from "@/lib/analytics/optimized";
 import { OptimizedProgress } from "@/components/quiz/OptimizedProgress";
