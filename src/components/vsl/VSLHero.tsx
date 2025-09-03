@@ -334,8 +334,8 @@ export const VSLHero = ({
           <div className="text-center mb-8 animate-fade-in">
             <div className="flex justify-center items-center gap-6 mb-6">
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-primary">3200+</div>
-                <div className="text-sm text-muted-foreground">dirigeants québécois<br/>accompagnés</div>
+                <div className="text-2xl sm:text-3xl font-bold text-primary">Des centaines</div>
+                <div className="text-sm text-muted-foreground">de PME québécoises<br/>sont en train de s'automatiser</div>
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="text-center">
