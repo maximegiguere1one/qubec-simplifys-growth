@@ -12,7 +12,7 @@ export const QuizPreFrame = () => {
         </div>
         
         <h3 className="text-xl sm:text-2xl font-bold mb-4">
-          🎯 Ce quiz a aidé <span className="text-primary">+3200 propriétaires d'entreprise</span> comme toi
+          🎯 Ce quiz a aidé <span className="text-primary">+plusieurs propriétaires d'entreprise</span> comme toi
         </h3>
         
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
