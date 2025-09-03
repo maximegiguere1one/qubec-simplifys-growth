@@ -23,11 +23,14 @@ export const QuizStoryOffer = () => {
         <div className="flex items-start gap-4">
           <Target className="w-8 h-8 text-accent flex-shrink-0 mt-1" />
           <div>
-            <h3 className="font-bold text-lg mb-2">Témoignage</h3>
+            <h3 className="font-bold text-lg mb-2">Inventaire optimisé • Gain de temps</h3>
             <p className="text-muted-foreground">
-              "Avant, je passais mes nuits dans Excel et je repoussais toujours les tâches importantes. 
-              Mais dès que j'ai compris que je pouvais <strong className="text-foreground">automatiser 80% de mes tâches</strong>, 
-              tout a changé. Aujourd'hui, je finis mes journées à 17h…"
+              "Le système de gestion d'inventaire pour nos thermopompes a completement transformé nos opérations en back-end. 
+              On gagne un temps fou, c'est structuré, puis ça nous permet de mieux servir nos clients. 
+              Je recommande <strong className="text-foreground">ONE. Système</strong>."
+            </p>
+            <p className="text-sm text-muted-foreground mt-2 font-medium">
+              — Karl Thivierge, Climat Distinction
             </p>
           </div>
         </div>
