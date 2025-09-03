@@ -43,7 +43,7 @@ export const QuizStoryOffer = () => {
           <div>
             <h3 className="font-bold text-lg mb-2">Cadeau gratuit</h3>
             <p className="text-muted-foreground">
-              Fais ce quiz gratuit maintenant et découvre <strong className="text-foreground">ta stratégie personnalisée</strong> 
+              Fais ce quiz gratuit maintenant et découvre <strong className="text-foreground">ta stratégie personnalisée </strong> 
               pour arrêter de te faire chier avec l'administratif – <strong className="text-primary">en moins de 2 minutes</strong>.
             </p>
           </div>
