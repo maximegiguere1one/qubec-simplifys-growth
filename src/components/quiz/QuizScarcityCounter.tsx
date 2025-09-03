@@ -35,7 +35,7 @@ export const QuizScarcityCounter = () => {
       </div>
       
       <p className="text-sm sm:text-base mb-4">
-        <strong>Seulement 100 diagnostics offerts chaque semaine.</strong>
+        <strong>Offre limitée</strong> On collabore avec un nombre restreint de PME chaque mois pour garantir un travail bien fait.
       </p>
       
       <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
