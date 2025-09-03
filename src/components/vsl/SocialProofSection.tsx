@@ -8,10 +8,10 @@ export const SocialProofSection = () => {
     benefits: "Inventaire optimisé • Gain de temps",
     rating: 5
   }, {
-    name: "Philippe Jacob",
-    company: "Pro Remorque",
-    text: "Honnêtement, j'aurais dû faire ça il y a 5 ans. Avec le système transactionnel de ONE. Système, la location de nos remorques est rendue simple et rapide, autant pour nous que pour nos clients.",
-    benefits: "Transactionnel rapide • Location simplifiée",
+    name: "Stéphanie Tremblay",
+    company: "il y a 9 mois",
+    text: "Un énorme merci à l'équipe de ONE qui nous transforme en une version améliorée de nous-mêmes ! Leur programme de croissance est top, et mention spéciale à Max pour son professionnalisme et sa rigueur (et sa patience, avouons le 🙃). Si vous cherchez des pros qui vous font évoluer avec le sourire, c'est eux qu'il vous faut !",
+    benefits: "Programme de croissance • Transformation",
     rating: 5
   }, {
     name: "Jessy Sioui",
