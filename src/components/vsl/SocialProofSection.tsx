@@ -8,10 +8,10 @@ export const SocialProofSection = () => {
     benefits: "Inventaire optimisé • Gain de temps",
     rating: 5
   }, {
-    name: "Stéphanie Tremblay",
-    company: "il y a 9 mois",
-    text: "Un énorme merci à l'équipe de ONE qui nous transforme en une version améliorée de nous-mêmes ! Leur programme de croissance est top, et mention spéciale à Max pour son professionnalisme et sa rigueur (et sa patience, avouons le 🙃). Si vous cherchez des pros qui vous font évoluer avec le sourire, c'est eux qu'il vous faut !",
-    benefits: "Programme de croissance • Transformation",
+    name: "Marc-Olivier Plante",
+    company: "",
+    text: "Un travail impeccable, ils ont le soucis du détails. Ils sont professionnels, M. Giguère est très à l'écoute de nos besoins. Je recommande cette entreprise à tous.",
+    benefits: "Travail impeccable • Service professionnel",
     rating: 5
   }, {
     name: "Jessy Sioui",
