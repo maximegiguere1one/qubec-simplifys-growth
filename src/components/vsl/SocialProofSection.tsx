@@ -25,7 +25,7 @@ export const SocialProofSection = () => {
     <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Ce que disent nos clients québécois</h2>
+          <h2 className="text-3xl font-bold mb-4">Ce que disent nos clients Québécois</h2>
           <p className="text-muted-foreground text-lg">Devenez notre prochain témoignage à succès</p>
         </div>
         
