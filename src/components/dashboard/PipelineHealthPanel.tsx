@@ -55,7 +55,7 @@ export const PipelineHealthPanel = () => {
       
       // Calculate pipeline health summary
       const healthScore = overviewData?.[0]?.health_score || 0;
-      const totalEvents = await getTotalEvents7d();
+      const totalEvents = getTotalEvents7d(healthMetrics || []);
       
       setPipelineHealth({
         total_events_7d: totalEvents,
@@ -72,16 +72,10 @@ export const PipelineHealthPanel = () => {
     }
   };
 
-  const getTotalEvents7d = async (): Promise<number> => {
-    try {
-      const { count } = await supabase
-        .from('funnel_events')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-      return count || 0;
-    } catch {
-      return 0;
-    }
+  const getTotalEvents7d = (healthMetrics: HealthMetric[]): number => {
+    // Derive from health metrics instead of direct query to avoid RLS issues
+    const eventsMetric = healthMetrics.find(m => m.metric_name === 'Evenements Totaux');
+    return eventsMetric?.metric_value || 0;
   };
 
   const getMetricValue = (metrics: HealthMetric[], name: string): number => {

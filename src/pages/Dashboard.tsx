@@ -8,7 +8,7 @@ import { SimplifiedFunnel } from '@/components/dashboard/SimplifiedFunnel';
 import { TopSources } from '@/components/dashboard/TopSources';
 import { ActionableInsights } from '@/components/dashboard/ActionableInsights';
 import { AdvancedAnalytics } from '@/components/AdvancedAnalytics';
-import { EnhancedOverviewDashboard } from '@/components/analytics/EnhancedOverviewDashboard';
+
 import { ExperimentTracker } from '@/components/ExperimentTracker';
 import { LeadsManagement } from '@/components/admin/LeadsManagement';
 import { GlobalFilters, GlobalFiltersState } from '@/components/dashboard/GlobalFilters';
@@ -108,6 +108,42 @@ const Dashboard = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const exportCSV = async () => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_trended_dashboard_metrics', { 
+          days_back: globalFilters.dateRange,
+          compare_period: globalFilters.comparison 
+        });
+
+      if (error) throw error;
+
+      // Convert to CSV
+      const headers = ['Date', 'Leads', 'Quiz Completions', 'VSL Views', 'Bookings', 'Taux Conversion %', 'Score Quiz Moyen'];
+      const csvContent = [
+        headers.join(','),
+        ...(data || []).map((row: any) => [
+          new Date(row.date).toLocaleDateString('fr-CA'),
+          row.total_leads,
+          row.quiz_completions,
+          row.vsl_views,
+          row.bookings,
+          row.conversion_rate,
+          row.avg_quiz_score
+        ].join(','))
+      ].join('\n');
+
+      // Download file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `analytics-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+    } catch (error) {
+      console.error('Erreur lors de l\'export:', error);
+    }
+  };
+
   // Auto-refresh effect
   useEffect(() => {
     if (!globalFilters.autoRefresh) return;
@@ -173,7 +209,7 @@ const Dashboard = () => {
                   Diagnostic
                 </Button>
               </Link>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={exportCSV}>
                 <Download className="h-4 w-4 mr-2" />
                 Exporter
               </Button>
@@ -224,15 +260,25 @@ const Dashboard = () => {
             <SimplifiedOverview 
               globalFilters={globalFilters}
               onFiltersChange={handleFiltersChange}
+              refreshTrigger={refreshTrigger}
             />
             
             <div className="grid gap-6 lg:grid-cols-2 mt-6">
-              <SimplifiedFunnel daysBack={globalFilters.dateRange} />
-              <TopSources daysBack={globalFilters.dateRange} />
+              <SimplifiedFunnel 
+                daysBack={globalFilters.dateRange} 
+                refreshTrigger={refreshTrigger}
+              />
+              <TopSources 
+                daysBack={globalFilters.dateRange}
+                refreshTrigger={refreshTrigger}
+              />
             </div>
             
             <div className="mt-6">
-              <ActionableInsights daysBack={globalFilters.dateRange} />
+              <ActionableInsights 
+                daysBack={globalFilters.dateRange}
+                refreshTrigger={refreshTrigger}
+              />
             </div>
           </TabsContent>
 

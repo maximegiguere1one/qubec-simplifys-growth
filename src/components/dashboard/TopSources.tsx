@@ -19,15 +19,16 @@ interface SourceData {
 
 interface TopSourcesProps {
   daysBack: number;
+  refreshTrigger?: number;
 }
 
-export const TopSources = ({ daysBack }: TopSourcesProps) => {
+export const TopSources = ({ daysBack, refreshTrigger }: TopSourcesProps) => {
   const [sourcesData, setSourcesData] = useState<SourceData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchSourcesData();
-  }, [daysBack]);
+  }, [daysBack, refreshTrigger]);
 
   const fetchSourcesData = async () => {
     setIsLoading(true);

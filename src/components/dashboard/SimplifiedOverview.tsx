@@ -38,9 +38,10 @@ interface GlobalFiltersState {
 interface SimplifiedOverviewProps {
   globalFilters: GlobalFiltersState;
   onFiltersChange: (filters: Partial<GlobalFiltersState>) => void;
+  refreshTrigger?: number;
 }
 
-export const SimplifiedOverview = ({ globalFilters, onFiltersChange }: SimplifiedOverviewProps) => {
+export const SimplifiedOverview = ({ globalFilters, onFiltersChange, refreshTrigger }: SimplifiedOverviewProps) => {
   const [metrics, setMetrics] = useState<CompactMetrics | null>(null);
   const [trendData, setTrendData] = useState<any[]>([]);
   const [focusMetric, setFocusMetric] = useState<'leads' | 'bookings' | 'conversion'>('leads');
@@ -48,7 +49,7 @@ export const SimplifiedOverview = ({ globalFilters, onFiltersChange }: Simplifie
 
   useEffect(() => {
     fetchData();
-  }, [globalFilters.dateRange, globalFilters.comparison]);
+  }, [globalFilters.dateRange, globalFilters.comparison, refreshTrigger]);
 
   const fetchData = async () => {
     setIsLoading(true);

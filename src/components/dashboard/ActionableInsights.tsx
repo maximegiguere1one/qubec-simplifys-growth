@@ -25,15 +25,16 @@ interface ActionItem {
 
 interface ActionableInsightsProps {
   daysBack: number;
+  refreshTrigger?: number;
 }
 
-export const ActionableInsights = ({ daysBack }: ActionableInsightsProps) => {
+export const ActionableInsights = ({ daysBack, refreshTrigger }: ActionableInsightsProps) => {
   const [actions, setActions] = useState<ActionItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     generateActions();
-  }, [daysBack]);
+  }, [daysBack, refreshTrigger]);
 
   const generateActions = async () => {
     setIsLoading(true);

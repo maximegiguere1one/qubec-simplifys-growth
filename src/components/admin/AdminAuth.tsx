@@ -70,31 +70,26 @@ export const AdminAuth: React.FC<AdminAuthProps> = ({ onAuthSuccess }) => {
 
   const ensureProfileExists = async (user: User) => {
     try {
-      // Check if profile exists
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!profile) {
-        // Create profile
-        const { error } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: user.id,
-            email: user.email,
-            first_name: user.user_metadata?.first_name || '',
-            last_name: user.user_metadata?.last_name || '',
-            role: 'admin' // First user is admin for simplicity
-          });
-
-        if (error) {
-          console.error('Error creating profile:', error);
+      // Use admin-profiles edge function to handle profile creation/update
+      const { data, error } = await supabase.functions.invoke('admin-profiles', {
+        headers: {
+          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
         }
+      });
+
+      if (error) {
+        console.error('Error calling admin-profiles function:', error);
+        throw error;
       }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to create/update profile');
+      }
+
+      console.log('Profile ensured:', data.profile);
     } catch (error) {
       console.error('Error ensuring profile exists:', error);
+      throw error;
     }
   };
 

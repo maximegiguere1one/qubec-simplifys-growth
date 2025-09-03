@@ -17,15 +17,16 @@ interface FunnelStep {
 
 interface SimplifiedFunnelProps {
   daysBack: number;
+  refreshTrigger?: number;
 }
 
-export const SimplifiedFunnel = ({ daysBack }: SimplifiedFunnelProps) => {
+export const SimplifiedFunnel = ({ daysBack, refreshTrigger }: SimplifiedFunnelProps) => {
   const [funnelData, setFunnelData] = useState<FunnelStep[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchFunnelData();
-  }, [daysBack]);
+  }, [daysBack, refreshTrigger]);
 
   const fetchFunnelData = async () => {
     setIsLoading(true);
