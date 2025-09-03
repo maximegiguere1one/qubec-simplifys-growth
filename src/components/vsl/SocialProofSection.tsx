@@ -26,7 +26,7 @@ export const SocialProofSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Ce que disent nos clients québécois</h2>
-          <p className="text-muted-foreground text-lg">Plus de 500 entreprises nous font confiance</p>
+          <p className="text-muted-foreground text-lg">Devenez notre prochain témoignage à succès</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
