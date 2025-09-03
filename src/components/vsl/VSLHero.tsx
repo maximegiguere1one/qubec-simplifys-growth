@@ -35,7 +35,28 @@ export const VSLHero = ({
   const [showOverlay, setShowOverlay] = useState(true);
   const [showPlayHint, setShowPlayHint] = useState(true);
   const [showCenterButton, setShowCenterButton] = useState(true);
+  const [showControls, setShowControls] = useState(true);
   const [currentVideoSrc, setCurrentVideoSrc] = useState(videoSrc);
+  const mouseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Mouse activity tracking
+  const handleMouseMove = () => {
+    setShowControls(true);
+    if (mouseTimeoutRef.current) {
+      clearTimeout(mouseTimeoutRef.current);
+    }
+    mouseTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 3000); // Hide after 3 seconds of inactivity
+  };
+
+  useEffect(() => {
+    return () => {
+      if (mouseTimeoutRef.current) {
+        clearTimeout(mouseTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Time formatting utility
   const formatTime = (seconds: number): string => {
@@ -189,6 +210,7 @@ export const VSLHero = ({
               <div 
                 className="relative aspect-video bg-black rounded-xl overflow-hidden shadow-elegant cursor-pointer"
                 onClick={handlePlay}
+                onMouseMove={handleMouseMove}
                 onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? handlePlay() : null}
                 tabIndex={0}
                 role="button"
@@ -229,7 +251,7 @@ export const VSLHero = ({
                 )}
 
                 {/* Center Play/Pause Button (after first play) */}
-                {!showPlayHint && showCenterButton && (
+                {!showPlayHint && showCenterButton && showControls && (
                   <div className={`absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300 ${showOverlay ? 'opacity-100' : 'opacity-0 md:hover:opacity-100'}`}>
                     <button 
                       onClick={handlePlay} 
@@ -254,42 +276,44 @@ export const VSLHero = ({
                 </div>
 
                 {/* Bottom Controls */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                  {/* Progress Indicator */}
-                  <div className="flex-1 mr-4">
-                    <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-                      <div className="h-full bg-gradient-primary transition-all duration-300 ease-out" style={{
-                      width: `${progress}%`
-                    }} />
-                    </div>
-                    {progress > 0 && (
-                      <div className="mt-1 text-white/90 text-xs font-medium">
-                        {Math.round(progress)}% complété
+                {showControls && (
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between transition-opacity duration-300">
+                    {/* Progress Indicator */}
+                    <div className="flex-1 mr-4">
+                      <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+                        <div className="h-full bg-gradient-primary transition-all duration-300 ease-out" style={{
+                        width: `${progress}%`
+                      }} />
                       </div>
-                    )}
-                  </div>
+                      {progress > 0 && (
+                        <div className="mt-1 text-white/90 text-xs font-medium">
+                          {Math.round(progress)}% complété
+                        </div>
+                      )}
+                    </div>
 
-                  {/* Controls */}
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={handleMute} 
-                      className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
-                      aria-label={isMuted ? "Activer le son" : "Désactiver le son"}
-                      title={isMuted ? "Activer le son (recommandé)" : "Désactiver le son"}
-                    >
-                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                    </button>
-                    
-                    <button 
-                      onClick={handleFullscreen} 
-                      className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
-                      aria-label="Plein écran"
-                      title="Plein écran"
-                    >
-                      <Maximize className="w-5 h-5" />
-                    </button>
+                    {/* Controls */}
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={handleMute} 
+                        className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
+                        aria-label={isMuted ? "Activer le son" : "Désactiver le son"}
+                        title={isMuted ? "Activer le son (recommandé)" : "Désactiver le son"}
+                      >
+                        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                      </button>
+                      
+                      <button 
+                        onClick={handleFullscreen} 
+                        className="flex items-center justify-center w-10 h-10 bg-black/70 hover:bg-black/90 rounded-full text-white transition-all duration-200 hover:scale-105" 
+                        aria-label="Plein écran"
+                        title="Plein écran"
+                      >
+                        <Maximize className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Captions Notice */}
                 {isMuted && <div className="absolute top-4 left-4 right-4">
