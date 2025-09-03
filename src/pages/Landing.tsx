@@ -11,6 +11,7 @@ import { usePageTracking } from "@/hooks/usePageTracking";
 import { MicroSurvey } from "@/components/MicroSurvey";
 import { ABTest } from "@/components/ABTest";
 import { useMobileOptimized } from "@/hooks/useMobileOptimized";
+import { usePrefetch } from '@/hooks/usePrefetch';
 import { openCal } from "@/lib/cal";
 
 const Landing = () => {
@@ -21,6 +22,9 @@ const Landing = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isMobile, mobileButtonClass, mobileContainerClass, animationClass, imageLoadingStrategy } = useMobileOptimized();
+  
+  // Prefetch critical routes for performance
+  const { handleHover } = usePrefetch(['/quiz', '/vsl'], { onIdle: true, delay: 3000 });
   
   // Track page view
   usePageTracking();
@@ -250,6 +254,7 @@ const Landing = () => {
                       variant="cta-large" 
                       className={`w-full h-16 sm:h-18 ${mobileButtonClass} btn-touch text-lg sm:text-xl font-bold ${animationClass} shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105`}
                       disabled={isLoading}
+                      onMouseEnter={() => handleHover('/quiz')}
                     >
                       <span className="truncate">
                         {isLoading ? "🔄 Analyse en cours..." : 
@@ -401,6 +406,7 @@ const Landing = () => {
                 trackEvent('vsl_cta_click', { cta_location: 'repeated_final', variant: 'scroll_to_form' });
                 document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
               }}
+              onMouseEnter={() => handleHover('/quiz')}
             >
               <span className="truncate">🚀 Commencer mon analyse gratuite</span>
             </Button>

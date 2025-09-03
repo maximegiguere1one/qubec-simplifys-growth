@@ -123,7 +123,7 @@ export const SmartVSLMedia = forwardRef<SmartVSLMediaRef, SmartVSLMediaProps>(({
     if (videoSource?.type === 'youtube' && youtubeReady && iframePlaying) {
       const interval = setInterval(() => {
         sendIframeCommand('getCurrentTime');
-      }, 250); // Poll every 250ms for smooth progress
+      }, 500); // Poll every 500ms for good performance balance
 
       return () => clearInterval(interval);
     }

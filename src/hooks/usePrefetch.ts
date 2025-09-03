@@ -40,11 +40,18 @@ export const usePrefetch = (
   }, [prefetchRoute, options.onHover]);
 
   useEffect(() => {
-    if (options.onIdle && 'requestIdleCallback' in window) {
+    if (options.onIdle) {
       const timeoutId = setTimeout(() => {
-        window.requestIdleCallback(() => {
-          routes.forEach(route => prefetchRoute(route));
-        });
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(() => {
+            routes.forEach(route => prefetchRoute(route));
+          });
+        } else {
+          // Fallback for Safari and older browsers
+          setTimeout(() => {
+            routes.forEach(route => prefetchRoute(route));
+          }, 100);
+        }
       }, options.delay);
 
       return () => clearTimeout(timeoutId);

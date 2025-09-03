@@ -223,6 +223,11 @@ const Quiz = () => {
   };
 
   const handleAnswerChange = useCallback((value: string) => {
+    // Add performance mark
+    if ('performance' in window) {
+      performance.mark('quiz_step_start');
+    }
+    
     // Prevent double-triggering
     if (isAdvancingRef.current) return;
     
@@ -260,6 +265,11 @@ const Quiz = () => {
   }, [currentQuestion, questions, timeSpent]);
 
   const handleNext = async () => {
+    // Add performance mark
+    if ('performance' in window) {
+      performance.mark('quiz_step_complete');
+    }
+    
     // Check if we need to show email gate
     if (shouldShowEmailGate) {
       setShowEmailGate(true);

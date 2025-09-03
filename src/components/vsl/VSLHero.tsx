@@ -56,6 +56,11 @@ export const VSLHero = ({
 
   // Event handlers
   const handlePlay = async () => {
+    // Add performance mark
+    if ('performance' in window) {
+      performance.mark('vsl_play');
+    }
+    
     if (!videoRef.current) return;
     try {
       if (isPlaying) {

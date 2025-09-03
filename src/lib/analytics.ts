@@ -535,17 +535,31 @@ export const trackQuizAnswer = async (
   answerScore: number,
   timeSpent: number
 ) => {
+  // Add performance mark
+  if ('performance' in window) {
+    performance.mark('quiz_answer_recorded');
+  }
+  
   try {
     const quizSessionId = localStorage.getItem('quiz_session_id');
     if (!quizSessionId) return;
 
-    await supabase.from('quiz_answers').insert({
-      quiz_session_id: quizSessionId,
-      question_id: questionId,
-      answer_value: answerValue,
-      answer_score: answerScore,
-      time_spent_seconds: timeSpent,
+    // Route through edge function for better reliability
+    const response = await supabase.functions.invoke('quiz-events', {
+      body: { 
+        action: 'answer', 
+        data: {
+          session_id: quizSessionId,
+          question_id: questionId,
+          answer: answerValue,
+          time_spent: timeSpent,
+        }
+      }
     });
+
+    if (response.error) {
+      console.error('Quiz answer tracking error:', response.error);
+    }
 
     await trackEvent('quiz_question_answer', {
       quiz_session_id: quizSessionId,
